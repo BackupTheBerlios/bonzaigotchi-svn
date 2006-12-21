@@ -1,0 +1,7 @@
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: Midlet Suite Vendor
+MIDlet-Jar-URL: BonzaiGotchi.jar
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-1: Start, ,Core
+MicroEdition-Profile: MIDP-1.0
+MIDlet-Name: BonzaiGotchi Midlet Suite

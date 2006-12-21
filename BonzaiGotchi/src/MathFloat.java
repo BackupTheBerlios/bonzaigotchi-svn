@@ -5,89 +5,54 @@
 // 2006-12-19 updated by chappy
 //            made it actually running ;)
 
+// fixed to 3 decimals
 public class MathFloat {
 
-	public int value;
-	public byte decimal;
+	public long value;
 	
-	public MathFloat (int tmpValue, byte tmpDecimal) {
+	public MathFloat (int tmpValue) {
 		value = tmpValue;
-		decimal = tmpDecimal;
 	}
 	
 	public void add(int operand) {
-//		System.out.println("--- MathFloat ADD: value|decimal|operand: " + value + "|" + decimal + "|" + operand + " ---");
-//		System.out.println("--- MathFloat ADD: power: " + MathCalc.power(10, decimal) + " ---");
-		value += operand * MathCalc.power(10, decimal);
-//		System.out.println("--- MathFloat ADD: value: " + value + " ---");
+		value += operand * 1000;
 	}
 	
 	public void add(MathFloat operand) {
-		if (operand.decimal > decimal) {
-			value *= MathCalc.power(10, (operand.decimal - decimal));
-			value += operand.value;
-			value /= MathCalc.power(10, (operand.decimal - decimal));
-		}
-		else {
-			value += operand.value * MathCalc.power(10, (decimal - operand.decimal));
-		}
+		value += operand.value;
 	}
 	
 	public void subtract(int operand) {
-		value -= operand * MathCalc.power(10, decimal);
+		value -= operand * 1000;
 	}
 	
 	public void subtract(MathFloat operand) {
-		if (operand.decimal > decimal) {
-			value *= MathCalc.power(10, (operand.decimal - decimal));
-			value -= operand.value;
-			value /= MathCalc.power(10, (operand.decimal - decimal));
-		}
-		else {
-			value -= operand.value * MathCalc.power(10, (decimal - operand.decimal));
-		}
+		value -= operand.value;
 	}
 	
 	public void multiply(int operand) {
-		value *= operand * MathCalc.power(10, decimal) / MathCalc.power(10, decimal);
+		value *= operand;
 	}
 	
 	public void multiply(MathFloat operand) {
-		if (operand.decimal > decimal) {
-//			System.out.println("--- MathFloat MULTIPLY: value|decimal|operandValue|operandDecimal: " + value + "|" + decimal + "|" + operand.value + "|" + operand.decimal + " ---");
-			value *= MathCalc.power(10, (operand.decimal - decimal));
-			value *= operand.value;
-			value /= MathCalc.power(10, operand.decimal);
-			value /= MathCalc.power(10, (operand.decimal - decimal));
-		}
-		else {
-//			System.out.println("--- MathFloat xMULTIPLY: value|decimal|operandValue|operandDecimal: " + value + "|" + decimal + "|" + operand.value + "|" + operand.decimal + " ---");
-			value *= operand.value * MathCalc.power(10, (decimal - operand.decimal)) / MathCalc.power(10, decimal);
-		}
+		value = value * operand.value / 1000;
 	}
 	
 	public void divide(int operand) {
-		value *= MathCalc.power(10, decimal) / operand * MathCalc.power(10, decimal);
+		value /= operand;
 	}
 	
 	public void divide(MathFloat operand) {
-		if (operand.decimal > decimal) {
-			value *= MathCalc.power(10, (operand.decimal - decimal));
-			value *= MathCalc.power(10, operand.decimal);
-			value /= operand.value;
-			value /= MathCalc.power(10, (operand.decimal - decimal));
-		}
-		else {
-			value /= operand.value * MathCalc.power(10, (decimal - operand.decimal));
-		}
+		value *= 1000;
+		value /= operand.value;
 	}
 	
 	public int getInt() {
-		return value / MathCalc.power(10, decimal);
+		return (int)(value / 1000);
 	}
 	
 	public short getShort() {
-		return (short)(value / MathCalc.power(10, decimal));
+		return (short)(value / 1000);
 	}
 	
 	/*

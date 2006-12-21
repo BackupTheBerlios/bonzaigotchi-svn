@@ -18,6 +18,8 @@ public class ScreenTree extends Canvas implements Runnable {
 	private int water;
 	
 	private Thread threadInterval;
+	private boolean threadRun = false;
+	private boolean threadWaiting = false;
 	
 	public ScreenTree() {
 		super();
@@ -30,27 +32,32 @@ public class ScreenTree extends Canvas implements Runnable {
 		water = Integer.MAX_VALUE;
 		log = new Element((short)0, (short)(GlobalVars.DISPLAY_X_WIDTH / 2), GlobalVars.DISPLAY_Y_HEIGHT, 10000);
 		logWaterRequest = log.getChildWaterRequest();
-		System.out.println("--- LogWaterRequest: " + logWaterRequest + "---");
-		
-		this.repaint();
-		
+	
+		this.repaint();		
 	}
 	
 	public ScreenTree(FileIO data) {
 		
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date(data.readDataLong());
+		GlobalVars.COUNTERINTERVAL = data.readDataInt();
 		GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
 		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 		
-		water = data.readDataInt();
-		
+		water = data.readDataInt();		
 		log = new Element(data);
 		logWaterRequest = log.getChildWaterRequest();
+		
+		this.repaint();
 	}
 	
 	protected void paint(Graphics g) {
+		g.setColor(0xFFFFFF);
+		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 		log.draw(g);
+		if (threadWaiting) {
+			interval();
+		}
 	}
 
 	protected void keyPressed (int keyCode){
@@ -59,41 +66,41 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	public void interval() {
 		threadInterval = new Thread(this);
-		threadInterval.run();
+		threadRun = true;
+		threadWaiting = false;
+		threadInterval.start();
+//		run();
 	}
 
 	public void run() {
-		int n = 0;
-		int counter = 0;
+		int counterDraw = 0;
 		// lets give him more to do ;-)
 //		while (((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 600000) > 0) {
-		for (int i = 0; i <= 5000; i++) {
-			
-			System.out.println("--- INTERVAL: " + ++n + " ---");
+		for (int i = 0; i <= 700 && threadRun; i++) {			
+			System.out.println("--- INTERVAL: " + ++GlobalVars.COUNTERINTERVAL + " ---");
 			
 			int supply = Math.min(water, logWaterRequest);
 	//		water -= supply;
 			log.grow(supply);
 			logWaterRequest = log.getChildWaterRequest();
 			
-			if (++counter == 6) {
-				this.repaint();
-				try {
-					Thread.sleep(70);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				counter = 0;
+			if (++counterDraw == 12) {
+					threadWaiting = true;
+					break;
 			}
 
 		}
 		this.repaint();
+		
+	}
+	
+	public void stopThread(){
+		threadRun = false;
 	}
 	
 	public void writeData(FileIO data) {
 		data.writeData(GlobalVars.TIME_STAMP.getTime());
+		data.writeData(GlobalVars.COUNTERINTERVAL);
 		data.writeData(water);
 		log.writeData(data);
 	}

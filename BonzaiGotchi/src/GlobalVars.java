@@ -13,7 +13,8 @@ import java.util.Date;
 
 public class GlobalVars {
 	
-	public static int ELEMENTCOUNTER = 0;
+	public static int COUNTERELEMENT = 0;
+	public static int COUNTERINTERVAL = 0;
 	
 	public final static short[] HEALTH_WATER_THRESHOLD = { 10,30,50,60,90,100};
 	public final static short[] HEALTH_WATER_INC =       {-10, 1, 3, 5, 6,  7};
@@ -23,12 +24,12 @@ public class GlobalVars {
 	public final static short GROWTH_WATER_MIN = 40;
 	public final static short GROWTH_HEALTH_MIN = 70;
 
-	public final static MathFloat GROWTH_LENGTH_INC = new MathFloat(33,(byte)3);
-	public final static MathFloat GROWTH_THICKNESS_INC = new MathFloat(2,(byte)3);
-	public final static MathFloat GROWTH_THICKNESS_ONLY_INC = new MathFloat(2,(byte)3);
+	public final static MathFloat GROWTH_LENGTH_INC = new MathFloat(33);
+	public final static MathFloat GROWTH_THICKNESS_INC = new MathFloat(2);
+	public final static MathFloat GROWTH_THICKNESS_ONLY_INC = new MathFloat(2);
 
 	public final static short[] REQUEST_WATER_THRESHOLD = {25,50,75,95,100};
-	public final static MathFloat[] REQUEST_WATER_FACTOR = {new MathFloat(30,(byte)1), new MathFloat (20,(byte)1), new MathFloat(15,(byte)1), new MathFloat(11,(byte)1), new MathFloat(10,(byte)1)};
+	public final static MathFloat[] REQUEST_WATER_FACTOR = {new MathFloat(3000), new MathFloat (2000), new MathFloat(1500), new MathFloat(1100), new MathFloat(1000)};
 
 	public static short DISPLAY_Y_HEIGHT;
 	public static short DISPLAY_X_WIDTH;
@@ -43,33 +44,33 @@ public class GlobalVars {
 
 	public static Date TIME_STAMP;
 	public final static short VERSION_ID = 001;
-	public final static short SAVE_RECORDSTORE_VERSION = 001;
+	public final static short SAVE_RECORDSTORE_VERSION = 002;
 
 	// COSINUS_TABLE [+6] = SINUS_TABLE
 	public final static MathFloat[] COSINUS_TABLE = { 
-			new MathFloat( 1000,(byte)3),
-			new MathFloat(  966,(byte)3),
-			new MathFloat(  866,(byte)3),
-			new MathFloat(  707,(byte)3),
-			new MathFloat(  500,(byte)3),
-			new MathFloat(  259,(byte)3),
-			new MathFloat(    0,(byte)3),
-			new MathFloat(- 259,(byte)3),
-			new MathFloat(- 500,(byte)3),
-			new MathFloat(- 707,(byte)3),
-			new MathFloat(- 866,(byte)3),
-			new MathFloat(- 966,(byte)3),
-			new MathFloat(-1000,(byte)3),
-			new MathFloat(- 966,(byte)3),
-			new MathFloat(- 866,(byte)3),
-			new MathFloat(- 707,(byte)3),
-			new MathFloat(- 500,(byte)3),
-			new MathFloat(- 259,(byte)3),
-			new MathFloat(    0,(byte)3),
-			new MathFloat(  259,(byte)3),
-			new MathFloat(  500,(byte)3),
-			new MathFloat(  707,(byte)3),
-			new MathFloat(  866,(byte)3),
-			new MathFloat(  966,(byte)3)
+			new MathFloat( 1000),
+			new MathFloat(  966),
+			new MathFloat(  866),
+			new MathFloat(  707),
+			new MathFloat(  500),
+			new MathFloat(  259),
+			new MathFloat(    0),
+			new MathFloat(- 259),
+			new MathFloat(- 500),
+			new MathFloat(- 707),
+			new MathFloat(- 866),
+			new MathFloat(- 966),
+			new MathFloat(-1000),
+			new MathFloat(- 966),
+			new MathFloat(- 866),
+			new MathFloat(- 707),
+			new MathFloat(- 500),
+			new MathFloat(- 259),
+			new MathFloat(    0),
+			new MathFloat(  259),
+			new MathFloat(  500),
+			new MathFloat(  707),
+			new MathFloat(  866),
+			new MathFloat(  966)
 	};
 }

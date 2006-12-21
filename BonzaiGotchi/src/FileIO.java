@@ -170,21 +170,21 @@ public class FileIO {
 		RecordStore rs = null;
 		byte[] record = null;
 		
-		String[] recordList = RecordStore.listRecordStores() ;
+		String[] recordList = RecordStore.listRecordStores();
 		System.out.println ("--- IO RECORDNAME: " + recordName + " ---");
 		System.out.println ("--- IO RECORD LIST ---");
 		
 		for (int i = 0; i < recordList.length; i++) {
 			System.out.println ("--- IO RECORD LIST: " + recordList[i] + " ---");
 			System.out.println ("--- IO RECORD Counter: " + i + " ---");
-			if (recordList[i] == recordName) {
+			if (recordList[i].compareTo(recordName) == 0) {
 				System.out.println ("--- IO RECORD Counter: " + i + " ---");
 				System.out.println ("--- IO RECORD LIST: " + recordList[i] + " ---");
 				recordExists = true;
 				System.out.println ("--- IO RECORD EXISTS: " + recordList[i] + " ---");
 			}
 		}
-		
+
 		if (recordExists) {
 		
 			try {			

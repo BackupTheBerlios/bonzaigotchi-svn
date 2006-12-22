@@ -13,8 +13,6 @@
 // 2006-12-20 updated by chappy
 //            updated arrayLoops (HEALTH_INC;WATER_FACTOR)
 
-import java.util.Random;
-
 import javax.microedition.lcdui.Graphics;
 
 public class Element {
@@ -39,16 +37,14 @@ public class Element {
 	private Element childCenter;
 	private Element childRight;
 	
-	private Random randomGenerator;
-	
 	public Element(FileIO data) {
-		System.out.println("--- Element Constructor LOADED ---");
-		
+	
 		id = ++GlobalVars.COUNTERELEMENT;
+		System.out.println("--- Element Constructor LOADED | "+ id +" ---");
 		
 		// Load Vars
-		length = new MathFloat(data.readDataInt());
-		thickness = new MathFloat(data.readDataInt());
+		length = new MathFloat((int)data.readDataLong());
+		thickness = new MathFloat((int)data.readDataLong());
 		angle = data.readDataShort();
 		posX = data.readDataShort();
 		posY = data.readDataShort();
@@ -78,9 +74,9 @@ public class Element {
 	}
 	
 	public Element(short tmpAngle, short tmpPosX, short tmpPosY, int tmpWater) {
-		System.out.println("--- Element Constructor SPAWNED ---");
-		
+	
 		id = ++GlobalVars.COUNTERELEMENT;
+		System.out.println("--- Element Constructor SPAWNED | "+ id +" ---");
 		
 		angle = tmpAngle;
 		posX = tmpPosX;
@@ -93,7 +89,7 @@ public class Element {
 	}
 	
 	public void grow (int supply) {
-		System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
+		// System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
 		// Usage
 		
@@ -185,7 +181,7 @@ public class Element {
 			}
 		}
 	
-		if (childLeft == null && childCenter == null && childRight == null && length.getInt() > 15 && water > 30000 && getRandom(10) == 3) {
+		if (childLeft == null && childCenter == null && childRight == null && length.getInt() > 15 && water > 30000 && getRandom(30) == 3) {
 			short tmpRandom = (short)getRandom(3);
 			
 			// System.out.println("--- ID: "+ id +" | SpawnRandom: " + tmpRandom + " ---");
@@ -228,7 +224,7 @@ public class Element {
 		
 		
 		
-		System.out.println("--- ID: "+ id +" | Element Grow END ---");
+		// System.out.println("--- ID: "+ id +" | Element Grow END ---");
 	}
 	
 	public short calcX2(short tmpX) {
@@ -249,7 +245,7 @@ public class Element {
 	}
 	
 	public void draw(Graphics g) {
-		System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
+		// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 		
 		short tmpPosX = posX;
 		short tmpPosY = posY;
@@ -332,11 +328,11 @@ public class Element {
 			childRight.draw(g);
 		}
 		
-		System.out.println("--- ID: "+ id +" | Element Draw END ---");
+		// System.out.println("--- ID: "+ id +" | Element Draw END ---");
 	}
 	
 	public int getChildWaterRequest() {
-		System.out.println("--- ID: "+ id +" | Element WaterRequest BEGINN ---");
+		// System.out.println("--- ID: "+ id +" | Element WaterRequest BEGINN ---");
 		
 		int tmpChildWaterRequest = 0;
 		
@@ -403,16 +399,14 @@ public class Element {
 		waterRequest = new MathFloat(demand*1000);
 		waterRequest.multiply(GlobalVars.REQUEST_WATER_FACTOR[n]);
 		// System.out.println("--- ID: "+ id +" | WaterRequest|Factor: " + waterRequest.getInt() + "|" + GlobalVars.REQUEST_WATER_FACTOR[n].value + " ---");
-		System.out.println("--- ID: "+ id +" | Element WaterRequest END ---");
+		// System.out.println("--- ID: "+ id +" | Element WaterRequest END ---");
 		return childWaterRequest + waterRequest.getInt();
 	}
 	
 	private int getRandom(int range) {
 		int tmpRandom;
-		if (randomGenerator == null) {
-			randomGenerator = new Random();
-		}
-		tmpRandom = randomGenerator.nextInt() % range;
+
+		tmpRandom = GlobalVars.RANDOMGENERATOR.nextInt() % range;
 		if (tmpRandom < 0) {
 			tmpRandom *= -1;
 		}
@@ -433,7 +427,18 @@ public class Element {
 	}
 	
 	public void childKill() {
-		
+		if (childLeft != null) {
+			childLeft.childKill();
+			childLeft = null;
+		}
+		if (childCenter != null) {
+			childCenter.childKill();
+			childCenter = null;
+		}
+		if (childRight != null) {
+			childRight.childKill();
+			childRight = null;
+		}
 	}
 	
 	private void childSpawn(short angle) {

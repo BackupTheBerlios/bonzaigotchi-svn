@@ -9,6 +9,7 @@
 //            altered GROWTH_WATER* TO REQUEST_WATER*
 
 import java.util.Date;
+import java.util.Random;
 
 
 public class GlobalVars {
@@ -73,4 +74,6 @@ public class GlobalVars {
 			new MathFloat(  866),
 			new MathFloat(  966)
 	};
+	
+	public static Random RANDOMGENERATOR = new Random();
 }

@@ -23,6 +23,7 @@ public class Core extends MIDlet implements CommandListener {
 	private Command cmdLoad;
 	private Command cmdBreak;
 	private Command cmdResume;
+	private Command cmdExit;
 	
 	private FileIO data;
 
@@ -32,17 +33,20 @@ public class Core extends MIDlet implements CommandListener {
 		cmdLoad = new Command("Load", Command.OK, 2);
 		cmdBreak = new Command("Break", Command.OK, 1);
 		cmdResume = new Command("Resume", Command.OK, 1);
+		cmdExit = new Command("Exit", Command.EXIT,2);
 		
 		
 		data = new FileIO("BonzaiGotchi");
 		
 		screenTree = new ScreenTree();
+		screenTree.addCommand(cmdResume);
 		screenTree.addCommand(cmdSave);
 		screenTree.addCommand(cmdLoad);
-		screenTree.addCommand(cmdBreak);
+		screenTree.addCommand(cmdExit);
+		screenTree.setCommandListener(this);
 		
 		Display.getDisplay(this).setCurrent(screenTree);
-		screenTree.interval();
+//		screenTree.interval();
 /*		data.writeDataInit(GlobalVars.SAVE_RECORDSTORE_VERSION);
 		screenTree.writeData(data);
 		data.writeDataFinalize();
@@ -72,19 +76,45 @@ public class Core extends MIDlet implements CommandListener {
 
 	public void commandAction(Command c, Displayable d) {
 		if (c.equals(cmdSave)) {
-			
+			data.writeDataInit(GlobalVars.SAVE_RECORDSTORE_VERSION);	
+			screenTree.writeData(data);
+			data.writeDataFinalize();
 		}
 		if (c.equals(cmdLoad)) {
+			screenTree.kill();
+			GlobalVars.COUNTERELEMENT = 0;
 			
+			short tmpVer = data.readDataInit();
+			if (tmpVer > 0) {
+				System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer + " ---");
+				screenTree = new ScreenTree(data);
+				screenTree.addCommand(cmdSave);
+				screenTree.addCommand(cmdLoad);
+				screenTree.addCommand(cmdResume);
+				screenTree.addCommand(cmdExit);
+				screenTree.setCommandListener(this);
+				Display.getDisplay(this).setCurrent(screenTree);
+				data.readDataFinalize();
+			}
 		}
 		if (c.equals(cmdBreak)) {
 			screenTree.stopThread();
 			screenTree.removeCommand(cmdBreak);
 			screenTree.addCommand(cmdResume);
+			screenTree.addCommand(cmdSave);
+			screenTree.addCommand(cmdLoad);
 		}
 		if (c.equals(cmdResume)) {
 			screenTree.removeCommand(cmdResume);
+			screenTree.removeCommand(cmdSave);
+			screenTree.removeCommand(cmdLoad);
 			screenTree.addCommand(cmdBreak);
+			screenTree.interval();
+		}
+		if (c.equals(cmdExit)) {
+			screenTree.stopThread();
+			screenTree.kill();
+			this.notifyDestroyed();
 		}
 	}
 

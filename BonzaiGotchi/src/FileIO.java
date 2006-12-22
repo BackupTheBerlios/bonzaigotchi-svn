@@ -33,36 +33,37 @@ public class FileIO {
 	
 	// writeDataInit has to be started before writing can begin
 	public void writeDataInit(short versionSave) {
+		System.out.println("--- IO WRITE INIT BEGINN ---");
 		
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
 		
 		writeData (versionSave);
-		
+		System.out.println("--- IO WRITE INIT ENDE ---");
 	}
 	
 	public void writeData(String data) {
 
-		System.out.println("--- IO WRITE (STRING)---");				
+		// System.out.println("--- IO WRITE (STRING)---");				
 		try {
 			dos.writeUTF(data);
-			System.out.println("--- IO WRITE VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE VALUE: " + data + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
 			e.printStackTrace();
 		}
 	}
 	
 	public void writeData(byte data) {
 		
-		System.out.println("--- IO WRITE (BYTE)---");
+		// System.out.println("--- IO WRITE (BYTE)---");
 		try {
 			dos.writeByte(data);
-			System.out.println("--- IO WRITE VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE VALUE: " + data + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
 			e.printStackTrace();
 		}
 		
@@ -70,14 +71,14 @@ public class FileIO {
 	
 	public void writeData(short data) {
 		
-		System.out.println("--- IO WRITE (SHORT)---");
+		// System.out.println("--- IO WRITE (SHORT)---");
 		
 		try {
 			dos.writeShort(data);
-			System.out.println("--- IO WRITE VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE VALUE: " + data + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
 			e.printStackTrace();
 		}
 		
@@ -85,14 +86,14 @@ public class FileIO {
 	
 	public void writeData(int data) {
 
-		System.out.println("--- IO WRITE (INT)---");
+		// System.out.println("--- IO WRITE (INT)---");
 
 		try {
 			dos.writeInt(data);
-			System.out.println("--- IO WRITE VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE VALUE: " + data + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
 			e.printStackTrace();
 		}
 		
@@ -100,14 +101,14 @@ public class FileIO {
 	
 	public void writeData(boolean data) {
 
-		System.out.println("--- IO WRITE (BOOLEAN)---");
+		// System.out.println("--- IO WRITE (BOOLEAN)---");
 
 		try {
 			dos.writeBoolean(data);
-			System.out.println("--- IO WRITE VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE VALUE: " + data + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
 			e.printStackTrace();
 		}
 		
@@ -115,14 +116,14 @@ public class FileIO {
 	
 	public void writeData(long data) {
 
-		System.out.println("--- IO WRITE (LONG)---");
+		// System.out.println("--- IO WRITE (LONG)---");
 
 		try {
 			dos.writeLong(data);
-			System.out.println("--- IO WRITE VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE VALUE: " + data + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
+			// System.out.println("--- IO WRITE ERROR VALUE: " + data + " ---");
 			e.printStackTrace();
 		}
 		
@@ -130,6 +131,7 @@ public class FileIO {
 	
 	// execute when reading has been finished
 	public boolean writeDataFinalize() {
+		System.out.println("--- IO WRITE FINALIZE BEGINN ---");
 		
 		RecordStore rs;
 		
@@ -137,9 +139,9 @@ public class FileIO {
 		
 		try {
 			RecordStore.deleteRecordStore(recordName);
-			System.out.println("--- DELETE RECORD ---");
+			// System.out.println("--- IO DELETE RECORD ---");
 		} catch (RecordStoreException e) {
-			System.out.println("--- DELETE RECORD ERROR ---");
+			// System.out.println("--- IO DELETE RECORD ERROR ---");
 		}
 		
 
@@ -147,23 +149,24 @@ public class FileIO {
 			rs = RecordStore.openRecordStore(recordName, true);
 			rs.addRecord(record, 0, record.length);
 			rs.closeRecordStore();
-			System.out.println("--- WRITE RECORD ---");
+			System.out.println("--- IO RECORD " + recordName + " SAVED | " + record.length + " BYTES WRITTEN ---");
 		} catch (RecordStoreException e) {
-			System.out.println("--- WRITE RECORD ERROR ---");
+			System.out.println("--- IO WRITE RECORD ERROR ---");
 			return false;
 		}
 		
-		System.out.println("--- RECORD " + recordName + " SAVED ---");
+		
 		baos = null;
 		dos = null;
-		return true;
 		
+		System.out.println("--- IO WRITE FINALIZE ENDE ---");
+		return true;
 	}
 
 	// execute before starting to read
 	public short readDataInit() {
 		
-		System.out.println("--- IO READ ---");
+		System.out.println("--- IO READ INIT BEGINN ---");
 		
 		boolean recordExists = false;
 		
@@ -171,17 +174,14 @@ public class FileIO {
 		byte[] record = null;
 		
 		String[] recordList = RecordStore.listRecordStores();
-		System.out.println ("--- IO RECORDNAME: " + recordName + " ---");
-		System.out.println ("--- IO RECORD LIST ---");
+		// System.out.println ("--- IO RECORDNAME: " + recordName + " ---");
+		// System.out.println ("--- IO RECORD LIST ---");
 		
 		for (int i = 0; i < recordList.length; i++) {
-			System.out.println ("--- IO RECORD LIST: " + recordList[i] + " ---");
-			System.out.println ("--- IO RECORD Counter: " + i + " ---");
+			// System.out.println ("--- IO RECORD LIST: " + i + ": " + recordList[i] + " ---");
 			if (recordList[i].compareTo(recordName) == 0) {
-				System.out.println ("--- IO RECORD Counter: " + i + " ---");
-				System.out.println ("--- IO RECORD LIST: " + recordList[i] + " ---");
 				recordExists = true;
-				System.out.println ("--- IO RECORD EXISTS: " + recordList[i] + " ---");
+				System.out.println ("--- IO RECORD EXISTS: " + i + ": " + recordList[i] + " ---");
 			}
 		}
 
@@ -208,7 +208,7 @@ public class FileIO {
 
 	        bais = new ByteArrayInputStream(record);
 	        dis = new DataInputStream(bais);
-	        System.out.println("--- IO INPUTSTREAMS ---");
+	        System.out.println("--- IO READ INIT END ---");
 	        return readDataShort(); // = versionSave
 	
 		}
@@ -219,16 +219,16 @@ public class FileIO {
 		
 	public String readDataString() {
 		
-		System.out.println("--- IO READ (STRING) ---");
+		// System.out.println("--- IO READ (STRING) ---");
 		
 		String tmpData = null;
 		
 		try {
 			tmpData = dis.readUTF();
-			System.out.println("--- IO READ VALUE: " + tmpData + " ---");
+			// System.out.println("--- IO READ VALUE: " + tmpData + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO READ ERROR ---");
+			// System.out.println("--- IO READ ERROR ---");
 			e.printStackTrace();
 		}
 		
@@ -238,16 +238,16 @@ public class FileIO {
 	
 	public byte readDataByte() {
         
-		System.out.println("--- IO READ BYTE) ---");
+		// System.out.println("--- IO READ (BYTE) ---");
 		
 		byte tmpData = 0;
 		
 		try {
 			tmpData = dis.readByte();
-			System.out.println("--- IO READ VALUE: " + tmpData + " ---");
+			// System.out.println("--- IO READ VALUE: " + tmpData + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO READ ERROR ---");
+			// System.out.println("--- IO READ ERROR ---");
 			e.printStackTrace();
 		}
 		
@@ -257,16 +257,16 @@ public class FileIO {
 	
 	public short readDataShort() {
         
-		System.out.println("--- IO READ BYTE) ---");
+		// System.out.println("--- IO READ (SHORT) ---");
 		
 		short tmpData = 0;
 		
 		try {
 			tmpData = dis.readShort();
-			System.out.println("--- IO READ VALUE: " + tmpData + " ---");
+			// System.out.println("--- IO READ VALUE: " + tmpData + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO READ ERROR ---");
+			// System.out.println("--- IO READ ERROR ---");
 			e.printStackTrace();
 		}
 		
@@ -276,16 +276,16 @@ public class FileIO {
 
 	public int readDataInt() {
 				
-		System.out.println("--- IO READ (INT) ---");
+		// System.out.println("--- IO READ (INT) ---");
 		
 		int tmpData = 0;
 
 		try {
 			tmpData = dis.readInt();
-			System.out.println("--- IO READ VALUE: " + tmpData + " ---");
+			// System.out.println("--- IO READ VALUE: " + tmpData + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO READ ERROR ---");
+			// System.out.println("--- IO READ ERROR ---");
 			e.printStackTrace();
 		}
 		
@@ -295,16 +295,16 @@ public class FileIO {
 	
 	public boolean readDataBoolean() {
 		
-		System.out.println("--- IO READ (BOOLEAN) ---");
+		// System.out.println("--- IO READ (BOOLEAN) ---");
 		
 		boolean tmpData = false;
 
 		try {
 			tmpData = dis.readBoolean();
-			System.out.println("--- IO READ VALUE: " + tmpData + " ---");
+			// System.out.println("--- IO READ VALUE: " + tmpData + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO READ ERROR ---");
+			// System.out.println("--- IO READ ERROR ---");
 			e.printStackTrace();
 		}
 		
@@ -313,16 +313,16 @@ public class FileIO {
 	}
 	
 	public long readDataLong() {
-		System.out.println("--- IO READ (LONG) ---");
+		// System.out.println("--- IO READ (LONG) ---");
 		
 		long tmpData = 0;
 
 		try {
 			tmpData = dis.readLong();
-			System.out.println("--- IO READ VALUE: " + tmpData + " ---");
+			// System.out.println("--- IO READ VALUE: " + tmpData + " ---");
 			
 		} catch (IOException e) {
-			System.out.println("--- IO READ ERROR ---");
+			// System.out.println("--- IO READ ERROR ---");
 			e.printStackTrace();
 		}
 		
@@ -333,6 +333,7 @@ public class FileIO {
 	// just to clear vars
 	// execute when finished reading
 	public void readDataFinalize() {
+		System.out.println("--- IO READ FINALIZE ---");
 		bais = null;
 		dis = null;
 	}

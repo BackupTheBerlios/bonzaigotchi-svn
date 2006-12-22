@@ -32,8 +32,6 @@ public class ScreenTree extends Canvas implements Runnable {
 		water = Integer.MAX_VALUE;
 		log = new Element((short)0, (short)(GlobalVars.DISPLAY_X_WIDTH / 2), GlobalVars.DISPLAY_Y_HEIGHT, 10000);
 		logWaterRequest = log.getChildWaterRequest();
-	
-		this.repaint();		
 	}
 	
 	public ScreenTree(FileIO data) {
@@ -47,8 +45,6 @@ public class ScreenTree extends Canvas implements Runnable {
 		water = data.readDataInt();		
 		log = new Element(data);
 		logWaterRequest = log.getChildWaterRequest();
-		
-		this.repaint();
 	}
 	
 	protected void paint(Graphics g) {
@@ -90,6 +86,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			}
 
 		}
+		System.out.println("--- INTERVAL END LOOP ---");
 		this.repaint();
 		
 	}
@@ -103,5 +100,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		data.writeData(GlobalVars.COUNTERINTERVAL);
 		data.writeData(water);
 		log.writeData(data);
+	}
+	
+	public void kill() {
+		log.childKill();
+		log = null;
 	}
 }

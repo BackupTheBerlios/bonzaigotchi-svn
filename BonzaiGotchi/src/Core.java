@@ -14,7 +14,7 @@ import javax.microedition.midlet.MIDletStateChangeException;
 	
 
 public class Core extends MIDlet implements CommandListener {
-
+	
 	private ScreenTree screenTree;
 //	private ScreenMenu screenMenu;
 //	private ScreenHelp screenHelp;
@@ -23,6 +23,8 @@ public class Core extends MIDlet implements CommandListener {
 	private Command cmdLoad;
 	private Command cmdBreak;
 	private Command cmdResume;
+	private Command cmdEdit;
+	private Command cmdSelect;
 	private Command cmdExit;
 	
 	private FileIO data;
@@ -31,8 +33,10 @@ public class Core extends MIDlet implements CommandListener {
 	protected void startApp() throws MIDletStateChangeException {
 		cmdSave = new Command("Save", Command.OK, 2);
 		cmdLoad = new Command("Load", Command.OK, 2);
-		cmdBreak = new Command("Break", Command.OK, 1);
+		cmdBreak = new Command("Break", Command.CANCEL, 1);
 		cmdResume = new Command("Resume", Command.OK, 1);
+		cmdEdit = new Command("Edit", Command.OK, 2);
+		cmdSelect = new Command("Select", Command.OK, 1);
 		cmdExit = new Command("Exit", Command.EXIT,2);
 		
 		
@@ -62,6 +66,7 @@ public class Core extends MIDlet implements CommandListener {
 			System.out.println("--- Core: DATAINIT No Record Found: " + tmpVer + " ---");
 		}
 */
+		GlobalVars.APPSTATUS=1;
 	}
 	
 	protected void pauseApp() {
@@ -80,7 +85,7 @@ public class Core extends MIDlet implements CommandListener {
 			screenTree.writeData(data);
 			data.writeDataFinalize();
 		}
-		if (c.equals(cmdLoad)) {
+		else if (c.equals(cmdLoad)) {
 			screenTree.kill();
 			GlobalVars.COUNTERELEMENT = 0;
 			
@@ -97,21 +102,54 @@ public class Core extends MIDlet implements CommandListener {
 				data.readDataFinalize();
 			}
 		}
-		if (c.equals(cmdBreak)) {
-			screenTree.stopThread();
-			screenTree.removeCommand(cmdBreak);
-			screenTree.addCommand(cmdResume);
-			screenTree.addCommand(cmdSave);
-			screenTree.addCommand(cmdLoad);
+		else if (c.equals(cmdBreak)) {
+			if (GlobalVars.APPSTATUS == 2) {
+				screenTree.stopThread();
+				screenTree.removeCommand(cmdBreak);
+				screenTree.addCommand(cmdResume);
+				screenTree.addCommand(cmdSave);
+				screenTree.addCommand(cmdLoad);
+				screenTree.addCommand(cmdEdit);
+				GlobalVars.APPSTATUS = 1;
+				System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
+			}
+			else if (GlobalVars.APPSTATUS == 3) {
+				screenTree.stopThread();
+				screenTree.removeCommand(cmdSelect);
+				screenTree.removeCommand(cmdBreak);
+				screenTree.addCommand(cmdResume);
+				screenTree.addCommand(cmdSave);
+				screenTree.addCommand(cmdLoad);
+				screenTree.addCommand(cmdEdit);
+				screenTree.addCommand(cmdExit);
+				GlobalVars.APPSTATUS = 1;
+				System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
+				screenTree.repaint();
+			}
 		}
-		if (c.equals(cmdResume)) {
+		else if (c.equals(cmdResume)) {
 			screenTree.removeCommand(cmdResume);
 			screenTree.removeCommand(cmdSave);
 			screenTree.removeCommand(cmdLoad);
+			screenTree.removeCommand(cmdEdit);
 			screenTree.addCommand(cmdBreak);
+			GlobalVars.APPSTATUS = 2;
+			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
 			screenTree.interval();
 		}
-		if (c.equals(cmdExit)) {
+		else if (c.equals(cmdEdit)) {
+			screenTree.removeCommand(cmdResume);
+			screenTree.removeCommand(cmdSave);
+			screenTree.removeCommand(cmdLoad);
+			screenTree.removeCommand(cmdEdit);
+			screenTree.removeCommand(cmdExit);
+			screenTree.addCommand(cmdSelect);
+			screenTree.addCommand(cmdBreak);
+			GlobalVars.APPSTATUS = 3;
+			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
+			screenTree.edit();
+		}
+		else if (c.equals(cmdExit)) {
 			screenTree.stopThread();
 			screenTree.kill();
 			this.notifyDestroyed();

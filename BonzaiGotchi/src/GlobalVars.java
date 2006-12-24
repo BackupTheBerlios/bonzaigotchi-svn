@@ -14,6 +14,10 @@ import java.util.Random;
 
 public class GlobalVars {
 	
+	// 0 = init, 1 = standBy, 2 = running, 3 = edit
+	public static int APPSTATUS = 0;
+	public static Element ELEMENTEDIT;
+	
 	public static int COUNTERELEMENT = 0;
 	public static int COUNTERINTERVAL = 0;
 	
@@ -39,7 +43,8 @@ public class GlobalVars {
 	public final static int COLOR_ELEMENT_OUTER = 0x007809;
 	public final static int COLOR_ELEMENT_DRY = 0xE2C48D;
 	public final static int COLOR_ELEMENT_DEAD = 0x000000;
-	public final static int COLOR_ELEMENT_EDIT = 0xFF0002;
+	public final static int COLOR_ELEMENT_EDIT = 0xFF0000;
+	public final static int COLOR_ELEMENT_EDIT_CHILD = 0xFF9900;
 	public final static int COLOR_ELEMENT_WATER_LOW = 0x99BBFF;
 	public final static int COLOR_ELEMENT_WATER_HIGH = 0x0000AA;
 

@@ -28,19 +28,22 @@ public class Element {
 	private short health = 100; // tempValue
 	private int demand;
 	private MathFloat waterRequest;
-	private boolean growStop = false;
 
-	private int childWaterRequest = 0; 
+	private int childWaterRequest = 0;
 	private byte childWaterDivider = 100;
 	
 	private Element childLeft;
 	private Element childCenter;
 	private Element childRight;
 	
-	public Element(FileIO data) {
+	private Element parent = null;
+	
+	public Element(Element inputParent, FileIO data) {
 	
 		id = ++GlobalVars.COUNTERELEMENT;
 		System.out.println("--- Element Constructor LOADED | "+ id +" ---");
+		
+		parent = inputParent;
 		
 		// Load Vars
 		length = new MathFloat((int)data.readDataLong());
@@ -50,7 +53,6 @@ public class Element {
 		posY = data.readDataShort();
 		water = data.readDataInt();
 		health = data.readDataShort();
-		growStop = data.readDataBoolean();
 		
 		// Check if I have children
 		boolean tmpChildLeft = data.readDataBoolean();
@@ -59,24 +61,26 @@ public class Element {
 		
 		if (tmpChildLeft) {
 			// System.out.println("--- Element Constructor ChildLeft ---");
-			childLeft = new Element(data);
+			childLeft = new Element(this, data);
 		}
 		if (tmpChildCenter) {
 			// System.out.println("--- Element Constructor ChildCenter ---");
-			childCenter = new Element(data);
+			childCenter = new Element(this, data);
 			
 		}
 		if (tmpChildRight) {
 			// System.out.println("--- Element Constructor ChildRight ---");
-			childRight = new Element(data);
+			childRight = new Element(this, data);
 		}
 				
 	}
 	
-	public Element(short tmpAngle, short tmpPosX, short tmpPosY, int tmpWater) {
+	public Element(Element inputParent, short tmpAngle, short tmpPosX, short tmpPosY, int tmpWater) {
 	
 		id = ++GlobalVars.COUNTERELEMENT;
 		System.out.println("--- Element Constructor SPAWNED | "+ id +" ---");
+		
+		parent = inputParent;
 		
 		angle = tmpAngle;
 		posX = tmpPosX;
@@ -188,35 +192,35 @@ public class Element {
 			
 			switch (tmpRandom + 3) {
 				case 0:
-					childLeft = new Element(calcAngle((short)20), calcX2(posX), calcY2(posY), 10000);
+					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), 10000);
 					water -= 10000;
 					break;
 					
 				case 1:
-					childCenter = new Element(calcAngle((short)22), calcX2(posX), calcY2(posY), 10000);
+					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), 10000);
 					water -= 10000;
 					break;
 					
 				case 2:
-					childRight = new Element(calcAngle((short)1), calcX2(posX), calcY2(posY), 10000);
+					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), 10000);
 					water -= 10000;
 					break;
 					
 				case 3:
-					childLeft = new Element(calcAngle((short)20), calcX2(posX), calcY2(posY), 10000);
-					childCenter = new Element(calcAngle((short)22), calcX2(posX), calcY2(posY), 10000);
+					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), 10000);
+					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), 10000);
 					water -= 20000;
 					break;
 					
 				case 4:
-					childLeft = new Element(calcAngle((short)20), calcX2(posX), calcY2(posY), 10000);
-					childRight = new Element(calcAngle((short)1), calcX2(posX), calcY2(posY), 10000);
+					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), 10000);
+					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), 10000);
 					water -= 20000;
 					break;
 					
 				case 5:
-					childCenter = new Element(calcAngle((short)22), calcX2(posX), calcY2(posY), 10000);
-					childRight = new Element(calcAngle((short)1), calcX2(posX), calcY2(posY), 10000);
+					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), 10000);
+					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), 10000);
 					water -= 20000;
 					break;
 			}
@@ -244,88 +248,107 @@ public class Element {
 		return (short)(tmpY - tmpPos.getShort());
 	}
 	
-	public void draw(Graphics g) {
+	public void draw(Graphics g, boolean edit, boolean editChild) {
 		// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
-		
-		short tmpPosX = posX;
-		short tmpPosY = posY;
-		
-		boolean thicknessEven = false;
-		boolean drawHorizontal = false;
-		
-		if (angle >= 21 || angle <= 3 || (angle >= 9 && angle <= 15)) {
-			drawHorizontal = true;
-			tmpPosX -= thickness.getShort() / 2;
-		}
-		else {
-			tmpPosY -= thickness.getShort() / 2;
-		}
-		
-		// System.out.println("--- DrawHorizontal: " + drawHorizontal + " ---");
-		
-		if (thickness.getInt() % 2 == 0) {
-			thicknessEven = true;
-		}
-		
-		// System.out.println("--- ThicknessEven: " + thicknessEven + " ---");
-		
-		short tmpPosX2 = calcX2(tmpPosX);
-		short tmpPosY2 = calcY2(tmpPosY);
-		
-		// System.out.println("--- PosX|Y: " + tmpPosX + "|" + tmpPosY + " : " + tmpPosX2 + "|" + tmpPosY2 + " ---");
-		
-		short colorSteps = (short)(thickness.getShort() / 2 + thickness.getShort() % 2 - 1);
-		// System.out.println("--- ColorSteps: " + colorSteps + " ---");
-				
-		short n = colorSteps;
-		colorSteps = (short)Math.max(colorSteps, 1);
-		boolean nIncrement = false;
-		
-		for (int i = 0; i < thickness.getInt(); i++) {
-			// System.out.println("--- LOOP BEGINN ---");
+		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
+		if (edit && GlobalVars.ELEMENTEDIT.equals(this) || !edit || editChild) {
+
+			short tmpPosX = posX;
+			short tmpPosY = posY;
 			
-			if (n < 0) {
-				if (thicknessEven) {
-					n = 0;
+			boolean thicknessEven = false;
+			boolean drawHorizontal = false;
+			
+			if (angle >= 21 || angle <= 3 || (angle >= 9 && angle <= 15)) {
+				drawHorizontal = true;
+				tmpPosX -= thickness.getShort() / 2;
+			}
+			else {
+				tmpPosY -= thickness.getShort() / 2;
+			}
+			
+			// System.out.println("--- DrawHorizontal: " + drawHorizontal + " ---");
+			
+			if (thickness.getInt() % 2 == 0) {
+				thicknessEven = true;
+			}
+			
+			// System.out.println("--- ThicknessEven: " + thicknessEven + " ---");
+			
+			short tmpPosX2 = calcX2(tmpPosX);
+			short tmpPosY2 = calcY2(tmpPosY);
+			
+			// System.out.println("--- PosX|Y: " + tmpPosX + "|" + tmpPosY + " : " + tmpPosX2 + "|" + tmpPosY2 + " ---");
+			
+			short colorSteps = (short)(thickness.getShort() / 2 + thickness.getShort() % 2 - 1);
+			// System.out.println("--- ColorSteps: " + colorSteps + " ---");
+					
+			short n = colorSteps;
+			colorSteps = (short)Math.max(colorSteps, 1);
+			boolean nIncrement = false;
+			
+			for (int i = 0; i < thickness.getInt(); i++) {
+				// System.out.println("--- LOOP BEGINN ---");
+				
+				if (n < 0) {
+					if (thicknessEven) {
+						n = 0;
+					}
+					else {
+						n = 1;
+					}
+					nIncrement = true;
+				}
+				
+				// System.out.println("--- N: " + n + " ---");
+
+				if (edit) {
+					if (editChild) {
+						g.setColor(GlobalVars.COLOR_ELEMENT_EDIT_CHILD);
+					}
+					else {
+						g.setColor(GlobalVars.COLOR_ELEMENT_EDIT);
+					}
 				}
 				else {
-					n = 1;
+				 g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_OUTER, GlobalVars.COLOR_ELEMENT_INNER, n, (short)(colorSteps - n)));
 				}
-				nIncrement = true;
+				
+				if (nIncrement) {
+					n++;
+				}
+				else {
+					n--;
+				}
+				
+				if (drawHorizontal) {
+					g.drawLine(tmpPosX + i, tmpPosY, tmpPosX2 + i, tmpPosY2);
+				}
+				else {
+					g.drawLine(tmpPosX, tmpPosY + i, tmpPosX2, tmpPosY2 + i);
+				}
+				
+				// System.out.println("--- LOOP END ---");			
 			}
 			
-			// System.out.println("--- N: " + n + " ---");
-						
-			g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_OUTER, GlobalVars.COLOR_ELEMENT_INNER, n, (short)(colorSteps - n)));
-			
-			if (nIncrement) {
-				n++;
-			}
-			else {
-				n--;
-			}
-			
-			if (drawHorizontal) {
-				g.drawLine(tmpPosX + i, tmpPosY, tmpPosX2 + i, tmpPosY2);
-			}
-			else {
-				g.drawLine(tmpPosX, tmpPosY + i, tmpPosX2, tmpPosY2 + i);
-			}
-			
-			// System.out.println("--- LOOP END ---");			
 		}
 		
-		
+		if (editChild) {
+			editChild = false;
+		}
+		else if (edit && GlobalVars.ELEMENTEDIT.equals(this)) {
+			editChild = true;
+		}
 		
 		// so now my children shoud paint themselves
 		if (childLeft != null) {
-			childLeft.draw(g);
+			childLeft.draw(g, edit, editChild);
 		}
 		if (childCenter != null) {
-			childCenter.draw(g);
+			childCenter.draw(g, edit, editChild);
 		}
 		if (childRight != null) {
-			childRight.draw(g);
+			childRight.draw(g, edit, editChild);
 		}
 		
 		// System.out.println("--- ID: "+ id +" | Element Draw END ---");
@@ -445,6 +468,21 @@ public class Element {
 
 	}
 
+	public Element getRelative(byte relative) {
+		
+		switch (relative) {
+			case 1:
+				return childLeft;
+			case 2:
+				return childCenter;
+			case 3:
+				return childRight;
+			case 4:
+				return parent;
+		}
+		return null;
+	}
+	
 	public void writeData(FileIO data) {
 
 		boolean tmpChildLeft = false;
@@ -471,7 +509,6 @@ public class Element {
 		data.writeData(posY);
 		data.writeData(water);
 		data.writeData(health);
-		data.writeData(growStop);
 
 		data.writeData(tmpChildLeft);
 		data.writeData(tmpChildCenter);

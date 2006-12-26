@@ -61,7 +61,7 @@ public class ScreenTree extends Canvas implements Runnable {
 
 	protected void keyPressed (int keyCode){
 		if (GlobalVars.APPSTATUS == 3) {
-			System.out.println("--- Key Pressed: "+ keyCode +"---");
+			// System.out.println("--- Key Pressed: "+ keyCode +"---");
 			Element tmpElementEdit;
 			byte tmpRelative = 0;
 			switch (getGameAction(keyCode)) {
@@ -72,7 +72,7 @@ public class ScreenTree extends Canvas implements Runnable {
 					tmpRelative = (byte)2;
 					break;
 				case RIGHT:
-					tmpRelative  = (byte)3;
+					tmpRelative = (byte)3;
 					break;
 				case DOWN:
 					tmpRelative = (byte)4;
@@ -82,7 +82,7 @@ public class ScreenTree extends Canvas implements Runnable {
 					this.repaint();
 					break;
 			}
-			System.out.println("--- Key Pressed: "+ tmpRelative +"---");
+			// System.out.println("--- Key Pressed: "+ tmpRelative +"---");
 			if (tmpRelative > 0) {
 				if ((tmpElementEdit = GlobalVars.ELEMENTEDIT.getRelative(tmpRelative)) != null) {
 					GlobalVars.ELEMENTEDIT = tmpElementEdit;

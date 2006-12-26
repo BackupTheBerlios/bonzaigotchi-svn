@@ -39,7 +39,6 @@ public class Core extends MIDlet implements CommandListener {
 		cmdSelect = new Command("Select", Command.OK, 1);
 		cmdExit = new Command("Exit", Command.EXIT,2);
 		
-		
 		data = new FileIO("BonzaiGotchi");
 		
 		screenTree = new ScreenTree();
@@ -50,22 +49,6 @@ public class Core extends MIDlet implements CommandListener {
 		screenTree.setCommandListener(this);
 		
 		Display.getDisplay(this).setCurrent(screenTree);
-//		screenTree.interval();
-/*		data.writeDataInit(GlobalVars.SAVE_RECORDSTORE_VERSION);
-		screenTree.writeData(data);
-		data.writeDataFinalize();
-		GlobalVars.COUNTERELEMENT = 0;
-		short tmpVer = data.readDataInit();
-		if (tmpVer > 0) {
-			System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer + " ---");
-			screenTree = new ScreenTree(data);
-			data.readDataFinalize();
-			screenTree.interval();
-		}
-		else {
-			System.out.println("--- Core: DATAINIT No Record Found: " + tmpVer + " ---");
-		}
-*/
 		GlobalVars.APPSTATUS=1;
 	}
 	
@@ -96,6 +79,7 @@ public class Core extends MIDlet implements CommandListener {
 				screenTree.addCommand(cmdSave);
 				screenTree.addCommand(cmdLoad);
 				screenTree.addCommand(cmdResume);
+				screenTree.addCommand(cmdEdit);
 				screenTree.addCommand(cmdExit);
 				screenTree.setCommandListener(this);
 				Display.getDisplay(this).setCurrent(screenTree);

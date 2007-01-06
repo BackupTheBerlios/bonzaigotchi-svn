@@ -404,8 +404,8 @@ public class Element {
 		}
 		
 		int n = 0;
-		for(int i = 0; i < GlobalVars.HEALTH_WATER_THRESHOLD.length; i++) {
-			if (GlobalVars.HEALTH_WATER_THRESHOLD[i] <= waterPercentage) {
+		for(int i = 0; i < GlobalVars.REQUEST_WATER_THRESHOLD.length; i++) {
+			if (GlobalVars.REQUEST_WATER_THRESHOLD[i] <= waterPercentage) {
 				n = i;
 			}
 		}

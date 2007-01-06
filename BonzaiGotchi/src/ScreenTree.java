@@ -29,7 +29,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
 		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 		
-		water = Integer.MAX_VALUE;
+		water = GlobalVars.POT_WATER_INIT;
 		log = new Element(null, (short)0, (short)(GlobalVars.DISPLAY_X_WIDTH / 2), GlobalVars.DISPLAY_Y_HEIGHT, 10000);
 		logWaterRequest = log.getChildWaterRequest();
 	}
@@ -59,6 +59,46 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 
+	public void interval() {
+		threadInterval = new Thread(this);
+		threadRun = true;
+		threadWaiting = false;
+		threadInterval.start();
+//		run();
+	}
+
+	public void run() {
+		int counterDraw = 0;
+		// lets give him more to do ;-)
+//		while (((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 600000) > 0 && threadRun) {
+		for (int i = 0; i <= 700 && threadRun; i++) {			
+			System.out.println("--- INTERVAL: " + ++GlobalVars.COUNTERINTERVAL + " ---");
+			
+			int supply = Math.min(water, logWaterRequest);
+	//		water -= supply;
+			log.grow(supply);
+			logWaterRequest = log.getChildWaterRequest();
+			
+			if (++counterDraw == 12) {
+					threadWaiting = true;
+					break;
+			}
+
+		}
+		System.out.println("--- INTERVAL END LOOP ---");
+		this.repaint();
+		
+	}
+	
+	public void stopThread(){
+		threadRun = false;
+	}
+	
+	public void edit() {
+		GlobalVars.ELEMENTEDIT = log;
+		this.repaint();
+	}
+	
 	protected void keyPressed (int keyCode){
 		if (GlobalVars.APPSTATUS == 3) {
 			// System.out.println("--- Key Pressed: "+ keyCode +"---");
@@ -92,39 +132,9 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
-	public void interval() {
-		threadInterval = new Thread(this);
-		threadRun = true;
-		threadWaiting = false;
-		threadInterval.start();
-//		run();
-	}
-
-	public void run() {
-		int counterDraw = 0;
-		// lets give him more to do ;-)
-//		while (((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 600000) > 0) {
-		for (int i = 0; i <= 700 && threadRun; i++) {			
-			System.out.println("--- INTERVAL: " + ++GlobalVars.COUNTERINTERVAL + " ---");
-			
-			int supply = Math.min(water, logWaterRequest);
-	//		water -= supply;
-			log.grow(supply);
-			logWaterRequest = log.getChildWaterRequest();
-			
-			if (++counterDraw == 12) {
-					threadWaiting = true;
-					break;
-			}
-
-		}
-		System.out.println("--- INTERVAL END LOOP ---");
-		this.repaint();
-		
-	}
-	
-	public void stopThread(){
-		threadRun = false;
+	public void kill() {
+		log.childKill();
+		log = null;
 	}
 	
 	public void writeData(FileIO data) {
@@ -134,13 +144,4 @@ public class ScreenTree extends Canvas implements Runnable {
 		log.writeData(data);
 	}
 	
-	public void edit() {
-		GlobalVars.ELEMENTEDIT = log;
-		this.repaint();
-	}
-	
-	public void kill() {
-		log.childKill();
-		log = null;
-	}
 }

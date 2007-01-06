@@ -76,9 +76,9 @@ public class Core extends MIDlet implements CommandListener {
 			if (tmpVer > 0) {
 				System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer + " ---");
 				screenTree = new ScreenTree(data);
+				screenTree.addCommand(cmdResume);
 				screenTree.addCommand(cmdSave);
 				screenTree.addCommand(cmdLoad);
-				screenTree.addCommand(cmdResume);
 				screenTree.addCommand(cmdEdit);
 				screenTree.addCommand(cmdExit);
 				screenTree.setCommandListener(this);

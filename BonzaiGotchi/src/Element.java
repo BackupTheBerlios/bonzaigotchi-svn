@@ -92,6 +92,79 @@ public class Element {
 		
 	}
 	
+	
+	public int getChildWaterRequest() {
+		// System.out.println("--- ID: "+ id +" | Element WaterRequest BEGINN ---");
+		
+		int tmpChildWaterRequest = 0;
+		
+		// System.out.println("--- ID: "+ id +" | Water: " + water + " ---");
+		demand = calcDemand();
+		// System.out.println("--- ID: "+ id +" | Demand: " + demand + " ---");
+		short waterPercentage = (short)(water * 100 / (demand * 100)); // water x 100 (to get percentage) / (demand x [maximum intervalls the capacity could last]
+		// System.out.println("--- ID: "+ id +" | WaterPercentage: " + waterPercentage + " ---");
+		
+		childWaterRequest = 0;
+		
+		if (childLeft != null || childCenter != null || childRight != null) {
+			
+			if (childLeft != null) {
+				childWaterRequest = childLeft.getChildWaterRequest();
+				// System.out.println("--- ID: "+ id +" | ChildLeft WaterRequest: " + childWaterRequest + " ---");
+			}
+			if (childCenter != null) {
+				if (childLeft != null) {
+					tmpChildWaterRequest = childCenter.getChildWaterRequest();
+					// System.out.println("--- ID: "+ id +" | ChildCenter TmpWaterRequest: " + tmpChildWaterRequest + " ---");
+				}
+				else {
+					childWaterRequest = childCenter.getChildWaterRequest();
+					// System.out.println("--- ID: "+ id +" | ChildCenter WaterRequest: " + childWaterRequest + " ---");
+				}
+			}
+			if (childRight != null) {
+				if (childLeft != null || childCenter != null) {
+					tmpChildWaterRequest = childRight.getChildWaterRequest();
+					// System.out.println("--- ID: "+ id +" | ChildRight TmpWaterRequest: " + tmpChildWaterRequest + " ---");
+				}
+				else {
+					childWaterRequest = childRight.getChildWaterRequest();
+					// System.out.println("--- ID: "+ id +" | ChildRight WaterRequest: " + childWaterRequest + " ---");
+				}
+			}
+			
+			
+			// System.out.println("--- ID: "+ id +" | WaterRequest: " + childWaterRequest + " ---");
+			// System.out.println("--- ID: "+ id +" | TmpWaterRequest: " + tmpChildWaterRequest + " ---");
+			childWaterDivider = (byte)(childWaterRequest * 100 / (childWaterRequest + tmpChildWaterRequest));
+			// System.out.println("--- ID: "+ id +" | ChildWaterDivider: " + childWaterDivider + " ---");
+			childWaterRequest += tmpChildWaterRequest;
+					
+		}
+		
+		int n = 0;
+		for(int i = 0; i < GlobalVars.REQUEST_WATER_THRESHOLD.length; i++) {
+			if (GlobalVars.REQUEST_WATER_THRESHOLD[i] <= waterPercentage) {
+				n = i;
+			}
+		}
+/*		
+		int i = 0;
+		while (GlobalVars.REQUEST_WATER_THRESHOLD[i] <= waterPercentage) {
+			if (++i == GlobalVars.REQUEST_WATER_THRESHOLD.length) { // will be neede if (water = 100%)
+				break;
+			}
+		}
+		i--;
+*/		
+		
+		waterRequest = new MathFloat(demand*1000);
+		waterRequest.multiply(GlobalVars.REQUEST_WATER_FACTOR[n]);
+		// System.out.println("--- ID: "+ id +" | WaterRequest|Factor: " + waterRequest.getInt() + "|" + GlobalVars.REQUEST_WATER_FACTOR[n].value + " ---");
+		// System.out.println("--- ID: "+ id +" | Element WaterRequest END ---");
+		return childWaterRequest + waterRequest.getInt();
+	}
+
 	public void grow (int supply) {
 		// System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
@@ -100,7 +173,7 @@ public class Element {
 		int supplyTaken = 0;
 		short waterPercentage = (short)(water * 100 / (demand * 100));
 		
-		if ((childLeft != null || childCenter != null || childRight != null) && childWaterRequest/2 > supply && waterPercentage > 75) {
+		if ((childLeft != null || childCenter != null || childRight != null) && childWaterRequest/2 > supply && waterPercentage > GlobalVars.WATER_SOCIAL_THRESHOLD) {
 			// System.out.println("--- ID: "+ id +" | SOCIAL ACT ---");
 			waterRequest.divide(2);
 			supplyTaken = Math.min(waterRequest.getInt(), supply);
@@ -185,43 +258,43 @@ public class Element {
 			}
 		}
 	
-		if (childLeft == null && childCenter == null && childRight == null && length.getInt() > 15 && water > 30000 && getRandom(30) == 3) {
-			short tmpRandom = (short)getRandom(3);
+		if (childLeft == null && childCenter == null && childRight == null && length.getInt() > GlobalVars.SPAWN_LENGTH_MIN && water > GlobalVars.SPAWN_WATER_MIN && getRandom(GlobalVars.SPAWN_CHANCE) == 3) {
+			short tmpRandom = (short)getRandom(6);
 			
 			// System.out.println("--- ID: "+ id +" | SpawnRandom: " + tmpRandom + " ---");
 			
-			switch (tmpRandom + 3) {
+			switch (tmpRandom) {
 				case 0:
-					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), 10000);
-					water -= 10000;
+					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 1:
-					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), 10000);
-					water -= 10000;
+					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 2:
-					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), 10000);
-					water -= 10000;
+					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 3:
-					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), 10000);
-					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), 10000);
-					water -= 20000;
+					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 					
 				case 4:
-					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), 10000);
-					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), 10000);
-					water -= 20000;
+					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 					
 				case 5:
-					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), 10000);
-					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), 10000);
-					water -= 20000;
+					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 			}
 		}
@@ -230,33 +303,17 @@ public class Element {
 		
 		// System.out.println("--- ID: "+ id +" | Element Grow END ---");
 	}
-	
-	public short calcX2(short tmpX) {
-		short tmpAngle = (short)(angle - 6);
-		if (tmpAngle < 0) {
-			tmpAngle += 24;
-		}
 		
-		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
-		tmpPos.multiply(length);
-		return (short)(tmpX + tmpPos.getShort());
-	}
 	
-	public short calcY2(short tmpY) {
-		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[angle].value);
-		tmpPos.multiply(length);
-		return (short)(tmpY - tmpPos.getShort());
-	}
-	
+
 	public void draw(Graphics g, boolean edit, boolean editChild) {
 		// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
-		if (edit && GlobalVars.ELEMENTEDIT.equals(this) || !edit || editChild) {
+		if (!edit || edit && GlobalVars.ELEMENTEDIT.equals(this) || editChild) {
 
 			short tmpPosX = posX;
 			short tmpPosY = posY;
 			
-			boolean thicknessEven = false;
 			boolean drawHorizontal = false;
 			
 			if (angle >= 21 || angle <= 3 || (angle >= 9 && angle <= 15)) {
@@ -269,10 +326,6 @@ public class Element {
 			
 			// System.out.println("--- DrawHorizontal: " + drawHorizontal + " ---");
 			
-			if (thickness.getInt() % 2 == 0) {
-				thicknessEven = true;
-			}
-			
 			// System.out.println("--- ThicknessEven: " + thicknessEven + " ---");
 			
 			short tmpPosX2 = calcX2(tmpPosX);
@@ -284,14 +337,16 @@ public class Element {
 			// System.out.println("--- ColorSteps: " + colorSteps + " ---");
 					
 			short n = colorSteps;
-			colorSteps = (short)Math.max(colorSteps, 1);
+			if (colorSteps < 1) {
+				colorSteps = 1;
+			}
 			boolean nIncrement = false;
 			
 			for (int i = 0; i < thickness.getInt(); i++) {
 				// System.out.println("--- LOOP BEGINN ---");
 				
 				if (n < 0) {
-					if (thicknessEven) {
+					if (thickness.getInt() % 2 == 0) {
 						n = 0;
 					}
 					else {
@@ -353,79 +408,7 @@ public class Element {
 		
 		// System.out.println("--- ID: "+ id +" | Element Draw END ---");
 	}
-	
-	public int getChildWaterRequest() {
-		// System.out.println("--- ID: "+ id +" | Element WaterRequest BEGINN ---");
-		
-		int tmpChildWaterRequest = 0;
-		
-		// System.out.println("--- ID: "+ id +" | Water: " + water + " ---");
-		demand = calcDemand();
-		// System.out.println("--- ID: "+ id +" | Demand: " + demand + " ---");
-		short waterPercentage = (short)(water * 100 / (demand * 100)); // water x 100 (to get percentage) / (demand x [maximum intervalls the capacity could last]
-		// System.out.println("--- ID: "+ id +" | WaterPercentage: " + waterPercentage + " ---");
-		
-		childWaterRequest = 0;
-		
-		if (childLeft != null || childCenter != null || childRight != null) {
-			
-			if (childLeft != null) {
-				childWaterRequest = childLeft.getChildWaterRequest();
-				// System.out.println("--- ID: "+ id +" | ChildLeft WaterRequest: " + childWaterRequest + " ---");
-			}
-			if (childCenter != null) {
-				if (childLeft != null) {
-					tmpChildWaterRequest = childCenter.getChildWaterRequest();
-					// System.out.println("--- ID: "+ id +" | ChildCenter TmpWaterRequest: " + tmpChildWaterRequest + " ---");
-				}
-				else {
-					childWaterRequest = childCenter.getChildWaterRequest();
-					// System.out.println("--- ID: "+ id +" | ChildCenter WaterRequest: " + childWaterRequest + " ---");
-				}
-			}
-			if (childRight != null) {
-				if (childLeft != null || childCenter != null) {
-					tmpChildWaterRequest = childRight.getChildWaterRequest();
-					// System.out.println("--- ID: "+ id +" | ChildRight TmpWaterRequest: " + tmpChildWaterRequest + " ---");
-				}
-				else {
-					childWaterRequest = childRight.getChildWaterRequest();
-					// System.out.println("--- ID: "+ id +" | ChildRight WaterRequest: " + childWaterRequest + " ---");
-				}
-			}
-			
-			
-			// System.out.println("--- ID: "+ id +" | WaterRequest: " + childWaterRequest + " ---");
-			// System.out.println("--- ID: "+ id +" | TmpWaterRequest: " + tmpChildWaterRequest + " ---");
-			childWaterDivider = (byte)(childWaterRequest * 100 / (childWaterRequest + tmpChildWaterRequest));
-			// System.out.println("--- ID: "+ id +" | ChildWaterDivider: " + childWaterDivider + " ---");
-			childWaterRequest += tmpChildWaterRequest;
-					
-		}
-		
-		int n = 0;
-		for(int i = 0; i < GlobalVars.REQUEST_WATER_THRESHOLD.length; i++) {
-			if (GlobalVars.REQUEST_WATER_THRESHOLD[i] <= waterPercentage) {
-				n = i;
-			}
-		}
-/*		
-		int i = 0;
-		while (GlobalVars.REQUEST_WATER_THRESHOLD[i] <= waterPercentage) {
-			if (++i == GlobalVars.REQUEST_WATER_THRESHOLD.length) { // will be neede if (water = 100%)
-				break;
-			}
-		}
-		i--;
-*/		
-		
-		waterRequest = new MathFloat(demand*1000);
-		waterRequest.multiply(GlobalVars.REQUEST_WATER_FACTOR[n]);
-		// System.out.println("--- ID: "+ id +" | WaterRequest|Factor: " + waterRequest.getInt() + "|" + GlobalVars.REQUEST_WATER_FACTOR[n].value + " ---");
-		// System.out.println("--- ID: "+ id +" | Element WaterRequest END ---");
-		return childWaterRequest + waterRequest.getInt();
-	}
-	
+
 	private int getRandom(int range) {
 		int tmpRandom;
 
@@ -436,6 +419,23 @@ public class Element {
 		return tmpRandom;
 	}
 	
+	public short calcX2(short tmpX) {
+		short tmpAngle = (short)(angle - 6);
+		if (tmpAngle < 0) {
+			tmpAngle += 24;
+		}
+		
+		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
+		tmpPos.multiply(length);
+		return (short)(tmpX + tmpPos.getShort());
+	}
+	
+	public short calcY2(short tmpY) {
+		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[angle].value);
+		tmpPos.multiply(length);
+		return (short)(tmpY - tmpPos.getShort());
+	}
+
 	private short calcAngle(short inputAngle) {
 		short tmpAngle = (short)(getRandom(4) + angle + inputAngle);
 		

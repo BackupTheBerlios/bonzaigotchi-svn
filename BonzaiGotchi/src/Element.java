@@ -134,10 +134,10 @@ public class Element {
 			}
 			
 			
-			// System.out.println("--- ID: "+ id +" | WaterRequest: " + childWaterRequest + " ---");
-			// System.out.println("--- ID: "+ id +" | TmpWaterRequest: " + tmpChildWaterRequest + " ---");
+			System.out.println("--- ID: "+ id +" | WaterRequest: " + childWaterRequest + " ---");
+			System.out.println("--- ID: "+ id +" | TmpWaterRequest: " + tmpChildWaterRequest + " ---");
 			childWaterDivider = (byte)(childWaterRequest * 100 / (childWaterRequest + tmpChildWaterRequest));
-			// System.out.println("--- ID: "+ id +" | ChildWaterDivider: " + childWaterDivider + " ---");
+			System.out.println("--- ID: "+ id +" | ChildWaterDivider: " + childWaterDivider + " ---");
 			childWaterRequest += tmpChildWaterRequest;
 					
 		}
@@ -160,14 +160,14 @@ public class Element {
 		
 		waterRequest = new MathFloat(demand*1000);
 		waterRequest.multiply(GlobalVars.REQUEST_WATER_FACTOR[n]);
-		// System.out.println("--- ID: "+ id +" | WaterRequest|Factor: " + waterRequest.getInt() + "|" + GlobalVars.REQUEST_WATER_FACTOR[n].value + " ---");
+		System.out.println("--- ID: "+ id +" | WaterRequest|Factor: " + waterRequest.getInt() + "|" + GlobalVars.REQUEST_WATER_FACTOR[n].value + " ---");
 		// System.out.println("--- ID: "+ id +" | Element WaterRequest END ---");
 		return childWaterRequest + waterRequest.getInt();
 	}
 
 	public void grow (int supply) {
-		// System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
-		// System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
+		System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
+		System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
 		// Usage
 		
 		int supplyTaken = 0;
@@ -182,7 +182,7 @@ public class Element {
 			supplyTaken = Math.min(waterRequest.getInt(), supply);
 		}
 		
-		// System.out.println("--- ID: "+ id +" | SupplyTaken: " + supplyTaken + " ---");
+		System.out.println("--- ID: "+ id +" | SupplyTaken: " + supplyTaken + " ---");
 		
 		supply -= supplyTaken;
 		demand -= supplyTaken;
@@ -242,7 +242,7 @@ public class Element {
 				else {
 					supplyTaken = supply * childWaterDivider / 100;
 					supply -= supplyTaken;
-					childCenter.grow(supply);
+					childCenter.grow(supplyTaken);
 				}
 			}
 			if (childRight != null) {
@@ -259,11 +259,11 @@ public class Element {
 		}
 	
 		if (childLeft == null && childCenter == null && childRight == null && length.getInt() > GlobalVars.SPAWN_LENGTH_MIN && water > GlobalVars.SPAWN_WATER_MIN && getRandom(GlobalVars.SPAWN_CHANCE) == 3) {
-			short tmpRandom = (short)getRandom(6);
+			short tmpRandom = (short)getRandom(3);
 			
 			// System.out.println("--- ID: "+ id +" | SpawnRandom: " + tmpRandom + " ---");
 			
-			switch (tmpRandom) {
+			switch (tmpRandom + 3) {
 				case 0:
 					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD;

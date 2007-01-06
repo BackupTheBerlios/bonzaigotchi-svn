@@ -134,10 +134,10 @@ public class Element {
 			}
 			
 			
-			System.out.println("--- ID: "+ id +" | WaterRequest: " + childWaterRequest + " ---");
-			System.out.println("--- ID: "+ id +" | TmpWaterRequest: " + tmpChildWaterRequest + " ---");
+			// System.out.println("--- ID: "+ id +" | WaterRequest: " + childWaterRequest + " ---");
+			// System.out.println("--- ID: "+ id +" | TmpWaterRequest: " + tmpChildWaterRequest + " ---");
 			childWaterDivider = (byte)(childWaterRequest * 100 / (childWaterRequest + tmpChildWaterRequest));
-			System.out.println("--- ID: "+ id +" | ChildWaterDivider: " + childWaterDivider + " ---");
+			// System.out.println("--- ID: "+ id +" | ChildWaterDivider: " + childWaterDivider + " ---");
 			childWaterRequest += tmpChildWaterRequest;
 					
 		}
@@ -160,14 +160,14 @@ public class Element {
 		
 		waterRequest = new MathFloat(demand*1000);
 		waterRequest.multiply(GlobalVars.REQUEST_WATER_FACTOR[n]);
-		System.out.println("--- ID: "+ id +" | WaterRequest|Factor: " + waterRequest.getInt() + "|" + GlobalVars.REQUEST_WATER_FACTOR[n].value + " ---");
+		// System.out.println("--- ID: "+ id +" | WaterRequest|Factor: " + waterRequest.getInt() + "|" + GlobalVars.REQUEST_WATER_FACTOR[n].value + " ---");
 		// System.out.println("--- ID: "+ id +" | Element WaterRequest END ---");
 		return childWaterRequest + waterRequest.getInt();
 	}
 
 	public void grow (int supply) {
-		System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
-		System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
+		// System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
+		// System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
 		// Usage
 		
 		int supplyTaken = 0;
@@ -182,7 +182,7 @@ public class Element {
 			supplyTaken = Math.min(waterRequest.getInt(), supply);
 		}
 		
-		System.out.println("--- ID: "+ id +" | SupplyTaken: " + supplyTaken + " ---");
+		// System.out.println("--- ID: "+ id +" | SupplyTaken: " + supplyTaken + " ---");
 		
 		supply -= supplyTaken;
 		demand -= supplyTaken;

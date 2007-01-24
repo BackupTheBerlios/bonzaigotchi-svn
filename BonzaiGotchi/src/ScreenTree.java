@@ -21,11 +21,15 @@ public class ScreenTree extends Canvas implements Runnable {
 	private boolean threadRun = false;
 	private boolean threadWaiting = false;
 	
+	private boolean animWatering = false;
+	
 	public ScreenTree() {
 		super();
 		
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date();
+		GlobalVars.COUNTERELEMENT = 0;
+		GlobalVars.COUNTERINTERVAL = 0;
 		GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
 		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 		
@@ -38,6 +42,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date(data.readDataLong());
+		GlobalVars.COUNTERELEMENT = 0;
 		GlobalVars.COUNTERINTERVAL = data.readDataInt();
 		GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
 		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
@@ -48,15 +53,24 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	protected void paint(Graphics g) {
-		g.setColor(0xFFFFFF);
-		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-		log.draw(g, false, false);
+		if (!animWatering) {
+			g.setColor(0xFFFFFF);
+			g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
+			log.draw(g, false, false);
+		}
+		draw(g);
 		if (GlobalVars.APPSTATUS == 3) {
 			log.draw(g, true, false);
 		}
 		if (threadWaiting && threadRun) {
 			interval();
 		}
+	}
+	
+	private void draw(Graphics g) {
+		/* graphic of pot */
+		// while animation=overpainting set flag animWatering = true;
+		/* animation for watering */
 	}
 
 	public void interval() {

@@ -185,14 +185,11 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | SupplyTaken: " + supplyTaken + " ---");
 		
 		supply -= supplyTaken;
-		demand -= supplyTaken;
-		
-		water -= demand;
+		water += supplyTaken;
 		
 		// System.out.println("--- ID: "+ id +" | water: " + water + " ---");
 		
 		// Health
-		demand = calcDemand();
 		waterPercentage = (short)(water * 100 / (demand * 100));
 		// System.out.println("--- ID: "+ id +" | waterPercentage: " + waterPercentage + " ---");
 		short tmpHealthInc = 0;
@@ -202,16 +199,6 @@ public class Element {
 				tmpHealthInc = GlobalVars.HEALTH_WATER_INC[i];
 			}
 		}
-/*		
-		int i = 0;
-		while(GlobalVars.HEALTH_WATER_THRESHOLD[i] <= waterPercentage) {
-			if (++i == GlobalVars.HEALTH_WATER_THRESHOLD.length) { // in case of 100 % needed
-				break;
-			}
-		}
-		i--;
-		// System.out.println("--- ID: "+ id +" | HEALTH I: "+ i +" ---");
-*/
 		
 		health += tmpHealthInc;
 		if (health > 100) {
@@ -226,7 +213,10 @@ public class Element {
 			
 			if (waterPercentage >= GlobalVars.GROWTH_WATER_MIN && health >= GlobalVars.GROWTH_HEALTH_MIN) {
 				thickness.add(GlobalVars.GROWTH_THICKNESS_ONLY_INC);
+				water -= demand;
 				// System.out.println("--- ID: "+ id +" | Thickness: " + thickness.getInt() + " ---");
+			} else {
+				water -= demand / 2;
 			}
 			
 			// Let my children have the rest of the supply but share it brotherly
@@ -253,8 +243,10 @@ public class Element {
 			if (waterPercentage >= GlobalVars.GROWTH_WATER_MIN && health >= GlobalVars.GROWTH_HEALTH_MIN) {
 				length.add(GlobalVars.GROWTH_LENGTH_INC);
 				thickness.add(GlobalVars.GROWTH_THICKNESS_INC);
-				
+				water -= demand;
 				// System.out.println("--- ID: "+ id +" | Length|Thickness: " + length.getInt() + "|" + thickness.getInt() + " ---");
+			} else {
+				water -= demand / 2;
 			}
 		}
 	
@@ -298,8 +290,6 @@ public class Element {
 					break;
 			}
 		}
-		
-		
 		
 		// System.out.println("--- ID: "+ id +" | Element Grow END ---");
 	}
@@ -446,7 +436,14 @@ public class Element {
 	}
 	
 	private int calcDemand() {
-		return (int)(thickness.value * length.value / 10000);
+		int tmpDemand = (int)(((thickness.value * length.value / 10000) -3) / 3);
+		if (tmpDemand < 0) {
+			tmpDemand = 0;
+		}
+		else if (tmpDemand > 29) {
+			tmpDemand = 29;
+		}
+		return GlobalVars.GROWTH_WATER_DEMAND[tmpDemand];
 	}
 	
 	public void childKill() {

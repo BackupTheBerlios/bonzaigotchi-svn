@@ -59,6 +59,41 @@ public class GlobalVars {
 	public final static short VERSION_ID = 001;
 	public final static short SAVE_RECORDSTORE_VERSION = 002;
 
+	// DEMAND_TABLE
+	public final static short[] GROWTH_WATER_DEMAND = {
+	69,
+	179,
+	220,
+	248,
+	271,
+	289,
+	304,
+	318,
+	330,
+	340,
+	350,
+	358,
+	366,
+	374,
+	381,
+	387,
+	393,
+	399,
+	404,
+	409,
+	414,
+	419,
+	423,
+	428,
+	432,
+	436,
+	439,
+	443,
+	447,
+	450
+	};
+
+	
 	// COSINUS_TABLE [-6] = SINUS_TABLE
 	public final static MathFloat[] COSINUS_TABLE = { 
 			new MathFloat( 1000),

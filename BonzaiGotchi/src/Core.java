@@ -41,7 +41,7 @@ public class Core extends MIDlet implements CommandListener {
 		
 		data = new FileIO("BonzaiGotchi");
 		
-		screenTree = new ScreenTree();
+		screenTree = new ScreenTree(this);
 		screenTree.addCommand(cmdResume);
 		screenTree.addCommand(cmdSave);
 		screenTree.addCommand(cmdLoad);
@@ -61,6 +61,10 @@ public class Core extends MIDlet implements CommandListener {
 		
 
 	}
+	
+	public void receiveSelect() {
+		/* Wird von aufgerufen wenn "Fire" betätigt */
+	}
 
 	public void commandAction(Command c, Displayable d) {
 		if (c.equals(cmdSave)) {
@@ -75,7 +79,7 @@ public class Core extends MIDlet implements CommandListener {
 			short tmpVer = data.readDataInit();
 			if (tmpVer > 0) {
 				System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer + " ---");
-				screenTree = new ScreenTree(data);
+				screenTree = new ScreenTree(this, data);
 				screenTree.addCommand(cmdResume);
 				screenTree.addCommand(cmdSave);
 				screenTree.addCommand(cmdLoad);

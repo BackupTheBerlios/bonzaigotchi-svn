@@ -446,6 +446,23 @@ public class Element {
 		return GlobalVars.GROWTH_WATER_DEMAND[tmpDemand];
 	}
 	
+	// kill specific child
+	public void childKill(Element childToKill) {
+		if (childLeft.equals(childToKill)) {
+			childLeft.childKill();
+			childLeft = null;
+		}
+		if (childCenter.equals(childToKill)) {
+			childCenter.childKill();
+			childCenter = null;
+		}
+		if (childRight.equals(childToKill)) {
+			childRight.childKill();
+			childRight = null;
+		}
+	}
+	
+	// kill all of them
 	public void childKill() {
 		if (childLeft != null) {
 			childLeft.childKill();

@@ -23,8 +23,12 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private boolean animWatering = false;
 	
-	public ScreenTree() {
+	private Core parent;
+	
+	public ScreenTree(Core tmpParent) {
 		super();
+		
+		parent = tmpParent;
 		
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date();
@@ -38,7 +42,9 @@ public class ScreenTree extends Canvas implements Runnable {
 		logWaterRequest = log.getChildWaterRequest();
 	}
 	
-	public ScreenTree(FileIO data) {
+	public ScreenTree(Core tmpParent, FileIO data) {
+		
+		parent = tmpParent;
 		
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date(data.readDataLong());
@@ -132,8 +138,7 @@ public class ScreenTree extends Canvas implements Runnable {
 					tmpRelative = (byte)4;
 					break;
 				case FIRE:
-					GlobalVars.ELEMENTEDIT.childKill();
-					this.repaint();
+					parent.receiveSelect();
 					break;
 			}
 			// System.out.println("--- Key Pressed: "+ tmpRelative +"---");

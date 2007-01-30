@@ -47,6 +47,11 @@ public class GlobalVars {
 	public final static short[] REQUEST_WATER_THRESHOLD = {25,50,75,95,100};
 	public final static MathFloat[] REQUEST_WATER_FACTOR = {new MathFloat(3000), new MathFloat (2000), new MathFloat(1500), new MathFloat(1100), new MathFloat(1000)};
 
+	public final static int CAN_LENGTH_INIT = 20000;
+	public final static int CAN_THICKNESS_INIT = 20000;
+	public final static int CAN_CHILD_LENGTH = 10000;
+	public final static int CAN_CHILD_THICKNESS = 2000;
+	
 	public static short DISPLAY_Y_HEIGHT;
 	public static short DISPLAY_X_WIDTH;
 

@@ -17,7 +17,8 @@ public class LangVars {
 	public final static String CMD_STARTM_NEW_TREE = "New Tree";
 	public final static String CMD_STARTM_TUTORIAL = "Help / Tutorial";
 	public final static String CMD_STARTM_CREDITS = "Show Credits";	
-
+	// if adding one Menu entry increment MAINMENU_LIST_MAX in GlobalVars!!
+	
 	public final static String CMD_TREEMENU_RETURN = "Return";
 	public final static String CMD_TREEMENU_WATER = "Water";
 	public final static String CMD_TREEMENU_EDIT  = "Edit";

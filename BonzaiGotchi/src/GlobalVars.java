@@ -7,6 +7,7 @@
 //            altered GROWTH_LENGTH_INC, GROWTH_THICKNESS_INC
 // 2006-12-19 updated by chappy
 //            altered GROWTH_WATER* TO REQUEST_WATER*
+// 2007-01-30 new Array-length for Menue-entries by fiips
 
 import java.util.Date;
 import java.util.Random;
@@ -18,6 +19,8 @@ public class GlobalVars {
 	public static int APPSTATUS = 0;
 	
 	public static Element ELEMENTEDIT;
+	
+	public static final int MAINMENU_LIST_MAX = 4;
 	
 	public static int COUNTERELEMENT = 0;
 	public static int COUNTERINTERVAL = 0;

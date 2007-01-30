@@ -436,13 +436,14 @@ public class Element {
 	}
 	
 	private int calcDemand() {
-		int tmpDemand = (int)(((thickness.value * length.value / 10000) -3) / 3);
+		int tmpDemand = (int)(((thickness.value * length.value / 1000000) -3) / 3);
 		if (tmpDemand < 0) {
 			tmpDemand = 0;
 		}
 		else if (tmpDemand > 29) {
 			tmpDemand = 29;
 		}
+		System.out.println("--- Element.calcDemand s|d: "+ (int)(thickness.value * length.value / 1000000)+ "|" + GlobalVars.GROWTH_WATER_DEMAND[tmpDemand] + "---");
 		return GlobalVars.GROWTH_WATER_DEMAND[tmpDemand];
 	}
 	

@@ -50,8 +50,8 @@ public class GlobalVars {
 	public final static short[] REQUEST_WATER_THRESHOLD = {25,50,75,95,100};
 	public final static MathFloat[] REQUEST_WATER_FACTOR = {new MathFloat(3000), new MathFloat (2000), new MathFloat(1500), new MathFloat(1100), new MathFloat(1000)};
 
-	public final static int CAN_LENGTH_INIT = 20000;
-	public final static int CAN_THICKNESS_INIT = 20000;
+	public final static int CAN_LENGTH_INIT = 1000;
+	public final static int CAN_THICKNESS_INIT = 1000;
 	
 	public static short DISPLAY_Y_HEIGHT;
 	public static short DISPLAY_X_WIDTH;
@@ -65,6 +65,9 @@ public class GlobalVars {
 	public final static int COLOR_ELEMENT_WATER_LOW = 0x99BBFF;
 	public final static int COLOR_ELEMENT_WATER_HIGH = 0x0000AA;
 
+	public final static int COLOR_CAN_INNER = 0x496A7D;
+	public final static int COLOR_CAN_OUTER = 0x97A4AD;
+	
 	public static Date TIME_STAMP;
 	public final static short VERSION_ID = 001;
 	public final static short SAVE_RECORDSTORE_VERSION = 002;

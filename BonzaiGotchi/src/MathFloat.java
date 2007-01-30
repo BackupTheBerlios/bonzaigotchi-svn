@@ -55,12 +55,16 @@ public class MathFloat {
 		return (short)(value / 1000);
 	}
 	
-	/*
 	// Statische Funktionen
 	public static MathFloat multiply (MathFloat operand1, MathFloat operand2) {
-		operand1.multiply(operand2);
-		return operand1;
+		return new MathFloat ((int)(operand1.value * operand2.value / 1000));
 	}
 
-	*/
+	public static MathFloat divide (MathFloat operand1, MathFloat operand2) {
+		return new MathFloat ((int)((operand1.value * 1000) / operand2.value));
+	}
+	
+	public static MathFloat divide (int operand1, int operand2) {
+		return new MathFloat (operand1 * 1000 / operand2);
+	}
 }

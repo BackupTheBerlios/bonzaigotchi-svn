@@ -1,9 +1,21 @@
 // BonzaiGotchi
 // 2006-12-14 class created by chappy
 // 2006-12-19 updated by chappy
-//            altered constructor
-//            altered run()
-//            added writeData()
+//            altered 		constructor
+//            altered 		run()
+//            added 		writeData()
+// 2006-01-30  updated by Sven
+//			  altered 		paint()
+//			  altered 		run()
+//			  altered 	  	edit()
+//			  altered 	  	keyPressed()
+//			  altered     	screenTree()
+//			  added 	  	watering()
+//			  added 	  	drawCan()
+//			  added 	  	drawWater()
+//			  added 	  	drawWatering()
+//			  added 	  	drawPot()
+//			  added 	  	actionWatering()
 
 import java.util.Date;
 
@@ -93,10 +105,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		if(true)//water<=GlobalVars.POT_SIZE[potsize])
 			{
 			g.setColor(0,0,100);
-			for(int i=x/2-24;i<x/2+5;i++)
+			for(int i=x/2-19;i<x/2+5;i++)
 				g.drawLine( i,  y, i-5,  y-10);
 			
-			for(int i=x/2+24;i>x/2-5;i--)
+			for(int i=x/2+19;i>x/2-5;i--)
 				g.drawLine( i,  y, i+5,  y-10);
 			
 			
@@ -109,11 +121,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 		
 		
-		g.setColor(255,255,255);
-		g.fillRect(x/2+lastposgauge-50,y/2-10,5,20);
+		//g.setColor(255,255,255);
+		//g.fillRect(x/2+lastposgauge-50,y/2-10,5,20);
 		
-		g.setColor(100,100,100);
-		switch(potsize){
+		//g.setColor(100,100,100);
+		/*switch(potsize){
 			case 0:
 				g.fillRect(x/2-30,y/2,60,5);
 				break;
@@ -123,10 +135,11 @@ public class ScreenTree extends Canvas implements Runnable {
 			case 2:
 				g.fillRect(x/2-30,y/2,60,5);
 				break;
-		}
+		}*/
 		
-		g.setColor(50,50,50);
-		g.fillRect(x/2+gauge-50,y/2-10,5,20);
+		drawCan(g);
+		//g.setColor(50,50,50);
+		//g.fillRect(x/2+gauge-50,y/2-10,5,20);
 		
 	}
 	
@@ -170,8 +183,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 	}
 	private void drawCan(Graphics g){
-
-		
+		g.setColor(255,255,255);
+		g.fillRect(0,0,x,y);
+		Can can = new Can((short)0,(short)(x/2),(short)(y/2),(short)gauge);
+		can.draw(g,false,false);
 	}
 	public void actionWatering(){
 		//max reinschütten

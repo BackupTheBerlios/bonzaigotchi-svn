@@ -14,8 +14,16 @@ import javax.microedition.lcdui.Graphics;
 public class ScreenTree extends Canvas implements Runnable {
 
 	private Element log;
+	private Element can;
+	private Element cantrunk;
 	private int logWaterRequest;
 	private int water;
+	private int gaugevalue;
+	private int lastposgauge;
+	private int gauge;
+	private int gaugeadd;
+	private int keyreceiver;
+	private int potsize;
 	
 	private Thread threadInterval;
 	private boolean threadRun = false;
@@ -25,9 +33,13 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private Core parent;
 	
+	private int y = super.getHeight();
+	private int x = super.getWidth();
+	
 	public ScreenTree(Core tmpParent) {
 		super();
-		
+		potsize=2;
+		gaugeadd=10;
 		parent = tmpParent;
 		
 		// setzten der GlobalVars
@@ -63,8 +75,13 @@ public class ScreenTree extends Canvas implements Runnable {
 			g.setColor(0xFFFFFF);
 			g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 			log.draw(g, false, false);
-		}
-		draw(g);
+			
+			drawWater(g);
+			drawPot(g);
+			}
+		if(keyreceiver==2)
+			drawWatering(g);
+		
 		if (GlobalVars.APPSTATUS == 3) {
 			log.draw(g, true, false);
 		}
@@ -72,13 +89,101 @@ public class ScreenTree extends Canvas implements Runnable {
 			interval();
 		}
 	}
-	
-	private void draw(Graphics g) {
+	private void drawWater(Graphics g) {
+		if(true)//water<=GlobalVars.POT_SIZE[potsize])
+			{
+			g.setColor(0,0,100);
+			for(int i=x/2-24;i<x/2+5;i++)
+				g.drawLine( i,  y, i-5,  y-10);
+			
+			for(int i=x/2+24;i>x/2-5;i--)
+				g.drawLine( i,  y, i+5,  y-10);
+			
+			
+			}
+	}
+	private void drawWatering(Graphics g) {
 		/* graphic of pot */
 		// while animation=overpainting set flag animWatering = true;
 		/* animation for watering */
+		
+		
+		
+		g.setColor(255,255,255);
+		g.fillRect(x/2+lastposgauge-50,y/2-10,5,20);
+		
+		g.setColor(100,100,100);
+		switch(potsize){
+			case 0:
+				g.fillRect(x/2-30,y/2,60,5);
+				break;
+			case 1:
+				g.fillRect(x/2-30,y/2,60,5);
+				break;
+			case 2:
+				g.fillRect(x/2-30,y/2,60,5);
+				break;
+		}
+		
+		g.setColor(50,50,50);
+		g.fillRect(x/2+gauge-50,y/2-10,5,20);
+		
 	}
+	
+	public void watering(){
+		keyreceiver=2;
+		animWatering=true;
+		gaugevalue=5;
+		gauge=50;
+		
+	
+		
+		this.repaint();
+		
+		System.out.println("watering-end");
+	}
+	private void drawPot(Graphics g){
+		//		drawing a pot
+		
+		switch(potsize){
+		case 0:
+			g.setColor(100,50,50);
+			g.drawLine( x/2-10,  y, x/2-15,  y-5);
+			g.drawLine( x/2+10,  y, x/2+15,  y-5);
+			
+			gaugeadd=30;
+			break;
+		case 1:
+			g.setColor(100,50,50);
+			g.drawLine( x/2-15,  y, x/2-20,  y-7);
+			g.drawLine( x/2+15,  y, x/2+20,  y-7);
+			gaugeadd=15;
+			break;
+			
+		case 2:
+			g.setColor(100,50,50);
+			g.drawLine( x/2-20,  y, x/2-25,  y-10);
+			g.drawLine( x/2+20,  y, x/2+25,  y-10);
+			gaugeadd=10;
+			break;
+		}
+		
+	}
+	private void drawCan(Graphics g){
 
+		
+	}
+	public void actionWatering(){
+		//max reinschütten
+		if(gauge==100)
+			gauge=99;
+		water+=GlobalVars.POT_SIZE[potsize]/100*(gauge+1);
+				
+			
+		System.out.println("SOVIEL WURDE GEGOSSEN:  "+GlobalVars.POT_SIZE[potsize]/100*(gauge+1));
+		this.repaint();
+		//animWatering=false;
+	}
 	public void interval() {
 		threadInterval = new Thread(this);
 		threadRun = true;
@@ -98,7 +203,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	//		water -= supply;
 			log.grow(supply);
 			logWaterRequest = log.getChildWaterRequest();
-			
+			System.out.println("--- INTERVAL: " + ++GlobalVars.COUNTERINTERVAL + " | " +logWaterRequest+ "---");
 			if (++counterDraw == 12) {
 					threadWaiting = true;
 					break;
@@ -115,16 +220,21 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	public void edit() {
+		keyreceiver=1;
 		GlobalVars.ELEMENTEDIT = log;
 		this.repaint();
 	}
 	
 	protected void keyPressed (int keyCode){
-		if (GlobalVars.APPSTATUS == 3) {
+		if (GlobalVars.APPSTATUS == 3||GlobalVars.APPSTATUS == 4) {
 			// System.out.println("--- Key Pressed: "+ keyCode +"---");
 			Element tmpElementEdit;
 			byte tmpRelative = 0;
+			
+			if(keyreceiver==1){
+				System.out.println("keyreceiver==1");
 			switch (getGameAction(keyCode)) {
+			
 				case LEFT:
 					tmpRelative = (byte)1;
 					break;
@@ -140,6 +250,50 @@ public class ScreenTree extends Canvas implements Runnable {
 				case FIRE:
 					parent.receiveSelect();
 					break;
+			}
+			}
+			else if(keyreceiver==2){
+				
+				System.out.println("keyreceiver==2");
+				switch (getGameAction(keyCode)) {
+				case LEFT:
+					
+					lastposgauge=gauge;
+					if(potsize==0){
+						if(gauge>=50){
+							gauge-=gaugeadd;
+						}
+					}else if(potsize==1){
+						if(gauge>=35)
+							gauge-=gaugeadd;
+					}else if(potsize==2){
+						if(gauge>=30)
+							gauge-=gaugeadd;
+					}
+					
+					this.repaint();
+					break;
+				case RIGHT:
+					lastposgauge=gauge;
+					
+					lastposgauge=gauge;
+					if(potsize==0){
+						if(gauge<=50){
+							gauge+=gaugeadd;
+						}
+					}else if(potsize==1){
+						if(gauge<=65)
+							gauge+=gaugeadd;
+					}else if(potsize==2){
+						if(gauge<=70)
+							gauge+=gaugeadd;
+					}
+					
+					
+					this.repaint();
+					break;
+				}
+				
 			}
 			// System.out.println("--- Key Pressed: "+ tmpRelative +"---");
 			if (tmpRelative > 0) {

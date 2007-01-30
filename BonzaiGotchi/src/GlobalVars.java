@@ -16,12 +16,14 @@ public class GlobalVars {
 	
 	// 0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering
 	public static int APPSTATUS = 0;
+	
 	public static Element ELEMENTEDIT;
 	
 	public static int COUNTERELEMENT = 0;
 	public static int COUNTERINTERVAL = 0;
 	
 	public final static int POT_WATER_INIT = Integer.MAX_VALUE;
+	public final static int[] POT_SIZE = {300000,1000000,9000000};
 	
 	public final static short[] HEALTH_WATER_THRESHOLD = { 10,30,50,60,90,100};
 	public final static short[] HEALTH_WATER_INC =       {-10, 1, 3, 5, 6,  7};

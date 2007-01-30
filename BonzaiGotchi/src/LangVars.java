@@ -6,10 +6,12 @@
 public class LangVars {
 	
 
+	
 	public final static String CMD_ALL_BACK = "Back";
 	public final static String CMD_ALL_EXIT = "Exit BonzaiGotchi";
-	public final static String CMD_ALL_SELECT = "Select Branch";
+	public final static String CMD_ALL_SELECT = "Select";
 	
+	public final static String MENU_NAME = "Main Menu";
 	public final static String CMD_STARTM_RESUME_TREE = "Resume Tree";
 	public final static String CMD_STARTM_NEW_TREE = "New Tree";
 	public final static String CMD_STARTM_TUTORIAL = "Help / Tutorial";

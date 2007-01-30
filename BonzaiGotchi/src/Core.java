@@ -26,6 +26,7 @@ public class Core extends MIDlet implements CommandListener {
 	private Command cmdEdit;
 	private Command cmdSelect;
 	private Command cmdExit;
+	private Command cmdWatering;
 	
 	private FileIO data;
 
@@ -37,6 +38,7 @@ public class Core extends MIDlet implements CommandListener {
 		cmdResume = new Command("Resume", Command.OK, 1);
 		cmdEdit = new Command("Edit", Command.OK, 2);
 		cmdSelect = new Command("Select", Command.OK, 1);
+		cmdWatering = new Command("Watering", Command.OK, 2);
 		cmdExit = new Command("Exit", Command.EXIT,2);
 		
 		data = new FileIO("BonzaiGotchi");
@@ -45,6 +47,7 @@ public class Core extends MIDlet implements CommandListener {
 		screenTree.addCommand(cmdResume);
 		screenTree.addCommand(cmdSave);
 		screenTree.addCommand(cmdLoad);
+		screenTree.addCommand(cmdWatering);
 		screenTree.addCommand(cmdExit);
 		screenTree.setCommandListener(this);
 		
@@ -136,6 +139,17 @@ public class Core extends MIDlet implements CommandListener {
 			GlobalVars.APPSTATUS = 3;
 			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
 			screenTree.edit();
+		}
+		else if (c.equals(cmdWatering)) {
+			screenTree.removeCommand(cmdResume);
+			screenTree.removeCommand(cmdSave);
+			screenTree.removeCommand(cmdLoad);
+			screenTree.removeCommand(cmdEdit);
+			screenTree.removeCommand(cmdExit);
+			screenTree.addCommand(cmdBreak);
+			GlobalVars.APPSTATUS = 4;
+			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
+			screenTree.watering();
 		}
 		else if (c.equals(cmdExit)) {
 			screenTree.stopThread();

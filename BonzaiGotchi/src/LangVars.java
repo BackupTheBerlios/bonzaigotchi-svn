@@ -2,6 +2,7 @@
 // 2006-12-14 class created by chappy
 // 2006-12-17 updated by chappy
 //            added static to all variables
+// 2007-01-30 changed names because of consistency and various languages by fiips
 
 public class LangVars {
 	

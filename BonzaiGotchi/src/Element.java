@@ -87,11 +87,10 @@ public class Element {
 		posY = tmpPosY;
 		water = tmpWater;
 		
-		length = new MathFloat(2000);
-		thickness = new MathFloat(1000);
+		length = new MathFloat(GlobalVars.SPAWN_LENGTH_INIT);
+		thickness = new MathFloat(GlobalVars.SPAWN_THICKNESS_INIT);
 		
 	}
-	
 	
 	public int getChildWaterRequest() {
 		// System.out.println("--- ID: "+ id +" | Element WaterRequest BEGINN ---");
@@ -436,14 +435,13 @@ public class Element {
 	}
 	
 	private int calcDemand() {
-		int tmpDemand = (int)(((thickness.value * length.value / 1000000) -3) / 3);
+		int tmpDemand = (int)(((thickness.value * length.value / 1000000) -4) / 4);
 		if (tmpDemand < 0) {
 			tmpDemand = 0;
 		}
 		else if (tmpDemand > 29) {
 			tmpDemand = 29;
 		}
-		System.out.println("--- Element.calcDemand s|d: "+ (int)(thickness.value * length.value / 1000000)+ "|" + GlobalVars.GROWTH_WATER_DEMAND[tmpDemand] + "---");
 		return GlobalVars.GROWTH_WATER_DEMAND[tmpDemand];
 	}
 	
@@ -479,10 +477,6 @@ public class Element {
 		}
 	}
 	
-	private void childSpawn(short angle) {
-
-	}
-
 	public Element getRelative(byte relative) {
 		
 		switch (relative) {

@@ -49,8 +49,6 @@ public class GlobalVars {
 
 	public final static int CAN_LENGTH_INIT = 20000;
 	public final static int CAN_THICKNESS_INIT = 20000;
-	public final static int CAN_CHILD_LENGTH = 10000;
-	public final static int CAN_CHILD_THICKNESS = 2000;
 	
 	public static short DISPLAY_Y_HEIGHT;
 	public static short DISPLAY_X_WIDTH;

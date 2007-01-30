@@ -37,6 +37,8 @@ public class GlobalVars {
 	public final static MathFloat GROWTH_THICKNESS_INC = new MathFloat(2);
 	public final static MathFloat GROWTH_THICKNESS_ONLY_INC = new MathFloat(2);
 
+	public final static int SPAWN_LENGTH_INIT = 2000;
+	public final static int SPAWN_THICKNESS_INIT = 1000;
 	public final static short SPAWN_LENGTH_MIN = 15;
 	public final static int SPAWN_WATER_MIN = 30000;
 	public final static short SPAWN_CHANCE = 30;

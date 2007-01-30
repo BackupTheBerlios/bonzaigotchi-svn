@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class GlobalVars {
 	
-	// 0 = init, 1 = standBy, 2 = running, 3 = edit
+	// 0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering
 	public static int APPSTATUS = 0;
 	public static Element ELEMENTEDIT;
 	

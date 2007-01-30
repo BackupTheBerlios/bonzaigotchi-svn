@@ -176,7 +176,12 @@ public class Core extends MIDlet implements CommandListener {
 			
 			
 			}
-		}
+		}else if (c.equals(cmdTWater)) {
+			screenTree.stopThread();
+			GlobalVars.APPSTATUS = 4;
+			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
+			screenTree.watering();
+		} 
 		/*else if (c.equals(cmdBreak)) {
 				if (GlobalVars.APPSTATUS == 2) {
 					screenTree.stopThread();

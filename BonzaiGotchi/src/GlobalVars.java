@@ -18,6 +18,9 @@ public class GlobalVars {
 	// 0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering
 	public static int APPSTATUS = 0;
 	
+	// 0 = void, 1 = normal, 2 = edit;
+	public static int PAINTSTATUS = 0;
+	
 	public static Element ELEMENTEDIT;
 	
 	public static final int MAINMENU_LIST_MAX = 4;
@@ -60,8 +63,11 @@ public class GlobalVars {
 	public final static int COLOR_ELEMENT_OUTER = 0x007809;
 	public final static int COLOR_ELEMENT_DRY = 0xE2C48D;
 	public final static int COLOR_ELEMENT_DEAD = 0x000000;
-	public final static int COLOR_ELEMENT_EDIT = 0xFF0000;
-	public final static int COLOR_ELEMENT_EDIT_CHILD = 0xFF9900;
+	public final static int COLOR_ELEMENT_EDIT_INNER = 0xFF0000;
+	public final static int COLOR_ELEMENT_EDIT_OUTER = 0xAA0000;
+	public final static int COLOR_ELEMENT_EDIT_INNER_CHILD_LEFT = 0xFFFF00;
+	public final static int COLOR_ELEMENT_EDIT_INNER_CHILD_CENTER = 0xFF00FF;
+	public final static int COLOR_ELEMENT_EDIT_INNER_CHILD_RIGHT = 0x00FFFF;
 	public final static int COLOR_ELEMENT_WATER_LOW = 0x99BBFF;
 	public final static int COLOR_ELEMENT_WATER_HIGH = 0x0000AA;
 

@@ -26,10 +26,11 @@ import javax.microedition.lcdui.Graphics;
 public class ScreenTree extends Canvas implements Runnable {
 
 	private Element log;
-	private Element can;
-	private Element cantrunk;
+	private Can can;
+	
 	private int logWaterRequest;
 	private int water;
+	
 	private int gaugevalue;
 	private int lastposgauge;
 	private int gauge;
@@ -86,7 +87,9 @@ public class ScreenTree extends Canvas implements Runnable {
 		if (!animWatering) {
 			g.setColor(0xFFFFFF);
 			g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-			log.draw(g, false, false);
+			GlobalVars.PAINTSTATUS = 1;
+			log.draw(g);
+			GlobalVars.PAINTSTATUS = 0;
 			
 			drawWater(g);
 			drawPot(g);
@@ -95,7 +98,9 @@ public class ScreenTree extends Canvas implements Runnable {
 			drawWatering(g);
 		
 		if (GlobalVars.APPSTATUS == 3) {
-			log.draw(g, true, false);
+			GlobalVars.PAINTSTATUS = 2;
+			log.draw(g);
+			GlobalVars.PAINTSTATUS = 0;
 		}
 		if (threadWaiting && threadRun) {
 			interval();

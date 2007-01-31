@@ -295,10 +295,10 @@ public class Element {
 		
 	
 
-	public void draw(Graphics g, boolean edit, boolean editChild) {
+	public void draw(Graphics g) {
 		// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
-		if (!edit || edit && GlobalVars.ELEMENTEDIT.equals(this) || editChild) {
+		if (GlobalVars.PAINTSTATUS == 1 || GlobalVars.PAINTSTATUS == 2 && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) {
 
 			short tmpPosX = posX;
 			short tmpPosY = posY;
@@ -321,6 +321,39 @@ public class Element {
 			short tmpPosY2 = calcY2(tmpPosY);
 			
 			// System.out.println("--- PosX|Y: " + tmpPosX + "|" + tmpPosY + " : " + tmpPosX2 + "|" + tmpPosY2 + " ---");
+			
+			int innerColor;
+			int outerColor;
+			
+			switch (GlobalVars.PAINTSTATUS) {
+				case 1:
+					innerColor = GlobalVars.COLOR_ELEMENT_INNER;
+					outerColor = GlobalVars.COLOR_ELEMENT_OUTER;
+					break;
+				case 2:
+					if (GlobalVars.ELEMENTEDIT.equals(this)) {
+						innerColor = GlobalVars.COLOR_ELEMENT_EDIT_INNER;
+						outerColor = GlobalVars.COLOR_ELEMENT_EDIT_OUTER;
+					}
+					else {
+						switch (parent.getRelative(this)) {
+							case 1:
+								innerColor = GlobalVars.COLOR_ELEMENT_EDIT_INNER_CHILD_LEFT;
+								outerColor = GlobalVars.COLOR_ELEMENT_EDIT_OUTER;
+								break;
+							case 2:
+								innerColor = GlobalVars.COLOR_ELEMENT_EDIT_INNER_CHILD_CENTER;
+								outerColor = GlobalVars.COLOR_ELEMENT_EDIT_OUTER;
+								break;
+							case 3:
+								innerColor = GlobalVars.COLOR_ELEMENT_EDIT_INNER_CHILD_RIGHT;
+								outerColor = GlobalVars.COLOR_ELEMENT_EDIT_OUTER;
+								break;
+						}
+					}
+					break;
+			}
+			
 			
 			short colorSteps = (short)(thickness.getShort() / 2 + thickness.getShort() % 2 - 1);
 			// System.out.println("--- ColorSteps: " + colorSteps + " ---");
@@ -345,18 +378,9 @@ public class Element {
 				}
 				
 				// System.out.println("--- N: " + n + " ---");
+			
+				g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_OUTER, GlobalVars.COLOR_ELEMENT_INNER, n, (short)(colorSteps - n)));
 
-				if (edit) {
-					if (editChild) {
-						g.setColor(GlobalVars.COLOR_ELEMENT_EDIT_CHILD);
-					}
-					else {
-						g.setColor(GlobalVars.COLOR_ELEMENT_EDIT);
-					}
-				}
-				else {
-				 g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_OUTER, GlobalVars.COLOR_ELEMENT_INNER, n, (short)(colorSteps - n)));
-				}
 				
 				if (nIncrement) {
 					n++;
@@ -377,22 +401,15 @@ public class Element {
 			
 		}
 		
-		if (editChild) {
-			editChild = false;
-		}
-		else if (edit && GlobalVars.ELEMENTEDIT.equals(this)) {
-			editChild = true;
-		}
-		
 		// so now my children shoud paint themselves
 		if (childLeft != null) {
-			childLeft.draw(g, edit, editChild);
+			childLeft.draw(g);
 		}
 		if (childCenter != null) {
-			childCenter.draw(g, edit, editChild);
+			childCenter.draw(g);
 		}
 		if (childRight != null) {
-			childRight.draw(g, edit, editChild);
+			childRight.draw(g);
 		}
 		
 		// System.out.println("--- ID: "+ id +" | Element Draw END ---");
@@ -490,6 +507,24 @@ public class Element {
 				return parent;
 		}
 		return null;
+	}
+	
+	public byte getRelative(Element relative) {
+		if (childLeft.equals(relative)) {
+			return 1;
+		}
+		else if (childCenter.equals(relative)) {
+			return 2;
+		}
+		else if (childRight.equals(relative)) {
+			return 3;
+		}
+		else if (parent.equals(relative)) {
+			return 4;
+		}
+		else {
+			return 0;
+		}
 	}
 	
 	public void writeData(FileIO data) {

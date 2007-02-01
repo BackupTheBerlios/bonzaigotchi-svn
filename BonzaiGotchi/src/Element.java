@@ -298,7 +298,9 @@ public class Element {
 	public void draw(Graphics g) {
 		// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
-		if (GlobalVars.PAINTSTATUS == 1 || GlobalVars.PAINTSTATUS == 2 && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) {
+		if ( GlobalVars.PAINTSTATUS == 1 ||
+			(GlobalVars.PAINTSTATUS == 2 && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) ||
+			(GlobalVars.PAINTSTATUS == 3 && GlobalVars.ELEMENTEDIT.equals(this))) {
 
 			short tmpPosX = posX;
 			short tmpPosY = posY;

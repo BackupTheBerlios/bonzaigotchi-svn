@@ -174,17 +174,16 @@ public class FileIO {
 		byte[] record = null;
 		
 		String[] recordList = RecordStore.listRecordStores();
-		
 		if (recordList != null) {
 		
-			System.out.println ("--- IO RECORDNAME: " + recordName + " ---");
-			System.out.println ("--- IO RECORD LIST: " + recordList.length + " ---");
+//			System.out.println ("--- IO RECORDNAME: " + recordName + " ---");
+//			System.out.println ("--- IO RECORD LIST: " + recordList.length + " ---");
 			
 			for (int i = 0; i < recordList.length; i++) {
-				System.out.println ("--- IO RECORD LIST: " + i + ": " + recordList[i] + " ---");
+//				System.out.println ("--- IO RECORD LIST: " + i + ": " + recordList[i] + " ---");
 				if (recordList[i].compareTo(recordName) == 0) {
 					recordExists = true;
-					System.out.println ("--- IO RECORD EXISTS: " + i + ": " + recordList[i] + " ---");
+//					System.out.println ("--- IO RECORD EXISTS: " + i + ": " + recordList[i] + " ---");
 				}
 			}
 		}

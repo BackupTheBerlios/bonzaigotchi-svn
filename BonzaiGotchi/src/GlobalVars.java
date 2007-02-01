@@ -18,7 +18,7 @@ public class GlobalVars {
 	// 0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering
 	public static int APPSTATUS = 0;
 	
-	// 0 = void, 1 = normal, 2 = edit;
+	// 0 = void, 1 = normal, 2 = edit, 3 = selectBranch
 	public static int PAINTSTATUS = 0;
 	
 	public static Element ELEMENTEDIT;
@@ -27,8 +27,9 @@ public class GlobalVars {
 	
 	public static int COUNTERELEMENT = 0;
 	public static int COUNTERINTERVAL = 0;
+	public static int COUNTERCHEAT = 0;
 	
-	public final static int POT_WATER_INIT = Integer.MAX_VALUE;
+	public final static int POT_WATER_INIT = 200000;
 	public final static int[] POT_SIZE = {300000,1000000,9000000};
 	public final static int[] POT_WIDTH = {30,40,50};
 	public final static int[] POT_HEIGHT = {10,15,20};
@@ -56,8 +57,8 @@ public class GlobalVars {
 	public final static short[] REQUEST_WATER_THRESHOLD = {25,50,75,95,100};
 	public final static MathFloat[] REQUEST_WATER_FACTOR = {new MathFloat(3000), new MathFloat (2000), new MathFloat(1500), new MathFloat(1100), new MathFloat(1000)};
 
-	public final static int CAN_LENGTH_INIT = 1000;
-	public final static int CAN_THICKNESS_INIT = 1000;
+	public final static int CAN_LENGTH_INIT = 10000;
+	public final static int CAN_THICKNESS_INIT = 10000;
 	
 	public static short DISPLAY_Y_HEIGHT;
 	public static short DISPLAY_X_WIDTH;

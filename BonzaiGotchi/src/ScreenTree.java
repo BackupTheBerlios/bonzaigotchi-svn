@@ -90,23 +90,21 @@ public class ScreenTree extends Canvas implements Runnable {
 				
 		g.setColor(0xFFFFFF);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-		
-		if (GlobalVars.APPSTATUS != 4) {
+			
+		GlobalVars.PAINTSTATUS = 1;
+		log.draw(g);
+		GlobalVars.PAINTSTATUS = 0;
 				
-			GlobalVars.PAINTSTATUS = 1;
-			log.draw(g);
-			GlobalVars.PAINTSTATUS = 0;
-				
-			drawPot(g);
-
-		} else {
-			can.draw(g);	
-		}
+		drawPot(g);
 			
 		if (GlobalVars.APPSTATUS == 3) {
 			GlobalVars.PAINTSTATUS = 2;
 			log.draw(g);
 			GlobalVars.PAINTSTATUS = 0;
+		}
+		
+		if (GlobalVars.APPSTATUS == 4) {
+			can.draw(g);
 		}
 		
 		if (threadWaiting && GlobalVars.APPSTATUS == 2) {
@@ -188,14 +186,19 @@ public class ScreenTree extends Canvas implements Runnable {
 		canValue = 1;
 		canSteps = (potSize + 1) * 3;	
 		
+		can.setSize((short)canValue);
+		
 		this.repaint();
 	}
 
 	public void wateringAction(){
 		water += GlobalVars.POT_SIZE[potSize] * canValue * 110 / 100 / canSteps ;
-		
+
+		if (water > GlobalVars.POT_SIZE[potSize] * (GlobalVars.POT_HEIGHT[potSize] + 100) / 100) {
+			water = GlobalVars.POT_SIZE[potSize] * (GlobalVars.POT_HEIGHT[potSize] + 100) / 100;
+		}
 			
-		System.out.println("SOVIEL WURDE GEGOSSEN:  " + GlobalVars.POT_SIZE[potSize] * canValue * 110 / 100 / canSteps);
+		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue * 110 / 100 / canSteps + " | " + water + " ---");
 		parent.resetTreeMenu();
 		this.repaint();
 		//animWatering=false;
@@ -211,15 +214,17 @@ public class ScreenTree extends Canvas implements Runnable {
 		int supply;
 
 		// anfangsstart
-//		while (((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) > 0 && GlobalVars.APPSTATUS == 2) {
-		for (int i = 0; GlobalVars.COUNTERINTERVAL <= 700 && threadRun; i++) {			
-			System.out.println("--- INTERVAL: " + ++GlobalVars.COUNTERINTERVAL + " ---");
+		while (--GlobalVars.COUNTERCHEAT > 0 || (((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) > 0 && GlobalVars.APPSTATUS == 2)) {		
+			System.out.println("--- INTERVAL|CHEATER: " + ++GlobalVars.COUNTERINTERVAL + " | " + GlobalVars.COUNTERCHEAT + " ---");
+			System.out.println("--- TIME:" + ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) + " ---");
+			
+			GlobalVars.TIME_STAMP.setTime(GlobalVars.TIME_STAMP.getTime() + 10000);
 			
 			supply = Math.min(water, logWaterRequest);
 			water -= supply;
 			log.grow(supply);
 			logWaterRequest = log.getChildWaterRequest();
-			System.out.println("--- INTERVAL: " + ++GlobalVars.COUNTERINTERVAL + " | " +logWaterRequest+ "---");
+			System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
 			if (++counterDraw == 12) {
 					threadWaiting = true;
 					break;
@@ -243,8 +248,8 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	protected void keyPressed (int keyCode){
+		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +"---");
 		if (GlobalVars.APPSTATUS == 3 || GlobalVars.APPSTATUS == 4) {
-			// System.out.println("--- Key Pressed: "+ keyCode +"---");
 			Element tmpElementEdit;
 			byte tmpRelative = 0;
 			
@@ -292,6 +297,8 @@ public class ScreenTree extends Canvas implements Runnable {
 								canValue = 1;
 							}
 							
+							can.setSize((short)canValue);
+							
 							this.repaint();
 							break;
 							
@@ -302,6 +309,8 @@ public class ScreenTree extends Canvas implements Runnable {
 							if (canValue > canSteps) {
 								canValue = canSteps;
 							}
+							
+							can.setSize((short)canValue);
 							
 							this.repaint();
 							break;
@@ -315,7 +324,18 @@ public class ScreenTree extends Canvas implements Runnable {
 					break;
 					
 			} // END SWITCH
+			
 			// System.out.println("--- Key Pressed: "+ tmpRelative +"---");
+		}
+		
+		if (GlobalVars.APPSTATUS == 1) {
+		
+			if (getGameAction(keyCode) == 5) {
+				System.out.println("--- Key Pressed: CHEATER ---");
+				GlobalVars.COUNTERCHEAT = 100;
+				GlobalVars.APPSTATUS = 2;
+				interval();
+			}
 		}
 	}
 	

@@ -9,7 +9,7 @@ public class LangVars {
 
 	
 	public final static String CMD_ALL_BACK = "Back";
-	public final static String CMD_ALL_EXIT = "Exit BonzaiGotchi";
+	public final static String CMD_ALL_EXIT = "Exit";
 	public final static String CMD_ALL_SELECT = "Select";
 	
 	public final static String MENU_NAME = "Main Menu";

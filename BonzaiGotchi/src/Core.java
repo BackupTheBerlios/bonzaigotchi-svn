@@ -29,7 +29,6 @@ public class Core extends MIDlet implements CommandListener {
 
 	// Hauptmenü ist List
 	private List mainmenuList;
-
 	private String[] mainElements; 
 	private Command cmdMSelect;
 
@@ -87,11 +86,8 @@ public class Core extends MIDlet implements CommandListener {
 		cmdSSeal = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 2);
 		cmdSDontSeal = new Command(LangVars.CMD_SELECTED_DONTSEAL, Command.OK, 3);
 		
+
 		
-		
-		
-		Display.getDisplay(this).setCurrent(mainmenuList);
-		GlobalVars.APPSTATUS=1;
 	}
 	
 
@@ -154,9 +150,11 @@ public class Core extends MIDlet implements CommandListener {
 								System.out.println("1");
 								screenTree = new ScreenTree(this);
 								Display.getDisplay(this).setCurrent(screenTree);
-								showTreeMenuCommand();
-								GlobalVars.APPSTATUS = 2;
 								screenTree.interval();
+								GlobalVars.APPSTATUS = 2;
+								
+								
+
 								break;
 							}				
 				case 2: 	{	// Im Tutorialauswahl
@@ -203,13 +201,14 @@ public class Core extends MIDlet implements CommandListener {
 			
 			
 		}
-		else if (c.equals(cmdTEdit)) {
-			// code wenn aufReturn im TreeMenü gedrückt wurde
+		else if (c.equals(cmdBack)) {
+			// code wenn auf Back gedrückt wurde
 			
 			
 		}
 
 		else if (c.equals(cmdSelect)) {
+			//	 APPSTATUS:    0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering
 				if (GlobalVars.APPSTATUS == 2) {
 					screenTree.stopThread();
 					showTreeMenuCommand();
@@ -280,7 +279,7 @@ public class Core extends MIDlet implements CommandListener {
 			screenTree.stopThread();
 			screenTree.kill();
 			showMainMenu();
-			Display.getDisplay(this).setCurrent(mainmenuList);
+			
 			//this.notifyDestroyed();
 	
 		}
@@ -288,6 +287,11 @@ public class Core extends MIDlet implements CommandListener {
 			this.notifyDestroyed();
 	
 		}
+	}
+	public void changeAppStatus() {
+		System.out.println("Appstatus: "+GlobalVars.APPSTATUS);
+		
+		
 	}
 
 	private void clearCommands() {
@@ -322,13 +326,30 @@ public class Core extends MIDlet implements CommandListener {
 	private void showMainMenu() {
 		// TODO Auto-generated method stub
 		//clearCommands();
+		//screenTree.stopThread();
+		
+		GlobalVars.APPSTATUS = 1;
 		mainmenuList.setSelectCommand(cmdMSelect);
 		mainmenuList.addCommand(cmdExit);
 		mainmenuList.setCommandListener(this);
+		Display.getDisplay(this).setCurrent(mainmenuList);
 		
 	}
 	
 
+	private void showSelectedBranchMenuCommand() {
+		clearCommands();
+		screenTree.addCommand(cmdSBCut);
+		screenTree.addCommand(cmdSBExact);
+		screenTree.addCommand(cmdSBColor);
+		screenTree.addCommand(cmdSBDung);
+		screenTree.addCommand(cmdBack);
+		
+		//screenTree.addCommand(cmdSExit); nicht erlaubt beim editieren eines astes
+		screenTree.setCommandListener(this);
+	}
+	
+	
 	private void showSelectBreakCommand() {
 		// Abfrage über APPSTATUS!!
 		clearCommands();

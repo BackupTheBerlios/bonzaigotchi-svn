@@ -22,7 +22,6 @@ public class Core extends MIDlet implements CommandListener {
 //	private ScreenHelp screenHelp;
 	
 	//Globale Commandos
-	private Command cmdBack;
 	private Command cmdExit;
 	private Command cmdSelect;
 	
@@ -40,15 +39,26 @@ public class Core extends MIDlet implements CommandListener {
 	private Command cmdSExit;
 	private Command cmdSExit_Menu;
 
+	// Edit Commandos
+	private Command cmdESelect;
+	private Command cmdEBack;
+	
+	// Water Commandos
+	private Command cmdWSelect;
+	private Command cmdWBack;
+	
 	// Ausgewählter Ast Commandos
 	private Command cmdSBCut;
 	private Command cmdSBExact;
 	private Command cmdSBColor;
 	private Command cmdSBDung;
+	private Command cmdSBBack;
+
 	
 	// Seal-Menü Commandos
 	private Command cmdSSeal;
 	private Command cmdSDontSeal;
+	private Command cmdSBack;
 
 	private FileIO data;
 
@@ -56,8 +66,10 @@ public class Core extends MIDlet implements CommandListener {
 	
 	
 	protected void startApp() throws MIDletStateChangeException {
+		data = new FileIO("BonzaiGotchi");
+		
+		
 		//Globale Commandos
-		cmdBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);
 		cmdExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 		cmdSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
 
@@ -83,10 +95,21 @@ public class Core extends MIDlet implements CommandListener {
 		cmdSBExact = new Command(LangVars.CMD_SELBRANCH_EXACTCUT, Command.OK, 3);
 		cmdSBColor = new Command(LangVars.CMD_SELBRANCH_COLOR, Command.OK, 4);
 		cmdSBDung = new Command(LangVars.CMD_SELBRANCH_DUNG, Command.OK, 5);
+		cmdSBBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);
+		
+		// Water Commandos
+		cmdWSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
+		cmdWBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);		
+		
+		// Edit Commandos
+		cmdESelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
+		cmdEBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);
 		
 		// Seal-Menü Commandos
 		cmdSSeal = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 2);
 		cmdSDontSeal = new Command(LangVars.CMD_SELECTED_DONTSEAL, Command.OK, 3);
+		
+		cmdSBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);
 		
 
 		
@@ -100,18 +123,21 @@ public class Core extends MIDlet implements CommandListener {
 		int i=0;
 		int check=-1; //wenn resume nicht dabei ist, maximal menueinträgeanzahl minus 1
 
-		
-		if (true){  //abfrage RecordStore fehlt
+		int tmpVer=data.readDataInit();
+		System.out.println("!!!! FEHLER HIER ??????");
+		data.readDataFinalize();
+		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) {  //abfrage RecordStore
 			check=0; //Maximalmenüeinträge wieder hergestellt!
 		}
-		
+
 		mainElements = new String[GlobalVars.MAINMENU_LIST_MAX+check]; //anlegen mit oder ohne resume
 		
 		if (check==0) mainElements[i++] = LangVars.CMD_STARTM_RESUME_TREE;
 		
 		mainElements[i++] = LangVars.CMD_STARTM_NEW_TREE;
 		mainElements[i++] = LangVars.CMD_STARTM_TUTORIAL;
-		mainElements[i++] = LangVars.CMD_STARTM_CREDITS;		
+		mainElements[i++] = LangVars.CMD_STARTM_CREDITS;	
+
 	}
 
 	protected void pauseApp() {
@@ -128,6 +154,7 @@ public class Core extends MIDlet implements CommandListener {
 		/* Wird von aufgerufen wenn "Fire" betätigt 
 		 * Ruft das Edit Menü auf....
 		 * */
+		showEditCommand();
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -177,7 +204,7 @@ public class Core extends MIDlet implements CommandListener {
 			}
 		}else if (c.equals(cmdTWater)) {
 			GlobalVars.APPSTATUS = 4;
-			showSelectBreakCommand();
+			showWaterCommand();
 			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
 			screenTree.watering();
 		} 
@@ -187,7 +214,7 @@ public class Core extends MIDlet implements CommandListener {
 			GlobalVars.APPSTATUS = 3;
 			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
 			screenTree.edit();
-			showSelectBreakCommand();
+			showEditCommand();
 		}
 
 		else if (c.equals(cmdTReturn)) {
@@ -201,8 +228,12 @@ public class Core extends MIDlet implements CommandListener {
 			
 			
 		}
-		else if (c.equals(cmdBack)) {
+		else if (c.equals(cmdSBBack)) {
 			// code wenn auf Back gedrückt wurde
+			if (GlobalVars.APPSTATUS==3) { //Back im Editmodus
+				
+				
+			}
 			
 			
 		}
@@ -218,8 +249,9 @@ public class Core extends MIDlet implements CommandListener {
 					showSelectedBranchMenuCommand();
 				}
 				else if (GlobalVars.APPSTATUS == 4) {
-					screenTree.stopThread();
 					GlobalVars.APPSTATUS = 1;
+					//screenTree.wateringAction();
+					screenTree.watering();
 					System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
 					//screenTree.interval();
 					//screenTree.repaint();
@@ -282,7 +314,18 @@ public class Core extends MIDlet implements CommandListener {
 	
 		}
 	}
-	public void calcFinished() {
+
+
+
+
+	private void showEditCommand() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void resetTreeMenu() {
 		//System.out.println("Appstatus: "+GlobalVars.APPSTATUS);
 		saveTree();
 		GlobalVars.APPSTATUS = 1;
@@ -290,7 +333,8 @@ public class Core extends MIDlet implements CommandListener {
 	}
 
 	private void clearCommands() {
-		screenTree.removeCommand(cmdBack);
+		screenTree.removeCommand(cmdSBBack);
+		screenTree.removeCommand(cmdSBack);
 		screenTree.removeCommand(cmdExit);
 		screenTree.removeCommand(cmdMSelect);
 		screenTree.removeCommand(cmdSBColor);
@@ -320,7 +364,7 @@ public class Core extends MIDlet implements CommandListener {
 	}
 	
 	private void showMainMenu() {
-		// TODO Auto-generated method stub
+
 		//clearCommands();
 		//screenTree.stopThread();
 		
@@ -329,9 +373,18 @@ public class Core extends MIDlet implements CommandListener {
 		mainmenuList.addCommand(cmdExit);
 		mainmenuList.setCommandListener(this);
 		Display.getDisplay(this).setCurrent(mainmenuList);
+		System.out.println("--- IO READ FINALIZE ddd---");
 		
 	}
 	
+	private void showWaterCommand() {
+		clearCommands();
+		screenTree.addCommand(cmdWSelect);
+		screenTree.addCommand(cmdWBack);
+		screenTree.setCommandListener(this);
+		
+		
+	}
 
 	private void showSelectedBranchMenuCommand() {
 		clearCommands();
@@ -339,27 +392,33 @@ public class Core extends MIDlet implements CommandListener {
 		screenTree.addCommand(cmdSBExact);
 		screenTree.addCommand(cmdSBColor);
 		screenTree.addCommand(cmdSBDung);
-		screenTree.addCommand(cmdBack);
+		screenTree.addCommand(cmdSBBack);
 		
 		//screenTree.addCommand(cmdSExit); nicht erlaubt beim editieren eines astes
 		screenTree.setCommandListener(this);
 	}
 	
 	
-	private void showSelectBreakCommand() {
-		// Abfrage über APPSTATUS!!
+	private void showSelectEditCommand() {
+	
+		clearCommands();
+		screenTree.addCommand(cmdESelect);
+		screenTree.addCommand(cmdEBack);
+	}
+	private void showSelectBranchCommand() {
+	
 		clearCommands();
 		screenTree.addCommand(cmdSelect);
-		screenTree.addCommand(cmdBack);
+		screenTree.addCommand(cmdSBBack);
 	}
 
 	protected void loadTree() {
-		data.readDataInit();
+		
 		screenTree.kill();
 		GlobalVars.COUNTERELEMENT = 0;
 		
 		short tmpVer = data.readDataInit();
-		if (tmpVer > 0) {
+		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) {
 			System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer + " ---");
 			screenTree = new ScreenTree(this, data);
 
@@ -378,7 +437,6 @@ public class Core extends MIDlet implements CommandListener {
 		data.writeDataInit(GlobalVars.SAVE_RECORDSTORE_VERSION);	
 		screenTree.writeData(data);
 		data.writeDataFinalize();
-		// TODO Auto-generated method stub
 		
 	}
 	

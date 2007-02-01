@@ -30,6 +30,9 @@ public class GlobalVars {
 	
 	public final static int POT_WATER_INIT = Integer.MAX_VALUE;
 	public final static int[] POT_SIZE = {300000,1000000,9000000};
+	public final static int[] POT_WIDTH = {30,40,50};
+	public final static int[] POT_HEIGHT = {10,15,20};
+	public final static int POT_THICKNESS = 3;
 	
 	public final static short[] HEALTH_WATER_THRESHOLD = { 10,30,50,60,90,100};
 	public final static short[] HEALTH_WATER_INC =       {-10, 1, 3, 5, 6,  7};
@@ -70,6 +73,8 @@ public class GlobalVars {
 	public final static int COLOR_ELEMENT_EDIT_INNER_CHILD_RIGHT = 0x00FFFF;
 	public final static int COLOR_ELEMENT_WATER_LOW = 0x99BBFF;
 	public final static int COLOR_ELEMENT_WATER_HIGH = 0x0000AA;
+	
+	public final static int COLOR_POT_WATER = 0x0000FF;
 
 	public final static int COLOR_CAN_INNER = 0x496A7D;
 	public final static int COLOR_CAN_OUTER = 0x97A4AD;

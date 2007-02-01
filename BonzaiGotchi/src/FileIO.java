@@ -174,14 +174,18 @@ public class FileIO {
 		byte[] record = null;
 		
 		String[] recordList = RecordStore.listRecordStores();
-		// System.out.println ("--- IO RECORDNAME: " + recordName + " ---");
-		// System.out.println ("--- IO RECORD LIST ---");
 		
-		for (int i = 0; i < recordList.length; i++) {
-			// System.out.println ("--- IO RECORD LIST: " + i + ": " + recordList[i] + " ---");
-			if (recordList[i].compareTo(recordName) == 0) {
-				recordExists = true;
-				System.out.println ("--- IO RECORD EXISTS: " + i + ": " + recordList[i] + " ---");
+		if (recordList != null) {
+		
+			System.out.println ("--- IO RECORDNAME: " + recordName + " ---");
+			System.out.println ("--- IO RECORD LIST: " + recordList.length + " ---");
+			
+			for (int i = 0; i < recordList.length; i++) {
+				System.out.println ("--- IO RECORD LIST: " + i + ": " + recordList[i] + " ---");
+				if (recordList[i].compareTo(recordName) == 0) {
+					recordExists = true;
+					System.out.println ("--- IO RECORD EXISTS: " + i + ": " + recordList[i] + " ---");
+				}
 			}
 		}
 
@@ -209,10 +213,17 @@ public class FileIO {
 	        bais = new ByteArrayInputStream(record);
 	        dis = new DataInputStream(bais);
 	        System.out.println("--- IO READ INIT END ---");
-	        return readDataShort(); // = versionSave
+	        try {
+	        	return readDataShort(); // = versionSave
+	        }
+	        catch (Exception e) {
+	        	System.out.println("--- IO READ INIT END | ERROR ---");
+	        	return 0;
+	        }
 	
 		}
 		else {
+			System.out.println("--- IO READ INIT END | 0 ---");
 			return 0;
 		}
 	}

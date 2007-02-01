@@ -35,78 +35,75 @@ public class Can {
 			posY = y;
 		}
 
-		public void draw(Graphics g, boolean edit, boolean editChild) {
+		public void draw(Graphics g) {
 			// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 			// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
-			if (!edit || edit && GlobalVars.ELEMENTEDIT.equals(this) || editChild) {
+		
+			short tmpPosX = posX;
+			short tmpPosY = posY;
+			
+			boolean drawHorizontal = false;
+			
+			if (angle >= 21 || angle <= 3 || (angle >= 9 && angle <= 15)) {
+				drawHorizontal = true;
+				tmpPosX -= thickness.getShort() / 2;
+			}
+			else {
+				tmpPosY -= thickness.getShort() / 2;
+			}
+			
+			// System.out.println("--- DrawHorizontal: " + drawHorizontal + " ---");
+			
+			// System.out.println("--- ThicknessEven: " + thicknessEven + " ---");
+			
+			short tmpPosX2 = calcX2(tmpPosX);
+			short tmpPosY2 = calcY2(tmpPosY);
+			
+			// System.out.println("--- PosX|Y: " + tmpPosX + "|" + tmpPosY + " : " + tmpPosX2 + "|" + tmpPosY2 + " ---");
+			
+			short colorSteps = (short)(thickness.getShort() / 2 + thickness.getShort() % 2 - 1);
+			// System.out.println("--- ColorSteps: " + colorSteps + " ---");
+					
+			short n = colorSteps;
+			if (colorSteps < 1) {
+				colorSteps = 1;
+			}
+			boolean nIncrement = false;
+			
+			for (int i = 0; i < thickness.getInt(); i++) {
+				// System.out.println("--- LOOP BEGINN ---");
+				
+				if (n < 0) {
+					if (thickness.getInt() % 2 == 0) {
+						n = 0;
+					}
+					else {
+						n = 1;
+					}
+					nIncrement = true;
+				}
+				
+				// System.out.println("--- N: " + n + " ---");
 
-				short tmpPosX = posX;
-				short tmpPosY = posY;
-				
-				boolean drawHorizontal = false;
-				
-				if (angle >= 21 || angle <= 3 || (angle >= 9 && angle <= 15)) {
-					drawHorizontal = true;
-					tmpPosX -= thickness.getShort() / 2;
+				g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_CAN_OUTER, GlobalVars.COLOR_CAN_INNER, n, (short)(colorSteps - n)));
+									
+				if (nIncrement) {
+					n++;
 				}
 				else {
-					tmpPosY -= thickness.getShort() / 2;
+					n--;
 				}
 				
-				// System.out.println("--- DrawHorizontal: " + drawHorizontal + " ---");
-				
-				// System.out.println("--- ThicknessEven: " + thicknessEven + " ---");
-				
-				short tmpPosX2 = calcX2(tmpPosX);
-				short tmpPosY2 = calcY2(tmpPosY);
-				
-				// System.out.println("--- PosX|Y: " + tmpPosX + "|" + tmpPosY + " : " + tmpPosX2 + "|" + tmpPosY2 + " ---");
-				
-				short colorSteps = (short)(thickness.getShort() / 2 + thickness.getShort() % 2 - 1);
-				// System.out.println("--- ColorSteps: " + colorSteps + " ---");
-						
-				short n = colorSteps;
-				if (colorSteps < 1) {
-					colorSteps = 1;
+				if (drawHorizontal) {
+					g.drawLine(tmpPosX + i, tmpPosY, tmpPosX2 + i, tmpPosY2);
 				}
-				boolean nIncrement = false;
-				
-				for (int i = 0; i < thickness.getInt(); i++) {
-					// System.out.println("--- LOOP BEGINN ---");
-					
-					if (n < 0) {
-						if (thickness.getInt() % 2 == 0) {
-							n = 0;
-						}
-						else {
-							n = 1;
-						}
-						nIncrement = true;
-					}
-					
-					// System.out.println("--- N: " + n + " ---");
-
-					g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_CAN_OUTER, GlobalVars.COLOR_CAN_INNER, n, (short)(colorSteps - n)));
-										
-					if (nIncrement) {
-						n++;
-					}
-					else {
-						n--;
-					}
-					
-					if (drawHorizontal) {
-						g.drawLine(tmpPosX + i, tmpPosY, tmpPosX2 + i, tmpPosY2);
-					}
-					else {
-						g.drawLine(tmpPosX, tmpPosY + i, tmpPosX2, tmpPosY2 + i);
-					}
-					
-					// System.out.println("--- LOOP END ---");			
+				else {
+					g.drawLine(tmpPosX, tmpPosY + i, tmpPosX2, tmpPosY2 + i);
 				}
 				
+				// System.out.println("--- LOOP END ---");			
 			}
-					
+									
 			// System.out.println("--- ID: "+ id +" | Element Draw END ---");
 		}
 		

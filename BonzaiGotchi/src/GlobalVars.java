@@ -36,12 +36,13 @@ public class GlobalVars {
 	public final static int POT_THICKNESS = 3;
 	
 	public final static short[] HEALTH_WATER_THRESHOLD = { 10,30,50,60,90,100};
-	public final static short[] HEALTH_WATER_INC =       {-10, 1, 3, 5, 6,  7};
+	public final static short[] HEALTH_WATER_INC =       {-5, -1, 1, 3, 5,  7};
 
 	public final static short WATER_SOCIAL_THRESHOLD = 75; //Prozent drüber
 
 	public final static short GROWTH_WATER_MIN = 40;
 	public final static short GROWTH_HEALTH_MIN = 70;
+	public final static short GROWTH_HEALTH_DEATH = 10;
 
 	public final static MathFloat GROWTH_LENGTH_INC = new MathFloat(33);
 	public final static MathFloat GROWTH_THICKNESS_INC = new MathFloat(2);
@@ -65,7 +66,7 @@ public class GlobalVars {
 
 	public final static int COLOR_ELEMENT_INNER = 0x76E273;
 	public final static int COLOR_ELEMENT_OUTER = 0x007809;
-	public final static int COLOR_ELEMENT_DRY = 0xE2C48D;
+	public final static int COLOR_ELEMENT_DRY = 0xA3731A;
 	public final static int COLOR_ELEMENT_DEAD = 0x000000;
 	public final static int COLOR_ELEMENT_EDIT_INNER = 0xFF0000;
 	public final static int COLOR_ELEMENT_EDIT_OUTER = 0xAA0000;

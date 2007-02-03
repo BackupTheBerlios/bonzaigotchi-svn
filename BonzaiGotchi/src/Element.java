@@ -301,7 +301,7 @@ public class Element {
 		if ( GlobalVars.PAINTSTATUS == 1 ||
 			(GlobalVars.PAINTSTATUS == 2 && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) ||
 			(GlobalVars.PAINTSTATUS == 3 && GlobalVars.ELEMENTEDIT.equals(this))) {
-
+			// System.out.println("--- ID|PAINTSTATUS: "+ id +" | "+ GlobalVars.PAINTSTATUS +" ---");
 			short tmpPosX = posX;
 			short tmpPosY = posY;
 			
@@ -324,13 +324,27 @@ public class Element {
 			
 			// System.out.println("--- PosX|Y: " + tmpPosX + "|" + tmpPosY + " : " + tmpPosX2 + "|" + tmpPosY2 + " ---");
 			
-			int innerColor;
-			int outerColor;
+			int innerColor = 0;
+			int outerColor = 0;
 			
 			switch (GlobalVars.PAINTSTATUS) {
 				case 1:
-					innerColor = GlobalVars.COLOR_ELEMENT_INNER;
-					outerColor = GlobalVars.COLOR_ELEMENT_OUTER;
+					if (health <= GlobalVars.GROWTH_HEALTH_MIN) {
+						if (health <= GlobalVars.GROWTH_HEALTH_DEATH) {
+							innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
+							outerColor = GlobalVars.COLOR_ELEMENT_DEAD;
+						}
+						else {
+							short steps = (short)((GlobalVars.GROWTH_HEALTH_MIN - GlobalVars.GROWTH_HEALTH_DEATH) / 10) +1; 
+							short ratio = (short)((health - GlobalVars.GROWTH_HEALTH_DEATH) / 10);
+							innerColor = MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_INNER, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
+							innerColor = MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_OUTER, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
+							System.out.println("--- GROW - STEPS|RATIO|HEALTH: "+ steps + " | "+ ratio +" | "+ health +" ---");
+						}
+					} else {
+						innerColor = GlobalVars.COLOR_ELEMENT_INNER;
+						outerColor = GlobalVars.COLOR_ELEMENT_OUTER;
+					}
 					break;
 				case 2:
 					if (GlobalVars.ELEMENTEDIT.equals(this)) {
@@ -381,7 +395,7 @@ public class Element {
 				
 				// System.out.println("--- N: " + n + " ---");
 			
-				g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_OUTER, GlobalVars.COLOR_ELEMENT_INNER, n, (short)(colorSteps - n)));
+				g.setColor(MathCalc.colorCombine(outerColor, innerColor, n, (short)(colorSteps - n)));
 
 				
 				if (nIncrement) {
@@ -512,13 +526,13 @@ public class Element {
 	}
 	
 	public byte getRelative(Element relative) {
-		if (childLeft.equals(relative)) {
+		if (childLeft != null && childLeft.equals(relative)) {
 			return 1;
 		}
-		else if (childCenter.equals(relative)) {
+		else if (childCenter != null && childCenter.equals(relative)) {
 			return 2;
 		}
-		else if (childRight.equals(relative)) {
+		else if (childRight != null && childRight.equals(relative)) {
 			return 3;
 		}
 		else if (parent.equals(relative)) {

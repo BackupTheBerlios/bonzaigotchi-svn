@@ -216,7 +216,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		// anfangsstart
 		while (--GlobalVars.COUNTERCHEAT > 0 || (((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) > 0 && GlobalVars.APPSTATUS == 2)) {		
 			System.out.println("--- INTERVAL|CHEATER: " + ++GlobalVars.COUNTERINTERVAL + " | " + GlobalVars.COUNTERCHEAT + " ---");
-			System.out.println("--- TIME:" + ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) + " ---");
+//			System.out.println("--- TIME:" + ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) + " ---");
 			
 			GlobalVars.TIME_STAMP.setTime(GlobalVars.TIME_STAMP.getTime() + 10000);
 			
@@ -225,7 +225,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			log.grow(supply);
 			logWaterRequest = log.getChildWaterRequest();
 			System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
-			if (++counterDraw == 12) {
+			if (++counterDraw == 1) {
 					threadWaiting = true;
 					break;
 			}
@@ -248,7 +248,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	protected void keyPressed (int keyCode){
-		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +"---");
+		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
 		if (GlobalVars.APPSTATUS == 3 || GlobalVars.APPSTATUS == 4) {
 			Element tmpElementEdit;
 			byte tmpRelative = 0;
@@ -330,7 +330,19 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 		if (GlobalVars.APPSTATUS == 1) {
 		
-			if (getGameAction(keyCode) == 5) {
+			if (getKeyName(keyCode).equals("4")) {
+				System.out.println("--- Key Pressed: CHEATER ---");
+				GlobalVars.COUNTERCHEAT = 25;
+				GlobalVars.APPSTATUS = 2;
+				interval();
+			}
+			if (getKeyName(keyCode).equals("5")) {
+				System.out.println("--- Key Pressed: CHEATER ---");
+				GlobalVars.COUNTERCHEAT = 50;
+				GlobalVars.APPSTATUS = 2;
+				interval();
+			}
+			if (getKeyName(keyCode).equals("6")) {
 				System.out.println("--- Key Pressed: CHEATER ---");
 				GlobalVars.COUNTERCHEAT = 100;
 				GlobalVars.APPSTATUS = 2;

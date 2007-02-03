@@ -68,7 +68,6 @@ public class Core extends MIDlet implements CommandListener {
 	protected void startApp() throws MIDletStateChangeException {
 		data = new FileIO("BonzaiGotchi");
 		
-		
 		//Globale Commandos
 		cmdExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 		cmdSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
@@ -123,7 +122,7 @@ public class Core extends MIDlet implements CommandListener {
 		int i=0;
 		int check=-1; //wenn resume nicht dabei ist, maximal menueinträgeanzahl minus 1
 
-		int tmpVer=data.readDataInit();
+		short tmpVer=data.readDataInit();
 		System.out.println("!!!! FEHLER HIER ??????");
 		data.readDataFinalize();
 		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) {  //abfrage RecordStore
@@ -219,7 +218,7 @@ public class Core extends MIDlet implements CommandListener {
 
 		else if (c.equals(cmdTReturn)) {
 			// TODO code wenn auf Return im TreeMenü gedrückt wurde
-			screenTree.stopThread();
+//			screenTree.stopThread();
 			screenTree.interval();
 			
 		}
@@ -241,7 +240,7 @@ public class Core extends MIDlet implements CommandListener {
 		else if (c.equals(cmdSelect)) {
 			//	 APPSTATUS:    0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering
 				if (GlobalVars.APPSTATUS == 2) { //TODO Löschen wenn fertig, da der Appstatus niemals 2 sein kann (berechnet gerade)
-					screenTree.stopThread();
+//					screenTree.stopThread();
 					System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
 				}
 				else if (GlobalVars.APPSTATUS == 3) {
@@ -302,7 +301,7 @@ public class Core extends MIDlet implements CommandListener {
 			
 			*/
 		else if (c.equals(cmdSExit)) {
-			screenTree.stopThread();
+//			screenTree.stopThread();
 			screenTree.kill();
 			showMainMenu();
 			
@@ -414,7 +413,9 @@ public class Core extends MIDlet implements CommandListener {
 
 	protected void loadTree() {
 		
-		screenTree.kill();
+		if (screenTree != null) {
+			screenTree.kill();
+		}
 		GlobalVars.COUNTERELEMENT = 0;
 		
 		short tmpVer = data.readDataInit();

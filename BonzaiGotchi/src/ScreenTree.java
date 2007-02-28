@@ -272,7 +272,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	protected void keyPressed (int keyCode){
 		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
-		if (GlobalVars.APPSTATUS == 3 || GlobalVars.APPSTATUS == 4) {
+		if (GlobalVars.APPSTATUS == 3 || GlobalVars.APPSTATUS == 4 || GlobalVars.APPSTATUS == 5) {
 			Element tmpElementEdit;
 			byte tmpRelative = 0;
 			

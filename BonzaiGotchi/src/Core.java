@@ -22,22 +22,27 @@ public class Core extends MIDlet implements CommandListener {
 //	private ScreenHelp screenHelp;
 	
 	//Globale Commandos
-	private Command cmdExit;
-	private Command cmdSelect;
+	//private Command cmdExit;
+	//private Command cmdSelect;
 	
 
 	// Hauptmenü ist List
 	private List mainmenuList;
 	private String[] mainElements; 
 	private Command cmdMSelect;
+	private Command cmdMExit;
 
 
 	// BaumMenü Commandos
-	private Command cmdTReturn;
-	private Command cmdTWater;
+	private Command cmdTResume;
+	private Command cmdTWater;	
 	private Command cmdTEdit;
-	private Command cmdSExit;
-	private Command cmdSExit_Menu;
+	private Command cmdTPot;
+	private Command cmdTExit_Menu;
+	
+	private Command cmdTExit;
+
+
 
 	// Edit Commandos
 	private Command cmdESelect;
@@ -62,31 +67,35 @@ public class Core extends MIDlet implements CommandListener {
 
 	private FileIO data;
 
+	private Command cmdSExit;
 
 	
 	
 	protected void startApp() throws MIDletStateChangeException {
 		data = new FileIO("BonzaiGotchi");
 		
+		//TODO: Thread "Timer" starten, schläft bis GLOBALVARSirgendwas; überprüft Appstatus und wenn 1 => resume() sonst schlaf; 
+		
 		//Globale Commandos
-		cmdExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
-		cmdSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
+		//cmdExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
+		//cmdSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
 
 		checkResume(); //Array bauen für Liste
 
 		// Hauptmenü Commandos
 		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT, mainElements, null);
 		cmdMSelect = new Command(LangVars.CMD_ALL_SELECT, Command.ITEM, 2);
+		cmdMExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 		showMainMenu();
 		
 
 		// BaumMenü Commandos
-		cmdTReturn = new Command(LangVars.CMD_TREEMENU_RETURN, Command.OK, 1);
+		cmdTResume = new Command(LangVars.CMD_TREEMENU_RETURN, Command.OK, 1);
 		cmdTWater = new Command(LangVars.CMD_TREEMENU_WATER, Command.OK, 1);
 		cmdTEdit = new Command(LangVars.CMD_TREEMENU_EDIT, Command.OK, 1);
-		cmdSExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
-		cmdSExit_Menu = new Command(LangVars.CMD_ALL_EXIT, Command.OK, 1);
-		
+		cmdTPot = new Command(LangVars.CMD_TREEMENU_POT, Command.OK, 1);
+		cmdTExit_Menu = new Command(LangVars.CMD_ALL_EXIT, Command.OK, 2);
+		cmdTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);		//außerhalb Menü
 		
 
 		// Ausgewählter Ast Commandos
@@ -162,12 +171,12 @@ public class Core extends MIDlet implements CommandListener {
 			cori=0;
 		};
 		
-		if (c==cmdMSelect)
+		if (c==cmdMSelect) //	 APPSTATUS:    0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering
 		{
 			switch (mainmenuList.getSelectedIndex()+cori) {
 			
 				case 0: 	{	//im Resume;
-								System.out.println("0");
+								System.out.println("0 = Im Resume");
 								loadTree();
 								GlobalVars.APPSTATUS = 2;
 								Display.getDisplay(this).setCurrent(screenTree);
@@ -177,7 +186,7 @@ public class Core extends MIDlet implements CommandListener {
 								break;
 							}	
 				case 1: 	{	//New Tree
-								System.out.println("1");
+								System.out.println("1 = im New Tree");
 								screenTree = new ScreenTree(this);
 								showTreeMenuCommand(); //TODO kommt weg... weil von Screentree aufgerufen!
 								Display.getDisplay(this).setCurrent(screenTree);
@@ -186,11 +195,11 @@ public class Core extends MIDlet implements CommandListener {
 								break;
 							}				
 				case 2: 	{	// Im Tutorialauswahl
-								System.out.println("2");
+								System.out.println("2 = im Tutorialauswahl");
 								break;
 							}				
 				case 3: 	{	// im Creditsauswahl
-								System.out.println("3");
+								System.out.println("3 = im creditauswahl");
 								saveTree();
 								break;
 							}				
@@ -201,32 +210,56 @@ public class Core extends MIDlet implements CommandListener {
 			
 			
 			}
-		}else if (c.equals(cmdTWater)) {
+		}
+		else if (c.equals(cmdMExit)) {
+			System.out.println("SYSTEM EXIT! Program shut down!");
+			this.notifyDestroyed();
+		} 
+		
+		// BaumMenü
+		else if (c.equals(cmdTResume)) {
+				// TODO code wenn auf Return im TreeMenü gedrückt wurde
+//				screenTree.stopThread();
+			GlobalVars.APPSTATUS = 1;
+				//screenTree.interval();
+				
+			 
+		}
+		else if (c.equals(cmdTWater)) {
 			GlobalVars.APPSTATUS = 4;
 			showWaterCommand();
+			screenTree.watering();		
 			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
-			screenTree.watering();
+			
 		} 
 		
 		else if (c.equals(cmdTEdit)) {
 			// code wenn auf edit im TreeMenü gedrückt wurde
 			GlobalVars.APPSTATUS = 3;
 			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
-			screenTree.edit();
 			showEditCommand();
+			screenTree.edit(false);
+
 		}
 
-		else if (c.equals(cmdTReturn)) {
-			// TODO code wenn auf Return im TreeMenü gedrückt wurde
-//			screenTree.stopThread();
-			screenTree.interval();
+
+		else if (c.equals(cmdTPot)) {
+			GlobalVars.APPSTATUS = 5;
+			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
+			showPotCommand();
+			screenTree.potChange();
+
 			
 		}
-		else if (c.equals(cmdTEdit)) {
-			// TODO code wenn auf Return im TreeMenü gedrückt wurde
-			
-			
+		
+		else if (c.equals(cmdTExit_Menu)) {
+			doExitToMain();
 		}
+		
+		else if (c.equals(cmdTExit)) {
+			doExitToMain();
+		}
+		
 		else if (c.equals(cmdSBBack)) {
 			// code wenn auf Back gedrückt wurde
 			if (GlobalVars.APPSTATUS==3) { //Back im Editmodus
@@ -237,7 +270,7 @@ public class Core extends MIDlet implements CommandListener {
 			
 		}
 
-		else if (c.equals(cmdSelect)) {
+		/*else if (c.equals(cmdMSelect)) {
 			//	 APPSTATUS:    0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering
 				if (GlobalVars.APPSTATUS == 2) { //TODO Löschen wenn fertig, da der Appstatus niemals 2 sein kann (berechnet gerade)
 //					screenTree.stopThread();
@@ -301,26 +334,15 @@ public class Core extends MIDlet implements CommandListener {
 			
 			*/
 		else if (c.equals(cmdSExit)) {
-//			screenTree.stopThread();
-			screenTree.kill();
-			showMainMenu();
-			
-			//this.notifyDestroyed();
+			doExitToMain();
 	
 		}
-		else if (c.equals(cmdExit)) {
-			this.notifyDestroyed();
-	
-		}
+
 	}
 
 
 
 
-	private void showEditCommand() {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 
@@ -330,36 +352,38 @@ public class Core extends MIDlet implements CommandListener {
 		GlobalVars.APPSTATUS = 1;
 		showTreeMenuCommand();
 	}
+	
+	private void doExitToMain() {
+		saveTree();
+		screenTree.kill();
+		screenTree = null;
+		showMainMenu();		
+	}
 
 	private void clearCommands() {
+		screenTree.removeCommand(cmdMSelect);
+		screenTree.removeCommand(cmdMExit);
+		
+		screenTree.removeCommand(cmdTEdit);
+		screenTree.removeCommand(cmdTResume);
+		screenTree.removeCommand(cmdTWater);
+		screenTree.removeCommand(cmdTPot);
+		screenTree.removeCommand(cmdTExit_Menu);
+		screenTree.removeCommand(cmdTExit);
+
+		
 		screenTree.removeCommand(cmdSBBack);
 		screenTree.removeCommand(cmdSBack);
-		screenTree.removeCommand(cmdExit);
-		screenTree.removeCommand(cmdMSelect);
 		screenTree.removeCommand(cmdSBColor);
 		screenTree.removeCommand(cmdSBCut);
 		screenTree.removeCommand(cmdSBDung);
 		screenTree.removeCommand(cmdSBExact);
 		screenTree.removeCommand(cmdSDontSeal);
-		screenTree.removeCommand(cmdSelect);
+		//screenTree.removeCommand(cmdSelect);
 		screenTree.removeCommand(cmdSExit);
 		screenTree.removeCommand(cmdSSeal);
-		screenTree.removeCommand(cmdTEdit);
-		screenTree.removeCommand(cmdTReturn);
-		screenTree.removeCommand(cmdTWater);		
+	
 		
-	}
-	
-	
-	private void showTreeMenuCommand() {
-		clearCommands();
-		screenTree.addCommand(cmdTReturn);
-		screenTree.addCommand(cmdTWater);
-		screenTree.addCommand(cmdTEdit);
-		screenTree.addCommand(cmdSExit_Menu);
-		screenTree.addCommand(cmdSExit);
-
-		screenTree.setCommandListener(this);
 	}
 	
 	private void showMainMenu() {
@@ -369,12 +393,26 @@ public class Core extends MIDlet implements CommandListener {
 		
 		GlobalVars.APPSTATUS = 1;
 		mainmenuList.setSelectCommand(cmdMSelect);
-		mainmenuList.addCommand(cmdExit);
+		mainmenuList.addCommand(cmdMExit);
 		mainmenuList.setCommandListener(this);
 		Display.getDisplay(this).setCurrent(mainmenuList);
-		System.out.println("--- IO READ FINALIZE ddd---");
+		System.out.println("--- MAIN MENUE CREATED ---");
 		
 	}
+	
+	private void showTreeMenuCommand() {
+		clearCommands();
+		screenTree.addCommand(cmdTResume);
+		screenTree.addCommand(cmdTWater);
+		screenTree.addCommand(cmdTEdit);
+		screenTree.addCommand(cmdTPot);
+		screenTree.addCommand(cmdTExit_Menu);
+		screenTree.addCommand(cmdTExit);
+
+
+		screenTree.setCommandListener(this);
+	}
+	
 	
 	private void showWaterCommand() {
 		clearCommands();
@@ -382,6 +420,16 @@ public class Core extends MIDlet implements CommandListener {
 		screenTree.addCommand(cmdWBack);
 		screenTree.setCommandListener(this);
 		
+		
+	}
+	
+	private void showEditCommand() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void showPotCommand() {
+		//clearCommands();
 		
 	}
 
@@ -407,7 +455,7 @@ public class Core extends MIDlet implements CommandListener {
 	private void showSelectBranchCommand() {
 	
 		clearCommands();
-		screenTree.addCommand(cmdSelect);
+		//screenTree.addCommand(cmdSelect);
 		screenTree.addCommand(cmdSBBack);
 	}
 
@@ -416,6 +464,7 @@ public class Core extends MIDlet implements CommandListener {
 		if (screenTree != null) {
 			screenTree.kill();
 		}
+		System.out.println("Im load tree");
 		GlobalVars.COUNTERELEMENT = 0;
 		
 		short tmpVer = data.readDataInit();

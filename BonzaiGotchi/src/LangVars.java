@@ -19,9 +19,10 @@ public class LangVars {
 	public final static String CMD_STARTM_CREDITS = "Show Credits";	
 	// if adding one Menu entry increment MAINMENU_LIST_MAX in GlobalVars!!
 	
-	public final static String CMD_TREEMENU_RETURN = "Return";
+	public final static String CMD_TREEMENU_RETURN = "Resume";
 	public final static String CMD_TREEMENU_WATER = "Water";
 	public final static String CMD_TREEMENU_EDIT  = "Edit";
+	public final static String CMD_TREEMENU_POT  = "Change Pot";
 
 
 	public final static String CMD_SELBRANCH_CUT = "Cut Branch";

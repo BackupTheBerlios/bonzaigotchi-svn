@@ -353,8 +353,8 @@ public class ScreenTree extends Canvas implements Runnable {
 						case DOWN:
 						
 							potSize--;
-							if (potSize < 1) {
-								potSize = 1;
+							if (potSize < 0) {
+								potSize = 0;
 							}
 							
 							this.repaint();
@@ -364,8 +364,8 @@ public class ScreenTree extends Canvas implements Runnable {
 						case UP:
 							
 							potSize++;
-							if (potSize > GlobalVars.POT_SIZE.length) {
-								potSize = GlobalVars.POT_SIZE.length;
+							if (potSize > GlobalVars.POT_SIZE.length - 1) {
+								potSize = GlobalVars.POT_SIZE.length - 1;
 							}
 												
 							this.repaint();

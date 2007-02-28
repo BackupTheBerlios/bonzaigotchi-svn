@@ -72,8 +72,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	public ScreenTree(Core tmpParent, FileIO data) {
 		
 		parent = tmpParent;
-		can = new Can((short)0,(short)(GlobalVars.DISPLAY_X_WIDTH/2),(short)(GlobalVars.DISPLAY_Y_HEIGHT/2),(short)0);
-		
+				
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date(data.readDataLong());
 		GlobalVars.COUNTERELEMENT = 0;
@@ -85,6 +84,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		potSize = data.readDataByte();
 		log = new Element(null, data);
 		logWaterRequest = log.getChildWaterRequest();
+		can = new Can((short)0,(short)(GlobalVars.DISPLAY_X_WIDTH/2),(short)(GlobalVars.DISPLAY_Y_HEIGHT/2),(short)0);
 	}
 	
 	protected void paint(Graphics g) {

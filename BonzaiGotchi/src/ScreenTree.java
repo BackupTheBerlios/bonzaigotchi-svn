@@ -91,26 +91,33 @@ public class ScreenTree extends Canvas implements Runnable {
 				
 		g.setColor(0xFFFFFF);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-			
-		GlobalVars.PAINTSTATUS = 1;
-		log.draw(g);
-		GlobalVars.PAINTSTATUS = 0;
-				
-		drawPot(g);
-			
-		if (GlobalVars.APPSTATUS == 3) {
-			GlobalVars.PAINTSTATUS = 2;
+		
+		if (log != null) {
+		
+			GlobalVars.PAINTSTATUS = 1;
 			log.draw(g);
 			GlobalVars.PAINTSTATUS = 0;
+					
+			drawPot(g);
+				
+			if (GlobalVars.APPSTATUS == 3) {
+				GlobalVars.PAINTSTATUS = 2;
+				log.draw(g);
+				GlobalVars.PAINTSTATUS = 0;
+			}
+			
+			if (GlobalVars.APPSTATUS == 4) {
+				can.draw(g);
+			}
+			
+			if (threadWaiting && GlobalVars.APPSTATUS == 2) {
+				interval();
+			}
 		}
-		
-		if (GlobalVars.APPSTATUS == 4) {
-			can.draw(g);
+		else {
+			g.drawString("Your tree died a\nslowly and painfull death", 0,0,0);
 		}
-		
-		if (threadWaiting && GlobalVars.APPSTATUS == 2) {
-			interval();
-		}
+			
 	}
 
 	private void drawWatering(Graphics g) {
@@ -198,7 +205,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			water = GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100);
 		}		
 			
-		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue * 110 / 100 / canSteps + " | " + water + " ---");
+		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps + " | " + water + " ---");
 		parent.resetTreeMenu();
 		this.repaint();
 		//animWatering=false;
@@ -236,7 +243,10 @@ public class ScreenTree extends Canvas implements Runnable {
 			
 			supply = Math.min(water, logWaterRequest);
 			water -= supply;
-			log.grow(supply);
+			if (!log.grow(supply)) {
+				log.childKill();
+				log = null;
+			}
 			logWaterRequest = log.getChildWaterRequest();
 			System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
 			if (++counterDraw == 1) {
@@ -262,8 +272,26 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	public void editKill() {
-		// elementedit = log --> new tree
-		// Mutterelement muss am schluss markiert sein
+		if (GlobalVars.ELEMENTEDIT == log) {
+			if (log != null) {
+				log.childKill();
+				log = null;
+			}
+			GlobalVars.COUNTERELEMENT = 0;
+			
+			int tmpSupply = 10000;
+			if (water < tmpSupply) {
+				tmpSupply = water;
+			}
+			water -= tmpSupply;
+			log = new Element(null, (short)0, (short)(GlobalVars.DISPLAY_X_WIDTH / 2), GlobalVars.DISPLAY_Y_HEIGHT, tmpSupply);
+			logWaterRequest = log.getChildWaterRequest();
+		}
+		else  {
+			Element tmpParent = GlobalVars.ELEMENTEDIT.getRelative((byte)4);
+			tmpParent.childKill(GlobalVars.ELEMENTEDIT);
+			GlobalVars.ELEMENTEDIT = tmpParent; 
+		}
 	}
 	
 	public void editExact() {

@@ -164,7 +164,7 @@ public class Element {
 		return childWaterRequest + waterRequest.getInt();
 	}
 
-	public void grow (int supply) {
+	public boolean grow (int supply) {
 		// System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
 		// Usage
@@ -190,7 +190,7 @@ public class Element {
 		
 		// Health
 		waterPercentage = (short)(water * 100 / (demand * 100));
-		// System.out.println("--- ID: "+ id +" | waterPercentage: " + waterPercentage + " ---");
+		System.out.println("--- ID: "+ id +" | waterPercentage: " + waterPercentage + " ---");
 		short tmpHealthInc = 0;
 		
 		for(int i = 0; i < GlobalVars.HEALTH_WATER_THRESHOLD.length; i++) {
@@ -204,7 +204,7 @@ public class Element {
 			health = 100;
 		}
 		
-		// System.out.println("--- ID: "+ id +" | Health|HEALTH_INC: " + health + "|" + tmpHealthInc + " ---");
+		System.out.println("--- ID: "+ id +" | Health|HEALTH_INC: " + health + "|" + tmpHealthInc + " ---");
 		
 		// grow
 		
@@ -216,26 +216,30 @@ public class Element {
 				// System.out.println("--- ID: "+ id +" | Thickness: " + thickness.getInt() + " ---");
 			} else {
 				water -= demand / 2;
+				if (water < 0) {
+					water = 0;
+					health--;
+				}
 			}
 			
 			// Let my children have the rest of the supply but share it brotherly
 			if (childLeft != null) {
 				supplyTaken = supply * childWaterDivider / 100;
 				supply -= supplyTaken;
-				childLeft.grow(supplyTaken);
+				if (!childLeft.grow(supplyTaken)) { childKill (childLeft); }
 			}
 			if (childCenter != null) {
 				if (childLeft != null) {
-					childCenter.grow(supply);
+					if (!childCenter.grow(supply)) { childKill (childCenter); }
 				}
 				else {
 					supplyTaken = supply * childWaterDivider / 100;
 					supply -= supplyTaken;
-					childCenter.grow(supplyTaken);
+					if (!childCenter.grow(supplyTaken)) { childKill (childCenter); }
 				}
 			}
 			if (childRight != null) {
-				childRight.grow(supply);
+				if (!childRight.grow(supply)) { childKill (childRight); }
 			}
 		}
 		else {
@@ -290,6 +294,8 @@ public class Element {
 			}
 		}
 		
+		if (health < -100) { return false; }
+		else { return true; }
 		// System.out.println("--- ID: "+ id +" | Element Grow END ---");
 	}
 		
@@ -339,7 +345,7 @@ public class Element {
 							short ratio = (short)((health - GlobalVars.GROWTH_HEALTH_DEATH) / 10);
 							innerColor = MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_INNER, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
 							innerColor = MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_OUTER, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
-							System.out.println("--- GROW - STEPS|RATIO|HEALTH: "+ steps + " | "+ ratio +" | "+ health +" ---");
+							// System.out.println("--- ID: "+ id +" | GROW - STEPS|RATIO|HEALTH: "+ steps + " | "+ ratio +" | "+ health +" ---");
 						}
 					} else {
 						innerColor = GlobalVars.COLOR_ELEMENT_INNER;

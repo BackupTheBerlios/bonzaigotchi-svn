@@ -42,15 +42,15 @@ public class Core extends MIDlet implements CommandListener {
 	
 	private Command cmdTExit;
 
-
+	// Water Commandos
+	private Command cmdWSelect;
+	private Command cmdWBack;
 
 	// Edit Commandos
 	private Command cmdESelect;
 	private Command cmdEBack;
 	
-	// Water Commandos
-	private Command cmdWSelect;
-	private Command cmdWBack;
+
 	
 	// Ausgewählter Ast Commandos
 	private Command cmdSBCut;
@@ -98,6 +98,10 @@ public class Core extends MIDlet implements CommandListener {
 		cmdTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);		//außerhalb Menü
 		
 
+		// Water Commandos
+		cmdWSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
+		cmdWBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);		
+		
 		// Ausgewählter Ast Commandos
 		cmdSBCut = new Command(LangVars.CMD_SELBRANCH_CUT, Command.OK, 2);
 		cmdSBExact = new Command(LangVars.CMD_SELBRANCH_EXACTCUT, Command.OK, 3);
@@ -105,9 +109,7 @@ public class Core extends MIDlet implements CommandListener {
 		cmdSBDung = new Command(LangVars.CMD_SELBRANCH_DUNG, Command.OK, 5);
 		cmdSBBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);
 		
-		// Water Commandos
-		cmdWSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
-		cmdWBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);		
+
 		
 		// Edit Commandos
 		cmdESelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
@@ -259,6 +261,26 @@ public class Core extends MIDlet implements CommandListener {
 		else if (c.equals(cmdTExit)) {
 			doExitToMain();
 		}
+		
+		else if (c.equals(cmdWSelect)) {
+			GlobalVars.APPSTATUS = 1;
+			screenTree.wateringAction();		
+			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");			
+		} 
+		
+		else if (c.equals(cmdWBack)) {
+			GlobalVars.APPSTATUS = 1;
+			showTreeMenuCommand();
+			screenTree.setCommandListener(this);
+			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");			
+		} 
+		
+		
+		
+		
+		
+		
+		
 		
 		else if (c.equals(cmdSBBack)) {
 			// code wenn auf Back gedrückt wurde

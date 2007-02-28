@@ -47,13 +47,12 @@ public class ScreenTree extends Canvas implements Runnable {
 	private boolean threadWaiting = false;
 	
 	private boolean animWatering = false;
-	
 	private Core parent;
 	
 	public ScreenTree(Core tmpParent) {
 		super();
 		parent = tmpParent;
-		
+
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date();
 		GlobalVars.COUNTERELEMENT = 0;
@@ -204,7 +203,13 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	public void potChange() {
-		
+		keyReceiver = 3;
+		this.repaint();
+	}
+	
+	public void potChangeAction() {
+		parent.resetTreeMenu();
+		this.repaint();
 	}
 	
 	public void interval() {
@@ -300,8 +305,8 @@ public class ScreenTree extends Canvas implements Runnable {
 						}
 					}
 					
-					// END CASE 1
 					break;
+					// END CASE 1
 				
 				case 2:
 						
@@ -338,8 +343,41 @@ public class ScreenTree extends Canvas implements Runnable {
 							wateringAction();
 							break;
 					}
-					// END CASE 2
 					break;
+					// END CASE 2
+				
+				case 3:
+					System.out.println("keyreceiver==3");
+					switch (getGameAction(keyCode)) {
+						case LEFT:
+						case DOWN:
+						
+							potSize--;
+							if (potSize < 1) {
+								potSize = 1;
+							}
+							
+							this.repaint();
+							break;
+							
+						case RIGHT:
+						case UP:
+							
+							potSize++;
+							if (potSize > GlobalVars.POT_SIZE.length + 1) {
+								potSize = GlobalVars.POT_SIZE.length + 1;
+							}
+												
+							this.repaint();
+							break;
+						
+						case FIRE:
+							
+							potChangeAction();
+							break;
+					}
+					break;
+					// END CASE 3
 					
 			} // END SWITCH
 			

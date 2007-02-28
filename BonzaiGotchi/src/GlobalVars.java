@@ -83,7 +83,7 @@ public class GlobalVars {
 	
 	public static Date TIME_STAMP;
 	public final static short VERSION_ID = 001;
-	public final static short SAVE_RECORDSTORE_VERSION = 002;
+	public final static short SAVE_RECORDSTORE_VERSION = 003;
 
 	// DEMAND_TABLE
 	public final static short[] GROWTH_WATER_DEMAND = {69,150,208,253,289,320,347,370,391,410,428,444,458,472,485,497,509,520,530,540,549,558,566,574,582,590,597,604,611};

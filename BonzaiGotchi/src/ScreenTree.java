@@ -29,7 +29,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private Element log;
 	
 	// Pot
-	private int potSize;
+	private byte potSize;
 	private int water;
 	private int logWaterRequest;
 	
@@ -38,7 +38,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private int canValue;
 	private int canSteps;
 	
-	// 0 = parent, 1 = EditElement, 2 = Gauge
+	// 0 = parent, 1 = EditElement, 2 = Can, 3 = Pot
 	private int keyReceiver;
 	
 	// Thread
@@ -81,6 +81,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 		
 		water = data.readDataInt();		
+		potSize = data.readDataByte();
 		log = new Element(null, data);
 		logWaterRequest = log.getChildWaterRequest();
 	}
@@ -190,11 +191,11 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 
 	public void wateringAction(){
-		water += GlobalVars.POT_SIZE[potSize] * canValue * 110 / 100 / canSteps ;
+		water += GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps ;
 
-		if (water > GlobalVars.POT_SIZE[potSize] * (GlobalVars.POT_HEIGHT[potSize] + 100) / 100) {
-			water = GlobalVars.POT_SIZE[potSize] * (GlobalVars.POT_HEIGHT[potSize] + 100) / 100;
-		}
+		if (water > GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100)) {
+			water = GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100);
+		}		
 			
 		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue * 110 / 100 / canSteps + " | " + water + " ---");
 		parent.resetTreeMenu();
@@ -208,6 +209,9 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	public void potChangeAction() {
+		if (water > GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100)) {
+			water = GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100);
+		}		
 		parent.resetTreeMenu();
 		this.repaint();
 	}
@@ -365,7 +369,7 @@ public class ScreenTree extends Canvas implements Runnable {
 							
 							potSize++;
 							if (potSize > GlobalVars.POT_SIZE.length - 1) {
-								potSize = GlobalVars.POT_SIZE.length - 1;
+								potSize = (byte)(GlobalVars.POT_SIZE.length - 1);
 							}
 												
 							this.repaint();
@@ -418,6 +422,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		data.writeData(GlobalVars.TIME_STAMP.getTime());
 		data.writeData(GlobalVars.COUNTERINTERVAL);
 		data.writeData(water);
+		data.writeData(potSize);
 		log.writeData(data);
 	}
 	

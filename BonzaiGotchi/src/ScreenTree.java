@@ -179,7 +179,6 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 	}
 
-
 	
 	public void watering(){
 		keyReceiver = 2;
@@ -203,6 +202,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		this.repaint();
 		//animWatering=false;
 	}
+	
+	public void potChange() {
+		
+	}
+	
 	public void interval() {
 		threadInterval = new Thread(this);
 		threadWaiting = false;
@@ -241,10 +245,24 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 	}
 	
-	public void edit() {
+	public void edit(boolean resume) {
 		keyReceiver = 1;
-		GlobalVars.ELEMENTEDIT = log;
+		if (!resume) { GlobalVars.ELEMENTEDIT = log; }
 		this.repaint();
+	}
+	
+	public void editKill() {
+		// elementedit = log --> new tree
+		// Mutterelement muss am schluss markiert sein
+	}
+	
+	public void editExact() {
+		
+	}
+	
+	public void editCut(boolean seal) {
+		// kill children and set to new length
+		// set growthStop = seal
 	}
 	
 	protected void keyPressed (int keyCode){
@@ -352,8 +370,10 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	public void kill() {
-		log.childKill();
-		log = null;
+		if (log != null) {
+			log.childKill();
+			log = null;
+		}
 	}
 	
 	public void writeData(FileIO data) {

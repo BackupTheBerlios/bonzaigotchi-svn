@@ -15,7 +15,7 @@ import java.util.Random;
 
 public class GlobalVars {
 	
-	// 0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering
+	// 0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering, 5 = potChange
 	public static int APPSTATUS = 0;
 	
 	// 0 = void, 1 = normal, 2 = edit, 3 = selectBranch

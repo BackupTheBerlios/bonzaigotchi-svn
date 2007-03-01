@@ -21,6 +21,7 @@ import java.util.Date;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Font;
 
 
 public class ScreenTree extends Canvas implements Runnable {
@@ -47,9 +48,9 @@ public class ScreenTree extends Canvas implements Runnable {
 	private boolean threadWaiting = false;
 	
 	private boolean animWatering = false;
-	private Core parent;
+	private ScreenTreeFeedback parent;
 	
-	public ScreenTree(Core tmpParent) {
+	public ScreenTree(ScreenTreeFeedback tmpParent) {
 		super();
 		parent = tmpParent;
 
@@ -69,7 +70,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		logWaterRequest = log.getChildWaterRequest();
 	}
 	
-	public ScreenTree(Core tmpParent, FileIO data) {
+	public ScreenTree(ScreenTreeFeedback tmpParent, FileIO data) {
 		
 		parent = tmpParent;
 				
@@ -80,7 +81,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
 		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 		
-		water = data.readDataInt();		
+		water = data.readDataInt();
 		potSize = data.readDataByte();
 		log = new Element(null, data);
 		logWaterRequest = log.getChildWaterRequest();
@@ -88,7 +89,8 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	protected void paint(Graphics g) {
-				
+		System.out.println("--- ScreenTree.paint BEGINN ---");
+//		Empty Screen
 		g.setColor(0xFFFFFF);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 		
@@ -115,7 +117,9 @@ public class ScreenTree extends Canvas implements Runnable {
 			}
 		}
 		else {
-			g.drawString("Your tree died a\nslowly and painfull death", 0,0,0);
+			System.out.println("--- ScreenTree.paint NOLOG ---");
+			g.setColor(0x555555);
+			g.drawString("Your tree died a slowly and painfull death", 0,0,0);
 		}
 			
 	}
@@ -206,7 +210,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		}		
 			
 		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps + " | " + water + " ---");
-		parent.resetTreeMenu();
+		parent.receiveFeedback((byte)11);
 		this.repaint();
 		//animWatering=false;
 	}
@@ -220,7 +224,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		if (water > GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100)) {
 			water = GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100);
 		}		
-		parent.resetTreeMenu();
+		parent.receiveFeedback((byte)11);
 		this.repaint();
 	}
 	
@@ -235,7 +239,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		int supply;
 
 		// anfangsstart
-		while (--GlobalVars.COUNTERCHEAT > 0 || (((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) > 0 && GlobalVars.APPSTATUS == 2)) {		
+		while (log != null && --GlobalVars.COUNTERCHEAT > 0 || (((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) > 0 && GlobalVars.APPSTATUS == 2)) {		
 			System.out.println("--- INTERVAL|CHEATER: " + ++GlobalVars.COUNTERINTERVAL + " | " + GlobalVars.COUNTERCHEAT + " ---");
 //			System.out.println("--- TIME:" + ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) + " ---");
 			
@@ -244,11 +248,16 @@ public class ScreenTree extends Canvas implements Runnable {
 			supply = Math.min(water, logWaterRequest);
 			water -= supply;
 			if (!log.grow(supply)) {
+				// System.out.println("--- ScreenTree.run: Log_Kill ---");
 				log.childKill();
 				log = null;
+				parent.receiveFeedback((byte)12);
+//				System.out.println("--- ScreenTree.run: Log_Killed ---");
 			}
-			logWaterRequest = log.getChildWaterRequest();
-			System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
+			else {
+				logWaterRequest = log.getChildWaterRequest();
+				System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
+			}
 			if (++counterDraw == 1) {
 					threadWaiting = true;
 					break;
@@ -259,7 +268,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		this.repaint();
 		
 		if (!threadWaiting) {
-			parent.resetTreeMenu();
+			parent.receiveFeedback((byte)11);
 		}
 		
 		
@@ -327,7 +336,7 @@ public class ScreenTree extends Canvas implements Runnable {
 							tmpRelative = (byte)4;
 							break;
 						case FIRE:
-							parent.receiveSelect();
+							parent.receiveFeedback((byte)21);
 							break;
 					}
 					
@@ -452,7 +461,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		data.writeData(GlobalVars.COUNTERINTERVAL);
 		data.writeData(water);
 		data.writeData(potSize);
-		log.writeData(data);
+		if (log != null) { log.writeData(data); }
 	}
 	
 }

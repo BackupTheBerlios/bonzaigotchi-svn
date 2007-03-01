@@ -16,21 +16,21 @@ import javax.microedition.midlet.MIDletStateChangeException;
 
 	
 
-public class Core extends MIDlet implements CommandListener {
+public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback {
 	
 	private ScreenTree screenTree;
 //TODO:	private ScreenMenu screenMenu;
 //TODO:	private ScreenHelp screenHelp;
 
 
-	// Hauptmenü ist List
+	// Hauptmenï¿½ ist List
 	private List mainmenuList;
 	private String[] mainElements; 
 	private Command cmdMSelect;
 	private Command cmdMExit;
 
 
-	// BaumMenü Commandos
+	// BaumMenï¿½ Commandos
 	private Command cmdTResume;
 	private Command cmdTWater;	
 	private Command cmdTEdit;
@@ -56,7 +56,7 @@ public class Core extends MIDlet implements CommandListener {
 	private Command cmdPSelect;
 	private Command cmdPBack;
 	
-	// Seal-Menü Commandos
+	// Seal-Menï¿½ Commandos
 	private Command cmdSSeal;
 	private Command cmdSDontSeal;
 
@@ -68,25 +68,25 @@ public class Core extends MIDlet implements CommandListener {
 	protected void startApp() throws MIDletStateChangeException {
 		data = new FileIO("BonzaiGotchi");
 		
-		//TODO: Thread "Timer" starten, schläft bis GLOBALVARSirgendwas; überprüft Appstatus und wenn 1 => resume() sonst schlaf; 
+		//TODO: Thread "Timer" starten, schlï¿½ft bis GLOBALVARSirgendwas; ï¿½berprï¿½ft Appstatus und wenn 1 => resume() sonst schlaf; 
 		
 
-		checkResume(); //Array bauen für Liste
+		checkResume(); //Array bauen fï¿½r Liste
 
-		// Hauptmenü Commandos
+		// Hauptmenï¿½ Commandos
 		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT, mainElements, null);
 		cmdMSelect = new Command(LangVars.CMD_ALL_SELECT, Command.ITEM, 2);
 		cmdMExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 		showMainMenu();
 		
 
-		// BaumMenü Commandos
+		// BaumMenï¿½ Commandos
 		cmdTResume = new Command(LangVars.CMD_TREEMENU_RETURN, Command.OK, 1);
 		cmdTWater = new Command(LangVars.CMD_TREEMENU_WATER, Command.OK, 1);
 		cmdTEdit = new Command(LangVars.CMD_TREEMENU_EDIT, Command.OK, 1);
 		cmdTPot = new Command(LangVars.CMD_TREEMENU_POT, Command.OK, 1);
 		cmdTExit_Menu = new Command(LangVars.CMD_ALL_EXIT, Command.OK, 2);
-		cmdTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);		//außerhalb Menü
+		cmdTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);		//auï¿½erhalb Menï¿½
 		
 
 		// Water Commandos
@@ -107,7 +107,7 @@ public class Core extends MIDlet implements CommandListener {
 		cmdPSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
 		cmdPBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);		
 		
-		// Seal-Menü Commandos
+		// Seal-Menï¿½ Commandos
 		cmdSSeal = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 1);
 		cmdSDontSeal = new Command(LangVars.CMD_SELECTED_DONTSEAL, Command.EXIT, 1);
 			
@@ -116,16 +116,16 @@ public class Core extends MIDlet implements CommandListener {
 
 
 	private void checkResume() {
-		// Hier wird der Array aufgebaut für das Menü
+		// Hier wird der Array aufgebaut fï¿½r das Menï¿½
 		
 		int i=0;
-		int check=-1; //wenn resume nicht dabei ist, maximal menueinträgeanzahl minus 1
+		int check=-1; //wenn resume nicht dabei ist, maximal menueintrï¿½geanzahl minus 1
 
 		short tmpVer=data.readDataInit();
 		System.out.println("!!!! FEHLER HIER ??????");
 		data.readDataFinalize();
 		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) {  //abfrage RecordStore
-			check=0; //Maximalmenüeinträge wieder hergestellt!
+			check=0; //Maximalmenï¿½eintrï¿½ge wieder hergestellt!
 		}
 
 		mainElements = new String[GlobalVars.MAINMENU_LIST_MAX+check]; //anlegen mit oder ohne resume
@@ -149,10 +149,7 @@ public class Core extends MIDlet implements CommandListener {
 	}
 	
 	public void receiveSelect() {
-		/* Wird von aufgerufen wenn "Fire" betätigt 
-		 * Ruft das Edit Menü auf....
-		 * */
-		showEditCommand();
+
 	}
 
 	public void commandAction(Command c, Displayable d) {
@@ -206,9 +203,9 @@ public class Core extends MIDlet implements CommandListener {
 			this.notifyDestroyed();
 		} 
 		
-		// BaumMenü
+		// BaumMenï¿½
 		else if (c.equals(cmdTResume)) {
-				// TODO code wenn auf Return im TreeMenü gedrückt wurde
+				// TODO code wenn auf Return im TreeMenï¿½ gedrï¿½ckt wurde
 			GlobalVars.APPSTATUS = 1;
 
 				
@@ -283,7 +280,7 @@ public class Core extends MIDlet implements CommandListener {
 		
 		else if (c.equals(cmdEDung)) {
 			// TODO: The Dung
-			System.out.println("Hier kommt das Düngen herein!!");
+			System.out.println("Hier kommt das Dï¿½ngen herein!!");
 		
 		}
 		
@@ -456,7 +453,29 @@ public class Core extends MIDlet implements CommandListener {
 		data.writeDataInit(GlobalVars.SAVE_RECORDSTORE_VERSION);	
 		screenTree.writeData(data);
 		data.writeDataFinalize();
+	}
+
+
+
+	public void receiveFeedback(byte code) {
+		// code: 1x Commands - 11 = treeMenu, 12 = treeDead, 13 = screenInterval; 2x keyEvent - 21 = fireButton
 		
+		switch (code) {
+			case 11:
+				resetTreeMenu();
+				break;
+			case 12:
+				break;
+			case 13:
+				break;
+			
+			case 21:
+				/* Wird von aufgerufen wenn "Fire" betï¿½tigt 
+				 * Ruft das Edit Menï¿½ auf....
+				 * */
+				showEditCommand();
+				break;
+		}
 	}
 	
 

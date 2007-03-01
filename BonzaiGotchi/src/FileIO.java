@@ -348,6 +348,16 @@ public class FileIO {
 		dis = null;
 	}
 	
-	
+	public void deleteRecord () {
+		try {
+			RecordStore.deleteRecordStore (recordName);
+		} catch (RecordStoreNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RecordStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 }

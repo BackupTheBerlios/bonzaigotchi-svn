@@ -223,23 +223,32 @@ public class Element {
 			}
 			
 			// Let my children have the rest of the supply but share it brotherly
+//			System.out.println("--- ID: "+ id +" | Element.grow: Children ---");
 			if (childLeft != null) {
 				supplyTaken = supply * childWaterDivider / 100;
 				supply -= supplyTaken;
-				if (!childLeft.grow(supplyTaken)) { childKill (childLeft); }
+				if (!childLeft.grow(supplyTaken)) { 
+//					System.out.println("--- ID: "+ id +" | Element.grow: Left ---");
+					childKill (childLeft); }
 			}
 			if (childCenter != null) {
 				if (childLeft != null) {
-					if (!childCenter.grow(supply)) { childKill (childCenter); }
+					if (!childCenter.grow(supply)) { 
+//						System.out.println("--- ID: "+ id +" | Element.grow: Center_Left ---");
+						childKill (childCenter); }
 				}
 				else {
 					supplyTaken = supply * childWaterDivider / 100;
 					supply -= supplyTaken;
-					if (!childCenter.grow(supplyTaken)) { childKill (childCenter); }
+					if (!childCenter.grow(supplyTaken)) {
+//						System.out.println("--- ID: "+ id +" | Element.grow: Center_NoLeft ---");
+						childKill (childCenter); }
 				}
 			}
 			if (childRight != null) {
-				if (!childRight.grow(supply)) { childKill (childRight); }
+				if (!childRight.grow(supply)) { 
+//					System.out.println("--- ID: "+ id +" | Element.grow: Right ---");
+					childKill (childRight); }
 			}
 		}
 		else {
@@ -486,33 +495,44 @@ public class Element {
 	
 	// kill specific child
 	public void childKill(Element childToKill) {
-		if (childLeft.equals(childToKill)) {
+//		System.out.println("--- ID: "+ id +" | Element.childKill ---");
+		if (childLeft != null && childLeft.equals(childToKill)) {
+//			System.out.println("--- ID: "+ id +" | Element.childKill: Left ---");
 			childLeft.childKill();
 			childLeft = null;
+//			System.out.println("--- ID: "+ id +" | Element.childKill: Left_killed ---");
 		}
-		if (childCenter.equals(childToKill)) {
+		if (childCenter != null && childCenter.equals(childToKill)) {
+//			System.out.println("--- ID: "+ id +" | Element.childKill: Center ---");
 			childCenter.childKill();
 			childCenter = null;
+//			System.out.println("--- ID: "+ id +" | Element.childKill: Center_killed ---");
 		}
-		if (childRight.equals(childToKill)) {
+		if (childRight != null && childRight.equals(childToKill)) {
+//			System.out.println("--- ID: "+ id +" | Element.childKill: Right ---");
 			childRight.childKill();
 			childRight = null;
+//			System.out.println("--- ID: "+ id +" | Element.childKill: Right_killed ---");
 		}
 	}
 	
 	// kill all of them
 	public void childKill() {
+		// System.out.println("--- ID: "+ id +" | Element.childKillAll ---");
 		if (childLeft != null) {
+//			System.out.println("--- ID: "+ id +" | Element.childKillAll: Left ---");
 			childLeft.childKill();
-			childLeft = null;
+			childLeft = null;			
 		}
 		if (childCenter != null) {
+//			System.out.println("--- ID: "+ id +" | Element.childKillAll: Center ---");
 			childCenter.childKill();
 			childCenter = null;
 		}
 		if (childRight != null) {
+//			System.out.println("--- ID: "+ id +" | Element.childKillAll: Right ---");
 			childRight.childKill();
-			childRight = null;
+			childRight = null;			
 		}
 	}
 	

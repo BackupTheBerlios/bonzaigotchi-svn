@@ -20,6 +20,7 @@ public class FileIO {
 	private ByteArrayOutputStream baos;
 	private DataOutputStream dos;
 	
+	private RecordStore rs;
 	private ByteArrayInputStream bais;
 	private DataInputStream dis;
 	
@@ -133,15 +134,13 @@ public class FileIO {
 	public boolean writeDataFinalize() {
 		System.out.println("--- IO WRITE FINALIZE BEGINN ---");
 		
-		RecordStore rs;
-		
 		byte[] record = baos.toByteArray();
 		
 		try {
 			RecordStore.deleteRecordStore(recordName);
-			// System.out.println("--- IO DELETE RECORD ---");
+			System.out.println("--- IO DELETE RECORD ---");
 		} catch (RecordStoreException e) {
-			// System.out.println("--- IO DELETE RECORD ERROR ---");
+			System.out.println("--- IO DELETE RECORD ERROR ---");
 		}
 		
 
@@ -170,7 +169,6 @@ public class FileIO {
 		
 		boolean recordExists = false;
 		
-		RecordStore rs = null;
 		byte[] record = null;
 		
 		String[] recordList = RecordStore.listRecordStores();
@@ -346,9 +344,20 @@ public class FileIO {
 		System.out.println("--- IO READ FINALIZE ---");
 		bais = null;
 		dis = null;
+		try {
+			if (rs != null) {
+				rs.closeRecordStore();
+			}
+		} catch (RecordStoreNotOpenException e) {
+			System.out.println("--- IO RecordStore CLOSED ---");
+			// e.printStackTrace();
+		} catch (RecordStoreException e) {
+			System.out.println("--- IO RecordStore CLOSE ERROR ---");
+//			e.printStackTrace();
+		}
 	}
 	
-	public void deleteRecord () {
+	public void deleteRecord() {
 		try {
 			RecordStore.deleteRecordStore (recordName);
 		} catch (RecordStoreNotFoundException e) {

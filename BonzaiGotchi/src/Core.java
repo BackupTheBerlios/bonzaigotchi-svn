@@ -23,7 +23,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 //TODO:	private ScreenHelp screenHelp;
 
 
-	// Hauptmenï¿½ ist List
+	// Hauptmenü ist List
 	private List mainmenuList;
 	private String[] mainElements; 
 	private Command cmdMSelect;
@@ -59,6 +59,9 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 	// Seal-Menï¿½ Commandos
 	private Command cmdSSeal;
 	private Command cmdSDontSeal;
+	
+	// Dead-Tree Menü Commando
+	private Command cmdDTExit;
 
 
 	private FileIO data;
@@ -110,6 +113,9 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		// Seal-Menï¿½ Commandos
 		cmdSSeal = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 1);
 		cmdSDontSeal = new Command(LangVars.CMD_SELECTED_DONTSEAL, Command.EXIT, 1);
+		
+		// Dead Tree Menü Commando
+		cmdDTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 			
 	}
 	
@@ -122,16 +128,19 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		int check=-1; //wenn resume nicht dabei ist, maximal menueintrï¿½geanzahl minus 1
 
 		short tmpVer=data.readDataInit();
-		System.out.println("!!!! FEHLER HIER ??????");
+		System.out.println("Temporäre Version: "+tmpVer);
 		data.readDataFinalize();
 		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) {  //abfrage RecordStore
+			System.out.println("--- check ---");
 			check=0; //Maximalmenï¿½eintrï¿½ge wieder hergestellt!
 		}
 
 		mainElements = new String[GlobalVars.MAINMENU_LIST_MAX+check]; //anlegen mit oder ohne resume
 		
-		if (check==0) mainElements[i++] = LangVars.CMD_STARTM_RESUME_TREE;
-		
+		if (check==0) {
+			System.out.println("--- addEntry ---");
+			mainElements[i++] = LangVars.CMD_STARTM_RESUME_TREE;
+		}
 		mainElements[i++] = LangVars.CMD_STARTM_NEW_TREE;
 		mainElements[i++] = LangVars.CMD_STARTM_TUTORIAL;
 		mainElements[i++] = LangVars.CMD_STARTM_CREDITS;	
@@ -144,7 +153,8 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 	}
 	
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
-		
+		System.out.println("SYSTEM EXIT! Program shut down!");
+		this.notifyDestroyed();
 
 	}
 	
@@ -324,6 +334,17 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");	
 		
 		}
+		else if (c.equals(cmdDTExit)) {
+			//screenTree.kill();
+			System.out.println("Im cmdDTExit!!");
+			data.deleteRecord();
+			screenTree.kill();
+			screenTree = null;
+			checkResume();
+			mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT, mainElements, null);
+			showMainMenu();	
+			//			doExitToMain();
+		}
 
 	}
 
@@ -343,6 +364,8 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		saveTree();
 		screenTree.kill();
 		screenTree = null;
+		checkResume();
+		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT, mainElements, null);
 		showMainMenu();		
 	}
 
@@ -424,6 +447,12 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		screenTree.addCommand(cmdPBack);
 		
 	}
+	
+	private void showTreeDeadCommand() {
+		clearCommands();
+		screenTree.addCommand(cmdDTExit);
+		
+	}
 
 	protected void loadTree() {
 		
@@ -459,13 +488,16 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 
 	public void receiveFeedback(byte code) {
 		// code: 1x Commands - 11 = treeMenu, 12 = treeDead, 13 = screenInterval; 2x keyEvent - 21 = fireButton
-		
+
+		System.out.println("feedback: "+code);
 		switch (code) {
 			case 11:
 				resetTreeMenu();
 				break;
-			case 12:
-				break;
+			case 12: {
+				showTreeDeadCommand();
+				System.out.println("Im 12er drin!!!!");
+				break; }
 			case 13:
 				break;
 			

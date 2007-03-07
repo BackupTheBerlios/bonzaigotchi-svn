@@ -267,7 +267,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		System.out.println("--- INTERVAL END LOOP ---");
 		this.repaint();
 		
-		if (!threadWaiting) {
+		if (!threadWaiting && log != null) {
 			parent.receiveFeedback((byte)11);
 		}
 		

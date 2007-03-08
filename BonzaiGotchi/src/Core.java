@@ -23,7 +23,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 //TODO:	private ScreenHelp screenHelp;
 
 
-	// Hauptmenü ist List
+	// Hauptmenï¿½ ist List
 	private List mainmenuList;
 	private String[] mainElements; 
 	private Command cmdMSelect;
@@ -60,7 +60,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 	private Command cmdSSeal;
 	private Command cmdSDontSeal;
 	
-	// Dead-Tree Menü Commando
+	// Dead-Tree Menï¿½ Commando
 	private Command cmdDTExit;
 
 
@@ -114,7 +114,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		cmdSSeal = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 1);
 		cmdSDontSeal = new Command(LangVars.CMD_SELECTED_DONTSEAL, Command.EXIT, 1);
 		
-		// Dead Tree Menü Commando
+		// Dead Tree Menï¿½ Commando
 		cmdDTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 			
 	}
@@ -128,7 +128,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		int check=-1; //wenn resume nicht dabei ist, maximal menueintrï¿½geanzahl minus 1
 
 		short tmpVer=data.readDataInit();
-		System.out.println("Temporäre Version: "+tmpVer);
+		System.out.println("Temporï¿½re Version: "+tmpVer);
 		data.readDataFinalize();
 		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) {  //abfrage RecordStore
 			System.out.println("--- check ---");
@@ -185,7 +185,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 				case 1: 	{	//New Tree
 								System.out.println("1 = im New Tree");
 								screenTree = new ScreenTree(this);
-								showTreeMenuCommand(); //TODO kommt weg... weil von Screentree aufgerufen!
+//								showTreeMenuCommand(); //TODO kommt weg... weil von Screentree aufgerufen!
 								Display.getDisplay(this).setCurrent(screenTree);
 								GlobalVars.APPSTATUS = 2;
 								screenTree.interval();
@@ -337,7 +337,6 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		else if (c.equals(cmdDTExit)) {
 			//screenTree.kill();
 			System.out.println("Im cmdDTExit!!");
-			data.deleteRecord();
 			screenTree.kill();
 			screenTree = null;
 			checkResume();
@@ -410,11 +409,11 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 	
 	private void showTreeMenuCommand() {
 		clearCommands();
-		screenTree.addCommand(cmdTResume);
+//		screenTree.addCommand(cmdTResume);
 		screenTree.addCommand(cmdTWater);
 		screenTree.addCommand(cmdTEdit);
 		screenTree.addCommand(cmdTPot);
-		screenTree.addCommand(cmdTExit_Menu);
+//		screenTree.addCommand(cmdTExit_Menu);
 		screenTree.addCommand(cmdTExit);
 
 		screenTree.setCommandListener(this);
@@ -467,12 +466,13 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 			System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer + " ---");
 			screenTree = new ScreenTree(this, data);
 
-			showTreeMenuCommand();
+			clearCommands();
+//			showTreeMenuCommand();
 
 
 			Display.getDisplay(this).setCurrent(screenTree);
 			data.readDataFinalize();
-		}
+		} // TODO: ausgabe + delete Record bzw. spÃ¤ter recordStore konverter
 	
 	
 		
@@ -487,7 +487,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 
 
 	public void receiveFeedback(byte code) {
-		// code: 1x Commands - 11 = treeMenu, 12 = treeDead, 13 = screenInterval; 2x keyEvent - 21 = fireButton
+		// code: 1x Commands - 11 = treeMenu, 12 = treeDead, 13 = screenInterval; 2x keyEvent - 21 = fireButton; 31 = saveTree();
 
 		System.out.println("feedback: "+code);
 		switch (code) {
@@ -495,6 +495,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 				resetTreeMenu();
 				break;
 			case 12: {
+				data.deleteRecord();
 				showTreeDeadCommand();
 				System.out.println("Im 12er drin!!!!");
 				break; }
@@ -506,6 +507,9 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 				 * Ruft das Edit Menï¿½ auf....
 				 * */
 				showEditCommand();
+				break;
+			case 31:
+				saveTree();
 				break;
 		}
 	}

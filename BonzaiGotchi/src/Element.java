@@ -190,7 +190,7 @@ public class Element {
 		
 		// Health
 		waterPercentage = (short)(water * 100 / (demand * 100));
-		System.out.println("--- ID: "+ id +" | waterPercentage: " + waterPercentage + " ---");
+//		System.out.println("--- ID: "+ id +" | waterPercentage: " + waterPercentage + " ---");
 		short tmpHealthInc = 0;
 		
 		for(int i = 0; i < GlobalVars.HEALTH_WATER_THRESHOLD.length; i++) {
@@ -204,7 +204,7 @@ public class Element {
 			health = 100;
 		}
 		
-		System.out.println("--- ID: "+ id +" | Health|HEALTH_INC: " + health + "|" + tmpHealthInc + " ---");
+//		System.out.println("--- ID: "+ id +" | Health|HEALTH_INC: " + health + "|" + tmpHealthInc + " ---");
 		
 		// grow
 		

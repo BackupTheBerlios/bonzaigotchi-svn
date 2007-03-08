@@ -138,9 +138,9 @@ public class FileIO {
 		
 		try {
 			RecordStore.deleteRecordStore(recordName);
-			System.out.println("--- IO DELETE RECORD ---");
+//			System.out.println("--- IO DELETE RECORD ---");
 		} catch (RecordStoreException e) {
-			System.out.println("--- IO DELETE RECORD ERROR ---");
+//			System.out.println("--- IO DELETE RECORD ERROR ---");
 		}
 		
 
@@ -341,7 +341,7 @@ public class FileIO {
 	// just to clear vars
 	// execute when finished reading
 	public void readDataFinalize() {
-		System.out.println("--- IO READ FINALIZE ---");
+		System.out.println("--- IO READ FINALIZE BEGINN ---");
 		bais = null;
 		dis = null;
 		try {
@@ -349,12 +349,13 @@ public class FileIO {
 				rs.closeRecordStore();
 			}
 		} catch (RecordStoreNotOpenException e) {
-			System.out.println("--- IO RecordStore CLOSED ---");
+//			System.out.println("--- IO RecordStore CLOSED ---");
 			// e.printStackTrace();
 		} catch (RecordStoreException e) {
-			System.out.println("--- IO RecordStore CLOSE ERROR ---");
+//			System.out.println("--- IO RecordStore CLOSE ERROR ---");
 //			e.printStackTrace();
 		}
+		System.out.println("--- IO READ FINALIZE END ---");
 	}
 	
 	public void deleteRecord() {

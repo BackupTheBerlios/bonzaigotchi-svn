@@ -89,7 +89,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	protected void paint(Graphics g) {
-		System.out.println("--- ScreenTree.paint BEGINN ---");
+//		System.out.println("--- ScreenTree.paint BEGINN ---");
 //		Empty Screen
 		g.setColor(0xFFFFFF);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
@@ -209,7 +209,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			water = GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100);
 		}		
 			
-		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps + " | " + water + " ---");
+//		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps + " | " + water + " ---");
 		parent.receiveFeedback((byte)11);
 		this.repaint();
 		//animWatering=false;
@@ -256,15 +256,18 @@ public class ScreenTree extends Canvas implements Runnable {
 			}
 			else {
 				logWaterRequest = log.getChildWaterRequest();
-				System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
+//				System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
 			}
-			if (++counterDraw == 1) {
+			if (++counterDraw == 8) {
 					threadWaiting = true;
 					break;
 			}
 
 		}
-		System.out.println("--- INTERVAL END LOOP ---");
+//		System.out.println("--- INTERVAL END LOOP ---");
+		if (log != null) {
+			parent.receiveFeedback((byte)31);
+		}
 		this.repaint();
 		
 		if (!threadWaiting && log != null) {
@@ -313,14 +316,14 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	protected void keyPressed (int keyCode){
-		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
+//		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
 		if (GlobalVars.APPSTATUS == 3 || GlobalVars.APPSTATUS == 4 || GlobalVars.APPSTATUS == 5) {
 			Element tmpElementEdit;
 			byte tmpRelative = 0;
 			
 			switch (keyReceiver) {
 				case 1: 
-					System.out.println("keyreceiver==1");
+//					System.out.println("keyreceiver==1");
 					switch (getGameAction(keyCode)) {
 					
 						case LEFT:
@@ -352,7 +355,7 @@ public class ScreenTree extends Canvas implements Runnable {
 				
 				case 2:
 						
-					System.out.println("keyreceiver==2");
+//					System.out.println("keyreceiver==2");
 					switch (getGameAction(keyCode)) {
 						case LEFT:
 						case DOWN:
@@ -389,7 +392,7 @@ public class ScreenTree extends Canvas implements Runnable {
 					// END CASE 2
 				
 				case 3:
-					System.out.println("keyreceiver==3");
+//					System.out.println("keyreceiver==3");
 					switch (getGameAction(keyCode)) {
 						case LEFT:
 						case DOWN:
@@ -429,19 +432,19 @@ public class ScreenTree extends Canvas implements Runnable {
 		if (GlobalVars.APPSTATUS == 1) {
 		
 			if (getKeyName(keyCode).equals("4")) {
-				System.out.println("--- Key Pressed: CHEATER ---");
+//				System.out.println("--- Key Pressed: CHEATER ---");
 				GlobalVars.COUNTERCHEAT = 25;
 				GlobalVars.APPSTATUS = 2;
 				interval();
 			}
 			if (getKeyName(keyCode).equals("5")) {
-				System.out.println("--- Key Pressed: CHEATER ---");
+//				System.out.println("--- Key Pressed: CHEATER ---");
 				GlobalVars.COUNTERCHEAT = 50;
 				GlobalVars.APPSTATUS = 2;
 				interval();
 			}
 			if (getKeyName(keyCode).equals("6")) {
-				System.out.println("--- Key Pressed: CHEATER ---");
+//				System.out.println("--- Key Pressed: CHEATER ---");
 				GlobalVars.COUNTERCHEAT = 100;
 				GlobalVars.APPSTATUS = 2;
 				interval();

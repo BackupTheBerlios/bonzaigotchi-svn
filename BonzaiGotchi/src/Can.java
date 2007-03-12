@@ -112,7 +112,7 @@ public class Can {
 			
 			//g.drawLine(tmpPosX+i, tmpPosY -(tmpPosY-tmpPosY2)/2+thickness.getInt()/4, tmpPosX-thickness.getInt()/2+i, tmpPosY2-thickness.getInt()/3+thickness.getInt()/4);
 			
-			g.fillTriangle(tmpPosX-thickness.getInt()/2+thickness.getInt()/5,tmpPosY2-thickness.getInt()/3+thickness.getInt()/4,tmpPosX-thickness.getInt()/2-thickness.getInt()/5,tmpPosY2-thickness.getInt()/3+thickness.getInt()/4,tmpPosX-thickness.getInt()/2,tmpPosY2-thickness.getInt()/2+thickness.getInt()/8 );
+			//g.fillTriangle(tmpPosX-thickness.getInt()/2+thickness.getInt()/5,tmpPosY2-thickness.getInt()/3+thickness.getInt()/4,tmpPosX-thickness.getInt()/2-thickness.getInt()/5,tmpPosY2-thickness.getInt()/3+thickness.getInt()/4,tmpPosX-thickness.getInt()/2,tmpPosY2-thickness.getInt()/2+thickness.getInt()/8 );
 			
 			// Draw Gieﬂarm
 			

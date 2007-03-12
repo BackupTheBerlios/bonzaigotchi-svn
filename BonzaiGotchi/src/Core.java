@@ -23,20 +23,18 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 //TODO:	private ScreenHelp screenHelp;
 
 
-	// Hauptmen� ist List
+	// Hauptmenue ist List
 	private List mainmenuList;
 	private String[] mainElements; 
 	private Command cmdMSelect;
 	private Command cmdMExit;
 
 
-	// BaumMen� Commandos
+	// BaumMenue Commandos
 	private Command cmdTResume;
 	private Command cmdTWater;	
 	private Command cmdTEdit;
 	private Command cmdTPot;
-	private Command cmdTExit_Menu;
-	
 	private Command cmdTExit;
 
 	// Water Commandos
@@ -56,11 +54,11 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 	private Command cmdPSelect;
 	private Command cmdPBack;
 	
-	// Seal-Men� Commandos
+	// Seal-Menue Commandos
 	private Command cmdSSeal;
 	private Command cmdSDontSeal;
 	
-	// Dead-Tree Men� Commando
+	// Dead-Tree Menue Commando
 	private Command cmdDTExit;
 
 
@@ -88,8 +86,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		cmdTWater = new Command(LangVars.CMD_TREEMENU_WATER, Command.OK, 1);
 		cmdTEdit = new Command(LangVars.CMD_TREEMENU_EDIT, Command.OK, 1);
 		cmdTPot = new Command(LangVars.CMD_TREEMENU_POT, Command.OK, 1);
-		cmdTExit_Menu = new Command(LangVars.CMD_ALL_EXIT, Command.OK, 2);
-		cmdTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);		//au�erhalb Men�
+		cmdTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);		//auszerhalb Menue
 		
 
 		// Water Commandos
@@ -110,11 +107,11 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		cmdPSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
 		cmdPBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);		
 		
-		// Seal-Men� Commandos
+		// Seal-Menue Commandos
 		cmdSSeal = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 1);
 		cmdSDontSeal = new Command(LangVars.CMD_SELECTED_DONTSEAL, Command.EXIT, 1);
 		
-		// Dead Tree Men� Commando
+		// Dead Tree Menue Commando
 		cmdDTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 			
 	}
@@ -122,17 +119,17 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 
 
 	private void checkResume() {
-		// Hier wird der Array aufgebaut f�r das Men�
+		// Hier wird der Array aufgebaut fuer das Menue
 		
 		int i=0;
-		int check=-1; //wenn resume nicht dabei ist, maximal menueintr�geanzahl minus 1
+		int check=-1; //wenn resume nicht dabei ist, maximal menueintruegeanzahl minus 1
 
 		short tmpVer=data.readDataInit();
-		System.out.println("Tempor�re Version: "+tmpVer);
+		System.out.println("Temporuere Version: "+tmpVer);
 		data.readDataFinalize();
 		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) {  //abfrage RecordStore
 			System.out.println("--- check ---");
-			check=0; //Maximalmen�eintr�ge wieder hergestellt!
+			check=0; //Maximalmenueeintruege wieder hergestellt!
 		}
 
 		mainElements = new String[GlobalVars.MAINMENU_LIST_MAX+check]; //anlegen mit oder ohne resume
@@ -213,9 +210,9 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 			this.notifyDestroyed();
 		} 
 		
-		// BaumMen�
+		// BaumMenue
 		else if (c.equals(cmdTResume)) {
-				// TODO code wenn auf Return im TreeMen� gedr�ckt wurde
+				// TODO code wenn auf Return im TreeMenue gedrueckt wurde
 			GlobalVars.APPSTATUS = 1;
 
 				
@@ -247,9 +244,6 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 			
 		}
 		
-		else if (c.equals(cmdTExit_Menu)) {
-			doExitToMain();
-		}
 		
 		else if (c.equals(cmdTExit)) {
 			doExitToMain();
@@ -290,7 +284,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		
 		else if (c.equals(cmdEDung)) {
 			// TODO: The Dung
-			System.out.println("Hier kommt das D�ngen herein!!");
+			System.out.println("Hier kommt das Duengen herein!!");
 		
 		}
 		
@@ -376,7 +370,6 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 		screenTree.removeCommand(cmdTResume);
 		screenTree.removeCommand(cmdTWater);
 		screenTree.removeCommand(cmdTPot);
-		screenTree.removeCommand(cmdTExit_Menu);
 		screenTree.removeCommand(cmdTExit);
 
 		screenTree.removeCommand(cmdWSelect);
@@ -399,7 +392,8 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 	
 	private void showMainMenu() {
 		GlobalVars.APPSTATUS = 1;
-		mainmenuList.setSelectCommand(cmdMSelect);
+		//mainmenuList.setSelectCommand(cmdMSelect);
+		mainmenuList.addCommand(cmdMSelect);
 		mainmenuList.addCommand(cmdMExit);
 		mainmenuList.setCommandListener(this);
 		Display.getDisplay(this).setCurrent(mainmenuList);
@@ -409,11 +403,10 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 	
 	private void showTreeMenuCommand() {
 		clearCommands();
-//		screenTree.addCommand(cmdTResume);
+		screenTree.addCommand(cmdTResume);
 		screenTree.addCommand(cmdTWater);
 		screenTree.addCommand(cmdTEdit);
 		screenTree.addCommand(cmdTPot);
-//		screenTree.addCommand(cmdTExit_Menu);
 		screenTree.addCommand(cmdTExit);
 
 		screenTree.setCommandListener(this);
@@ -472,7 +465,7 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 
 			Display.getDisplay(this).setCurrent(screenTree);
 			data.readDataFinalize();
-		} // TODO: ausgabe + delete Record bzw. später recordStore konverter
+		} // TODO: ausgabe + delete Record bzw. spaeter recordStore konverter
 	
 	
 		
@@ -503,8 +496,8 @@ public class Core extends MIDlet implements CommandListener, ScreenTreeFeedback 
 				break;
 			
 			case 21:
-				/* Wird von aufgerufen wenn "Fire" bet�tigt 
-				 * Ruft das Edit Men� auf....
+				/* Wird von aufgerufen wenn "Fire" betaetigt 
+				 * Ruft das Edit Menue auf....
 				 * */
 				showEditCommand();
 				break;

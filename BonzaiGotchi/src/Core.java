@@ -106,7 +106,7 @@ public class Core extends MIDlet implements CommandListener,
 		cmdSSeal = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 1);
 		cmdSDontSeal = new Command(LangVars.CMD_SELECTED_DONTSEAL,
 				Command.EXIT, 1);
-		cmdSBack = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 2);
+		cmdSBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 2);
 
 		// Dead Tree Menue Commando
 		cmdDTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
@@ -524,7 +524,9 @@ public class Core extends MIDlet implements CommandListener,
 		try {
 			while (true) {
 				Thread.sleep(GlobalVars.GROWTH_INTERVAL);
+				System.out.println("----Thread Interval----");
 				if (GlobalVars.APPSTATUS == 1) {
+					System.out.println("----Thread Interval Appstatus: 1 ----");
 					screenTree.interval();
 				}
 			}

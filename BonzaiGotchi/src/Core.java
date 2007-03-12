@@ -23,51 +23,37 @@ public class Core extends MIDlet implements CommandListener,
 
 	// Hauptmenue ist List
 	private List mainmenuList;
-
 	private String[] mainElements;
-
 	private Command cmdMSelect;
-
 	private Command cmdMExit;
 
 	// BaumMenue Commandos
 	private Command cmdTResume;
-
 	private Command cmdTWater;
-
 	private Command cmdTEdit;
-
 	private Command cmdTPot;
-
 	private Command cmdTExit;
 
 	// Water Commandos
 	private Command cmdWSelect;
-
 	private Command cmdWBack;
 
 	// Edit Commandos
 	private Command cmdECut;
-
 	private Command cmdEExact;
-
 	private Command cmdEColor;
-
 	private Command cmdEDung;
-
 	private Command cmdEBack_Menu;
-
 	private Command cmdEBack;
 
 	// Pot Commandos
 	private Command cmdPSelect;
-
 	private Command cmdPBack;
 
 	// Seal-Menue Commandos
 	private Command cmdSSeal;
-
 	private Command cmdSDontSeal;
+	private Command cmdSBack;
 
 	// Dead-Tree Menue Commando
 	private Command cmdDTExit;
@@ -120,6 +106,7 @@ public class Core extends MIDlet implements CommandListener,
 		cmdSSeal = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 1);
 		cmdSDontSeal = new Command(LangVars.CMD_SELECTED_DONTSEAL,
 				Command.EXIT, 1);
+		cmdSBack = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 2);
 
 		// Dead Tree Menue Commando
 		cmdDTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
@@ -134,7 +121,7 @@ public class Core extends MIDlet implements CommandListener,
 						// menueintruegeanzahl minus 1
 
 		short tmpVer = data.readDataInit();
-		System.out.println("Temporuere Version: " + tmpVer);
+		System.out.println("Temporary Version: " + tmpVer);
 		data.readDataFinalize();
 		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) { // abfrage
 																// RecordStore
@@ -284,7 +271,7 @@ public class Core extends MIDlet implements CommandListener,
 		}
 
 		else if (c.equals(cmdEExact)) {
-			GlobalVars.APPSTATUS = 3;
+			GlobalVars.APPSTATUS = 31;
 			screenTree.editExact();
 			showSealMenu();
 
@@ -334,6 +321,7 @@ public class Core extends MIDlet implements CommandListener,
 			showEditCommand();
 			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
 					+ GlobalVars.APPSTATUS + " ---");
+			
 		} else if (c.equals(cmdSDontSeal)) {
 			GlobalVars.APPSTATUS = 3;
 			screenTree.editCut(false);
@@ -341,6 +329,14 @@ public class Core extends MIDlet implements CommandListener,
 			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
 					+ GlobalVars.APPSTATUS + " ---");
 
+		} else if (c.equals(cmdSBack)) {
+			GlobalVars.APPSTATUS = 3;
+			screenTree.edit(true);
+			showEditCommand();
+			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
+					+ GlobalVars.APPSTATUS + " ---");
+
+			
 		} else if (c.equals(cmdDTExit)) {
 			// screenTree.kill();
 			System.out.println("Im cmdDTExit!!");
@@ -359,6 +355,7 @@ public class Core extends MIDlet implements CommandListener,
 		clearCommands();
 		screenTree.addCommand(cmdSSeal);
 		screenTree.addCommand(cmdSDontSeal);
+		screenTree.addCommand(cmdSBack);
 	}
 
 	public void resetTreeMenu() {
@@ -402,12 +399,13 @@ public class Core extends MIDlet implements CommandListener,
 
 		screenTree.removeCommand(cmdSSeal);
 		screenTree.removeCommand(cmdSDontSeal);
+		screenTree.removeCommand(cmdSBack);
 
 	}
 
 	private void showMainMenu() {
 		GlobalVars.APPSTATUS = 1;
-		// mainmenuList.setSelectCommand(cmdMSelect);
+		// mainmenuList.setSelectCommand(cmdMSelect);  //NICHT MIDP 1.0 fähig
 		mainmenuList.addCommand(cmdMSelect);
 		mainmenuList.addCommand(cmdMExit);
 		mainmenuList.setCommandListener(this);

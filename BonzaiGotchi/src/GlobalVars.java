@@ -24,6 +24,7 @@ public class GlobalVars {
 	
 	public static Element ELEMENTEDIT;
 	public static int EDITEXACTPOS;
+	public static int EDITEXACTLENGTH = 3;
 	
 	public static final int MAINMENU_LIST_MAX = 4;
 	

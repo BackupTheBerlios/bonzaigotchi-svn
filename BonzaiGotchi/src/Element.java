@@ -314,8 +314,7 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
 		if ( GlobalVars.PAINTSTATUS == 1 ||
-			(GlobalVars.PAINTSTATUS == 2 && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) ||
-			(GlobalVars.PAINTSTATUS == 3 && GlobalVars.ELEMENTEDIT.equals(this))) {
+			(GlobalVars.PAINTSTATUS == 2 && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent)))) {
 			// System.out.println("--- ID|PAINTSTATUS: "+ id +" | "+ GlobalVars.PAINTSTATUS +" ---");
 			short tmpPosX = posX;
 			short tmpPosY = posY;
@@ -399,36 +398,65 @@ public class Element {
 				// System.out.println("--- LOOP BEGINN ---");
 				
 				if (n < 0) {
-					if (thickness.getInt() % 2 == 0) {
-						n = 0;
-					}
-					else {
-						n = 1;
-					}
+					if (thickness.getInt() % 2 == 0) { n = 0; }
+					else                             { n = 1; }
 					nIncrement = true;
 				}
-				
-				// System.out.println("--- N: " + n + " ---");
-			
+						
 				g.setColor(MathCalc.colorCombine(outerColor, innerColor, n, (short)(colorSteps - n)));
-
 				
-				if (nIncrement) {
-					n++;
-				}
-				else {
-					n--;
-				}
+				if (nIncrement) { n++; }
+				else            { n--; }
 				
-				if (drawHorizontal) {
-					g.drawLine(tmpPosX + i, tmpPosY, tmpPosX2 + i, tmpPosY2);
-				}
-				else {
-					g.drawLine(tmpPosX, tmpPosY + i, tmpPosX2, tmpPosY2 + i);
-				}
+				if (drawHorizontal) { g.drawLine(tmpPosX + i, tmpPosY, tmpPosX2 + i, tmpPosY2); }
+				else                { g.drawLine(tmpPosX, tmpPosY + i, tmpPosX2, tmpPosY2 + i); }
 				
 				// System.out.println("--- LOOP END ---");			
 			}
+			
+		} // if Appstatus 1 || 2
+		else if (GlobalVars.PAINTSTATUS == 3 && GlobalVars.ELEMENTEDIT.equals(this)) {
+			System.out.println("--- ID: "+ id +" | Element Draw.PS3 ---");
+			short tmpAngle = (short)(angle - 6);
+			if (tmpAngle < 0) {
+				tmpAngle += 24;
+			}			
+			MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
+			tmpPos.multiply(GlobalVars.EDITEXACTPOS);
+			int tmpPosCenterX = posX + tmpPos.getShort();
+			
+			tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[angle].value);
+			tmpPos.multiply(GlobalVars.EDITEXACTPOS);
+			int tmpPosCenterY = posY - tmpPos.getShort();
+			
+			tmpAngle = (short)(tmpAngle - 6);
+			if (tmpAngle < 0) {
+				tmpAngle += 24;
+			}
+			
+			tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
+			tmpPos.multiply(GlobalVars.EDITEXACTLENGTH + thickness.getInt() / 2);
+			int tmpPosX = tmpPosCenterX + tmpPos.getShort();
+			
+			tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
+			tmpPos.multiply((GlobalVars.EDITEXACTLENGTH + thickness.getInt() / 2) * -1);
+			int tmpPosX2 = tmpPosCenterX + tmpPos.getShort();
+			
+			tmpAngle = (short)(angle - 6);
+			if (tmpAngle < 0) {
+				tmpAngle += 24;
+			}
+			
+			tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
+			tmpPos.multiply(GlobalVars.EDITEXACTLENGTH + thickness.getInt() / 2);
+			int tmpPosY = tmpPosCenterY - tmpPos.getShort();
+			
+			tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
+			tmpPos.multiply((GlobalVars.EDITEXACTLENGTH + thickness.getInt() / 2) * -1 );
+			int tmpPosY2 = tmpPosCenterY - tmpPos.getShort();
+			
+			g.setColor(GlobalVars.COLOR_ELEMENT_EDIT_INNER);
+			g.drawLine(tmpPosX, tmpPosY, tmpPosX2, tmpPosY2);
 			
 		}
 		

@@ -119,7 +119,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		else {
 			System.out.println("--- ScreenTree.paint NOLOG ---");
 			g.setColor(0x555555);
-			g.drawString("Your tree died a slowly and painfull death", 0,0,0);
+			g.drawString(LangVars.DIE_MESSAGE, 0,0,0);
 		}
 			
 	}
@@ -235,6 +235,8 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 
 	public void run() {
+		
+		//TODO: Wurzeln; Krankheit durch Wasser; 
 		int counterDraw = 0;
 		int supply;
 
@@ -243,7 +245,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			System.out.println("--- INTERVAL|CHEATER: " + ++GlobalVars.COUNTERINTERVAL + " | " + GlobalVars.COUNTERCHEAT + " ---");
 //			System.out.println("--- TIME:" + ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) + " ---");
 			
-			GlobalVars.TIME_STAMP.setTime(GlobalVars.TIME_STAMP.getTime() + 10000);
+			GlobalVars.TIME_STAMP.setTime(GlobalVars.TIME_STAMP.getTime() + GlobalVars.GROWTH_INTERVAL);
 			
 			supply = Math.min(water, logWaterRequest);
 			water -= supply;

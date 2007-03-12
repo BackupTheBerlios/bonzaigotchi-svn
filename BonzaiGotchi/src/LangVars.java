@@ -33,6 +33,8 @@ public class LangVars {
 	public final static String CMD_SELECTED_SEAL = "Seal";
 	public final static String CMD_SELECTED_DONTSEAL = "Don't Seal";
 	
+	public static final String DIE_MESSAGE = "Your tree died a slowly and painfull death";
+	
 	
 	/* keine Verwendung! Nur Stringarray testing! Hier kommt noch die Funktion zum Auslesen
 	 * des lang.conf Datei wegen verschiedener Sprachen

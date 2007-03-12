@@ -8,6 +8,7 @@
 // 2006-12-19 updated by chappy
 //            altered GROWTH_WATER* TO REQUEST_WATER*
 // 2007-01-30 new Array-length for Menue-entries by fiips
+// 2007-03-12 GROWTH_INTERVAL implementiert, damit automatisch upgedated wird
 
 import java.util.Date;
 import java.util.Random;
@@ -15,7 +16,7 @@ import java.util.Random;
 
 public class GlobalVars {
 	
-	// 0 = init, 1 = standBy, 2 = running, 3 = edit, 4 = watering, 5 = potChange
+	// 0 = init, 1 = standBy, 2 = running, 3 = edit, 31 = edit exact, 4 = watering, 5 = potChange
 	public static int APPSTATUS = 0;
 	
 	// 0 = void, 1 = normal, 2 = edit, 3 = selectBranch
@@ -28,6 +29,8 @@ public class GlobalVars {
 	public static int COUNTERELEMENT = 0;
 	public static int COUNTERINTERVAL = 0;
 	public static int COUNTERCHEAT = 0;
+	
+	public static int GROWTH_INTERVAL = 10000;
 	
 	public final static int POT_WATER_INIT = 200000;
 	public final static int[] POT_SIZE = {300000,1000000,9000000};

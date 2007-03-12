@@ -39,7 +39,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private int canValue;
 	private int canSteps;
 	
-	// 0 = parent, 1 = EditElement, 2 = Can, 3 = Pot
+	// 0 = parent, 1 = EditElement, 2 = Can, 3 = Pot, 4
 	private int keyReceiver;
 	
 	// Thread
@@ -102,8 +102,14 @@ public class ScreenTree extends Canvas implements Runnable {
 					
 			drawPot(g);
 				
-			if (GlobalVars.APPSTATUS == 3) {
+			if (GlobalVars.APPSTATUS == 3 || GlobalVars.APPSTATUS == 31) {
 				GlobalVars.PAINTSTATUS = 2;
+				log.draw(g);
+				GlobalVars.PAINTSTATUS = 0;
+			}
+			
+			if (GlobalVars.APPSTATUS == 31) {
+				GlobalVars.PAINTSTATUS = 3;
 				log.draw(g);
 				GlobalVars.PAINTSTATUS = 0;
 			}
@@ -309,13 +315,17 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	public void editExact() {
-		
+		keyReceiver = 4;
+		GlobalVars.EDITEXACTPOS = 0;
 	}
 	
 	public void editCut(boolean seal) {
+		GlobalVars.ELEMENTEDIT.childKill();
+//		GlobalVars.ELEMENTEDIT.setSize();
 		// kill children and set to new length
 		// set growthStop = seal
 	}
+
 	
 	protected void keyPressed (int keyCode){
 //		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
@@ -425,6 +435,21 @@ public class ScreenTree extends Canvas implements Runnable {
 					}
 					break;
 					// END CASE 3
+					
+				case 4:
+					switch (getGameAction(keyCode)) {
+						case LEFT:
+						case DOWN:
+							GlobalVars.EDITEXACTPOS--;
+							this.repaint();
+							break;
+						case RIGHT:
+						case UP:
+							GlobalVars.EDITEXACTPOS++;
+							this.repaint();
+							break;
+					}
+					break;
 					
 			} // END SWITCH
 			

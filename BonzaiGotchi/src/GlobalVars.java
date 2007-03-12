@@ -23,6 +23,7 @@ public class GlobalVars {
 	public static int PAINTSTATUS = 0;
 	
 	public static Element ELEMENTEDIT;
+	public static int EDITEXACTPOS;
 	
 	public static final int MAINMENU_LIST_MAX = 4;
 	

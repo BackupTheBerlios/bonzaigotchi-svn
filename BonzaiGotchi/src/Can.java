@@ -70,6 +70,84 @@ public class Can {
 			}
 			boolean nIncrement = false;
 			
+			
+			// Draw Henkel
+			
+			
+			for(int i=0;i<thickness.getInt()/6;i++){
+				
+				if (n < 0) {
+					if (thickness.getInt() % 2 == 0) {
+						n = 0;
+					}
+					else {
+						n = 1;
+					}
+					nIncrement = true;
+				}
+				
+				// System.out.println("--- N: " + n + " ---");
+
+				g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_CAN_OUTER, GlobalVars.COLOR_CAN_INNER, n, (short)(colorSteps - n)));
+									
+				if (nIncrement) {
+					n++;
+				}
+				else {
+					n--;
+				}
+				
+			g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_CAN_OUTER, GlobalVars.COLOR_CAN_INNER, n, (short)(colorSteps - n)));
+					
+				
+			g.drawLine(tmpPosX2+thickness.getInt(), tmpPosY2 -(tmpPosY2-tmpPosY)-thickness.getInt()/3-i, tmpPosX+thickness.getInt()+thickness.getInt()/3, tmpPosY2 -(tmpPosY2-tmpPosY)-thickness.getInt()/3-i);
+			g.drawLine(tmpPosX2+thickness.getInt(), tmpPosY2 -(tmpPosY2-tmpPosY)-thickness.getInt()/2-thickness.getInt()/3+i, tmpPosX+thickness.getInt()+thickness.getInt()/3, tmpPosY2 -(tmpPosY2-tmpPosY)-thickness.getInt()/2-thickness.getInt()/3+i);
+			
+			g.drawLine(tmpPosX+thickness.getInt()+thickness.getInt()/3+i, tmpPosY2 -(tmpPosY2-tmpPosY)-thickness.getInt()/2-thickness.getInt()/3,tmpPosX+thickness.getInt()+thickness.getInt()/3+i, tmpPosY2 -(tmpPosY2-tmpPosY)-thickness.getInt()/3);
+			//g.drawLine(tmpPosX+i, tmpPosY -(tmpPosY-tmpPosY2)/2, tmpPosX-thickness.getInt()/2+i, tmpPosY2-thickness.getInt()/3);
+			//g.drawLine(tmpPosX+i, tmpPosY -(tmpPosY-tmpPosY2)/2, tmpPosX-thickness.getInt()/2+i, tmpPosY2-thickness.getInt()/3);
+			}
+			
+			// Draw Gießkopf
+			
+			//g.drawLine(tmpPosX+i, tmpPosY -(tmpPosY-tmpPosY2)/2+thickness.getInt()/4, tmpPosX-thickness.getInt()/2+i, tmpPosY2-thickness.getInt()/3+thickness.getInt()/4);
+			
+			g.fillTriangle(tmpPosX-thickness.getInt()/2+thickness.getInt()/5,tmpPosY2-thickness.getInt()/3+thickness.getInt()/4,tmpPosX-thickness.getInt()/2-thickness.getInt()/5,tmpPosY2-thickness.getInt()/3+thickness.getInt()/4,tmpPosX-thickness.getInt()/2,tmpPosY2-thickness.getInt()/2+thickness.getInt()/8 );
+			
+			// Draw Gießarm
+			
+			for (int i = 0; i< (thickness.getInt()/5); i++)
+			{
+			if (n < 0) {
+				if (thickness.getInt() % 2 == 0) {
+					n = 0;
+				}
+				else {
+					n = 1;
+				}
+				nIncrement = true;
+			}
+			
+			// System.out.println("--- N: " + n + " ---");
+
+			g.setColor(MathCalc.colorCombine(GlobalVars.COLOR_CAN_OUTER, GlobalVars.COLOR_CAN_INNER, n, (short)(colorSteps - n)));
+								
+			if (nIncrement) {
+				n++;
+			}
+			else {
+				n--;
+			}
+			
+			if (!drawHorizontal) {
+				//g.drawLine(tmpPosX2, tmpPosY2 - i-(tmpPosY2-tmpPosY)/2, tmpPosX + i-(tmpPosX2-tmpPosX)/2, tmpPosY);
+				
+			}
+			else {
+				g.drawLine(tmpPosX+i, tmpPosY -(tmpPosY-tmpPosY2)/2+thickness.getInt()/4, tmpPosX-thickness.getInt()/2+i, tmpPosY2-thickness.getInt()/3+thickness.getInt()/4);
+			}
+			}
+			
 			for (int i = 0; i < thickness.getInt(); i++) {
 				// System.out.println("--- LOOP BEGINN ---");
 				
@@ -103,7 +181,9 @@ public class Can {
 				
 				// System.out.println("--- LOOP END ---");			
 			}
-									
+			
+			
+			
 			// System.out.println("--- ID: "+ id +" | Element Draw END ---");
 		}
 		

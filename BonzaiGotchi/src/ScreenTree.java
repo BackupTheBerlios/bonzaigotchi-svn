@@ -43,7 +43,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private int keyReceiver;
 	
 	// Thread
-	private Thread threadInterval;
+	public Thread threadInterval;
 	private boolean threadRun = false;
 	private boolean threadWaiting = false;
 	
@@ -123,7 +123,6 @@ public class ScreenTree extends Canvas implements Runnable {
 			}
 		}
 		else {
-			System.out.println("--- ScreenTree.paint NOLOG ---");
 			g.setColor(0x555555);
 			g.drawString(LangVars.DIE_MESSAGE, 0,0,0);
 		}
@@ -247,9 +246,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		int supply;
 
 		// anfangsstart
-		while (log != null && --GlobalVars.COUNTERCHEAT > 0 || (((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) > 0 && GlobalVars.APPSTATUS == 2)) {		
+		while ((log != null && GlobalVars.APPSTATUS == 2) && (GlobalVars.COUNTERCHEAT > 0 || ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) > 0)) {		
 			System.out.println("--- INTERVAL|CHEATER: " + ++GlobalVars.COUNTERINTERVAL + " | " + GlobalVars.COUNTERCHEAT + " ---");
 //			System.out.println("--- TIME:" + ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) + " ---");
+			--GlobalVars.COUNTERCHEAT;
 			
 			GlobalVars.TIME_STAMP.setTime(GlobalVars.TIME_STAMP.getTime() + GlobalVars.GROWTH_INTERVAL);
 			
@@ -281,7 +281,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		if (!threadWaiting && log != null) {
 			parent.receiveFeedback((byte)11);
 		}
-		
+
 		
 	}
 	
@@ -439,7 +439,7 @@ public class ScreenTree extends Canvas implements Runnable {
 					// END CASE 3
 					
 				case 4:
-					System.out.println("keyreceiver==4");
+//					System.out.println("keyreceiver==4");
 					switch (getGameAction(keyCode)) {
 						case LEFT:
 						case DOWN:
@@ -465,18 +465,21 @@ public class ScreenTree extends Canvas implements Runnable {
 //				System.out.println("--- Key Pressed: CHEATER ---");
 				GlobalVars.COUNTERCHEAT = 25;
 				GlobalVars.APPSTATUS = 2;
+				parent.receiveFeedback((byte)10);
 				interval();
 			}
 			if (getKeyName(keyCode).equals("5")) {
 //				System.out.println("--- Key Pressed: CHEATER ---");
 				GlobalVars.COUNTERCHEAT = 50;
 				GlobalVars.APPSTATUS = 2;
+				parent.receiveFeedback((byte)10);
 				interval();
 			}
 			if (getKeyName(keyCode).equals("6")) {
 //				System.out.println("--- Key Pressed: CHEATER ---");
 				GlobalVars.COUNTERCHEAT = 100;
 				GlobalVars.APPSTATUS = 2;
+				parent.receiveFeedback((byte)10);
 				interval();
 			}
 		}

@@ -138,9 +138,9 @@ public class FileIO {
 		
 		try {
 			RecordStore.deleteRecordStore(recordName);
-//			System.out.println("--- IO DELETE RECORD ---");
+			System.out.println("--- IO DELETE RECORD ---");
 		} catch (RecordStoreException e) {
-//			System.out.println("--- IO DELETE RECORD ERROR ---");
+			System.out.println("--- IO DELETE RECORD ERROR ---");
 		}
 		
 

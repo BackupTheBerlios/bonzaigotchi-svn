@@ -146,16 +146,7 @@ public class Element {
 			if (GlobalVars.REQUEST_WATER_THRESHOLD[i] <= waterPercentage) {
 				n = i;
 			}
-		}
-/*		
-		int i = 0;
-		while (GlobalVars.REQUEST_WATER_THRESHOLD[i] <= waterPercentage) {
-			if (++i == GlobalVars.REQUEST_WATER_THRESHOLD.length) { // will be neede if (water = 100%)
-				break;
-			}
-		}
-		i--;
-*/		
+		}	
 		
 		waterRequest = new MathFloat(demand*1000);
 		waterRequest.multiply(GlobalVars.REQUEST_WATER_FACTOR[n]);
@@ -515,8 +506,8 @@ public class Element {
 		if (tmpDemand < 0) {
 			tmpDemand = 0;
 		}
-		else if (tmpDemand > 29) {
-			tmpDemand = 29;
+		else if (tmpDemand >= GlobalVars.GROWTH_WATER_DEMAND.length) {
+			tmpDemand = GlobalVars.GROWTH_WATER_DEMAND.length - 1;
 		}
 		return GlobalVars.GROWTH_WATER_DEMAND[tmpDemand];
 	}

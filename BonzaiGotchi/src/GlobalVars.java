@@ -60,7 +60,7 @@ public class GlobalVars {
 	public final static short SPAWN_CHANCE = 30;
 	public final static int SPAWN_WATER_CHILD = 10000;
 	
-	public final static short[] REQUEST_WATER_THRESHOLD = {25,50,75,95,100};
+	public final static short[] REQUEST_WATER_THRESHOLD =  {                 25,                   50,                  75,                  95,                 100};
 	public final static MathFloat[] REQUEST_WATER_FACTOR = {new MathFloat(3000), new MathFloat (2000), new MathFloat(1500), new MathFloat(1100), new MathFloat(1000)};
 
 	public final static int CAN_LENGTH_INIT = 10000;

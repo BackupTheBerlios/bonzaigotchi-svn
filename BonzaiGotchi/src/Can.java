@@ -110,9 +110,17 @@ public class Can {
 			
 			// Draw Gieﬂkopf
 			
-			//g.drawLine(tmpPosX+i, tmpPosY -(tmpPosY-tmpPosY2)/2+thickness.getInt()/4, tmpPosX-thickness.getInt()/2+i, tmpPosY2-thickness.getInt()/3+thickness.getInt()/4);
 			
+			///////////////////////// Mein Dreieck ////////////////////////
+			//
 			//g.fillTriangle(tmpPosX-thickness.getInt()/2+thickness.getInt()/5,tmpPosY2-thickness.getInt()/3+thickness.getInt()/4,tmpPosX-thickness.getInt()/2-thickness.getInt()/5,tmpPosY2-thickness.getInt()/3+thickness.getInt()/4,tmpPosX-thickness.getInt()/2,tmpPosY2-thickness.getInt()/2+thickness.getInt()/8 );
+			//
+			///////////////////////////////////////////////////////////////
+			///////////////////////// Dreieckslinien //////////////////////
+			//g.drawLine(tmpPosX-thickness.getInt()/2+thickness.getInt()/5 , tmpPosY2-thickness.getInt()/3+thickness.getInt()/3, tmpPosX-thickness.getInt()/2-thickness.getInt()/5,tmpPosY2-thickness.getInt()/3+thickness.getInt()/4);
+			//g.drawLine(tmpPosX-thickness.getInt()/2+thickness.getInt()/5 , tmpPosY2-thickness.getInt()/3+thickness.getInt()/4,tmpPosX-thickness.getInt()/2,tmpPosY2-thickness.getInt()/2+thickness.getInt()/8  );
+			///////////////////////////////////////////////////////////////
+			
 			
 			// Draw Gieﬂarm
 			

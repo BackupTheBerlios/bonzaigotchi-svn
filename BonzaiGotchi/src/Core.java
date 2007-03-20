@@ -13,8 +13,7 @@ import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
-public class Core extends MIDlet implements CommandListener,
-		ScreenTreeFeedback, Runnable {
+public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Runnable {
 
 	private ScreenTree screenTree;
 
@@ -30,46 +29,9 @@ public class Core extends MIDlet implements CommandListener,
 
 	private Command cmdMExit;
 
-	// BaumMenue Commandos
-	private Command cmdTResume;
-
-	private Command cmdTWater;
-
-	private Command cmdTEdit;
-
-	private Command cmdTPot;
-
+	private Command cmdTMenu;
+	private Command cmdTBack;
 	private Command cmdTExit;
-
-	// Water Commandos
-	private Command cmdWSelect;
-
-	private Command cmdWBack;
-
-	// Edit Commandos
-	private Command cmdECut;
-
-	private Command cmdEExact;
-
-	private Command cmdEColor;
-
-	private Command cmdEDung;
-
-	private Command cmdEBack_Menu;
-
-	private Command cmdEBack;
-
-	// Pot Commandos
-	private Command cmdPSelect;
-
-	private Command cmdPBack;
-
-	// Seal-Menue Commandos
-	private Command cmdSSeal;
-
-	private Command cmdSDontSeal;
-
-	private Command cmdSBack;
 
 	// Dead-Tree Menue Commando
 	private Command cmdDTExit;
@@ -90,42 +52,14 @@ public class Core extends MIDlet implements CommandListener,
 		checkResume(); // Array bauen fuer Liste
 
 		// Hauptmenue Commandos
-		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT,
-				mainElements, null);
+		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT, mainElements, null);
 		cmdMSelect = new Command(LangVars.CMD_ALL_SELECT, Command.ITEM, 2);
 		cmdMExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 		showMainMenu();
 
-		// BaumMenue Commandos
-		cmdTResume = new Command(LangVars.CMD_TREEMENU_RETURN, Command.OK, 1);
-		cmdTWater = new Command(LangVars.CMD_TREEMENU_WATER, Command.OK, 1);
-		cmdTEdit = new Command(LangVars.CMD_TREEMENU_EDIT, Command.OK, 1);
-		cmdTPot = new Command(LangVars.CMD_TREEMENU_POT, Command.OK, 1);
-		cmdTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1); // auszerhalb
-		// Menue
-
-		// Water Commandos
-		cmdWSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
-		cmdWBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);
-
-		// Edit Commandos
-		cmdECut = new Command(LangVars.CMD_SELBRANCH_CUT, Command.OK, 2);
-		cmdEExact = new Command(LangVars.CMD_SELBRANCH_EXACTCUT, Command.OK, 3);
-		cmdEColor = new Command(LangVars.CMD_SELBRANCH_COLOR, Command.OK, 4);
-		cmdEDung = new Command(LangVars.CMD_SELBRANCH_DUNG, Command.OK, 5);
-		cmdEBack_Menu = new Command(LangVars.CMD_ALL_BACK, Command.OK, 6);
-
-		cmdEBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);
-
-		// Pot Commandos
-		cmdPSelect = new Command(LangVars.CMD_ALL_SELECT, Command.OK, 1);
-		cmdPBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);
-
-		// Seal-Menue Commandos
-		cmdSSeal = new Command(LangVars.CMD_SELECTED_SEAL, Command.OK, 1);
-		cmdSDontSeal = new Command(LangVars.CMD_SELECTED_DONTSEAL,
-				Command.EXIT, 1);
-		cmdSBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 2);
+		cmdTMenu = new Command(LangVars.CMD_TREEMENU_MENU, Command.OK, 1);
+		cmdTBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);
+		cmdTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 
 		// Dead Tree Menue Commando
 		cmdDTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
@@ -233,126 +167,19 @@ public class Core extends MIDlet implements CommandListener,
 		}
 
 		// BaumMenue
-		else if (c.equals(cmdTResume)) {
-			// TODO code wenn auf Return im TreeMenue gedrueckt wurde
-			GlobalVars.APPSTATUS = 1;
-
-		} else if (c.equals(cmdTWater)) {
-			GlobalVars.APPSTATUS = 4;
-			showWaterCommand();
-			screenTree.watering();
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-
-		}
-
-		else if (c.equals(cmdTEdit)) {
-			GlobalVars.APPSTATUS = 3;
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-			showEditCommand();
-			screenTree.edit(false);
-
-		}
-
-		else if (c.equals(cmdTPot)) {
-			GlobalVars.APPSTATUS = 5;
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-			showPotCommand();
-			screenTree.potChange();
-
-		}
 
 		else if (c.equals(cmdTExit)) {
 			doExitToMain();
 		}
+		
+		else if (c.equals(cmdTMenu)) {
+			screenTree.menuShow();
+			showTreeMenuMenuActive();
+		}
 
-		else if (c.equals(cmdWSelect)) {
-			screenTree.wateringAction();
+		else if (c.equals(cmdTBack)) {
 			GlobalVars.APPSTATUS = 1;
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-		}
-
-		else if (c.equals(cmdWBack)) {
-			GlobalVars.APPSTATUS = 1;
-			showTreeMenuCommand();
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-		}
-
-		else if (c.equals(cmdECut)) {
-			GlobalVars.APPSTATUS = 3;
-			screenTree.editKill();
-			screenTree.edit(true);
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-		}
-
-		else if (c.equals(cmdEExact)) {
-			GlobalVars.APPSTATUS = 31;
-			screenTree.editExact();
-			showSealMenu();
-
-		}
-
-		else if (c.equals(cmdEColor)) {
-			// TODO: The Coloring
-			System.out.println("Hier kommt das Coloring herein!!");
-
-		}
-
-		else if (c.equals(cmdEDung)) {
-			// TODO: The Dung
-			System.out.println("Hier kommt das Duengen herein!!");
-
-		}
-
-		// HIER CUTBRANCH USW
-		else if (c.equals(cmdEBack_Menu)) {
-			// showEditCommand();
-			// screenTree.edit(true);
-		}
-
-		else if (c.equals(cmdEBack)) {
-			resetTreeMenu();
-			screenTree.repaint();
-		}
-
-		else if (c.equals(cmdPSelect)) {
-			screenTree.potChangeAction();
-			GlobalVars.APPSTATUS = 1;
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-		}
-
-		else if (c.equals(cmdPBack)) {
-			GlobalVars.APPSTATUS = 1;
-			showTreeMenuCommand();
-			screenTree.setCommandListener(this);
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-		}
-
-		else if (c.equals(cmdSSeal)) {
-			GlobalVars.APPSTATUS = 3;
-			screenTree.editCut(true);
-			showEditCommand();
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-
-		} else if (c.equals(cmdSDontSeal)) {
-			GlobalVars.APPSTATUS = 3;
-			screenTree.editCut(false);
-			showEditCommand();
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
-
-		} else if (c.equals(cmdSBack)) {
-			GlobalVars.APPSTATUS = 3;
-			screenTree.edit(true);
-			showEditCommand();
+			screenTree.receiveBack();
 			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
 					+ GlobalVars.APPSTATUS + " ---");
 
@@ -370,12 +197,6 @@ public class Core extends MIDlet implements CommandListener,
 
 	}
 
-	private void showSealMenu() {
-		clearCommands();
-		screenTree.addCommand(cmdSSeal);
-		screenTree.addCommand(cmdSDontSeal);
-		screenTree.addCommand(cmdSBack);
-	}
 
 	public void resetTreeMenu() {
 		GlobalVars.APPSTATUS = 1;
@@ -396,34 +217,15 @@ public class Core extends MIDlet implements CommandListener,
 		screenTree.removeCommand(cmdMSelect);
 		screenTree.removeCommand(cmdMExit);
 
-		screenTree.removeCommand(cmdTEdit);
-		screenTree.removeCommand(cmdTResume);
-		screenTree.removeCommand(cmdTWater);
-		screenTree.removeCommand(cmdTPot);
+		screenTree.removeCommand(cmdTMenu);
+		screenTree.removeCommand(cmdTBack);
 		screenTree.removeCommand(cmdTExit);
-
-		screenTree.removeCommand(cmdWSelect);
-		screenTree.removeCommand(cmdWBack);
-
-		screenTree.removeCommand(cmdECut);
-		screenTree.removeCommand(cmdEExact);
-		screenTree.removeCommand(cmdEColor);
-		screenTree.removeCommand(cmdEDung);
-		screenTree.removeCommand(cmdEBack_Menu);
-		screenTree.removeCommand(cmdEBack);
-
-		screenTree.removeCommand(cmdPSelect);
-		screenTree.removeCommand(cmdPBack);
-
-		screenTree.removeCommand(cmdSSeal);
-		screenTree.removeCommand(cmdSDontSeal);
-		screenTree.removeCommand(cmdSBack);
-
+		screenTree.removeCommand(cmdDTExit);
 	}
 
 	private void showMainMenu() {
 		GlobalVars.APPSTATUS = 1;
-		// mainmenuList.setSelectCommand(cmdMSelect); //NICHT MIDP 1.0 fähig
+		// mainmenuList.setSelectCommand(cmdMSelect); //NICHT MIDP 1.0 fï¿½hig
 		mainmenuList.addCommand(cmdMSelect);
 		mainmenuList.addCommand(cmdMExit);
 		mainmenuList.setCommandListener(this);
@@ -434,41 +236,18 @@ public class Core extends MIDlet implements CommandListener,
 
 	private void showTreeMenuCommand() {
 		clearCommands();
-		screenTree.addCommand(cmdTResume);
-		screenTree.addCommand(cmdTWater);
-		screenTree.addCommand(cmdTEdit);
-		screenTree.addCommand(cmdTPot);
+		screenTree.addCommand(cmdTMenu);
 		screenTree.addCommand(cmdTExit);
 
 		screenTree.setCommandListener(this);
 	}
-
-	private void showWaterCommand() {
+	
+	private void showTreeMenuMenuActive() {
 		clearCommands();
-//		System.out.println("Im show Water command");
-		screenTree.addCommand(cmdWSelect);
-		screenTree.addCommand(cmdWBack);
-
+		screenTree.addCommand(cmdTBack);
+		screenTree.addCommand(cmdTExit);
 	}
 
-	private void showEditCommand() {
-		clearCommands();
-		screenTree.addCommand(cmdECut);
-		screenTree.addCommand(cmdEExact);
-		screenTree.addCommand(cmdEColor);
-		screenTree.addCommand(cmdEDung);
-		screenTree.addCommand(cmdEBack_Menu);
-
-		screenTree.addCommand(cmdEBack);
-
-	}
-
-	private void showPotCommand() {
-		clearCommands();
-		screenTree.addCommand(cmdPSelect);
-		screenTree.addCommand(cmdPBack);
-
-	}
 
 	private void showTreeDeadCommand() {
 		clearCommands();
@@ -534,6 +313,7 @@ public class Core extends MIDlet implements CommandListener,
 			}
 			break;
 		case 12: {
+			GlobalVars.APPSTATUS = 19;
 			data.deleteRecord();
 			showTreeDeadCommand();
 //			System.out.println("Im 12er drin!!!!");
@@ -543,13 +323,6 @@ public class Core extends MIDlet implements CommandListener,
 
 			break;
 
-		case 21:
-			/*
-			 * Wird von aufgerufen wenn "Fire" betaetigt ruft das Edit Menue
-			 * auf....
-			 */
-			showEditCommand();
-			break;
 		case 31:
 			saveTree();
 			//GlobalVars.APPSTATUS=1;

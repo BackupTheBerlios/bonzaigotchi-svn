@@ -16,11 +16,27 @@ import java.util.Random;
 
 public class GlobalVars {
 	
-	// 0 = init, 1 = standBy, 2 = running, 3 = edit, 31 = edit exact, 4 = watering, 5 = potChange
-	public static int APPSTATUS = 0;
+	// 0 = init, 1 = standBy, 11 = menuAktiv, 19 = treeDead, 2 = running, 3 = edit, 31 = edit exact, 4 = watering, 5 = potChange
+	// Dem komfort opfern wir jetzt mal 9 byte ;)
+	public final static byte APPSTATUS_INIT = 0;
+	public final static byte APPSTATUS_STANDBY = 1;
+	public final static byte APPSTATUS_MENU = 11;
+	public final static byte APPSTATUS_TREEDEAD = 19;
+	public final static byte APPSTATUS_RUNNING = 2;
+	public final static byte APPSTATUS_EDIT = 3;
+	public final static byte APPSTATUS_EDITEXACT = 31;
+	public final static byte APPSTATUS_WATERING = 4;
+	public final static byte APPSTATUS_POTCHANGE = 5;
+
+	public static byte APPSTATUS = APPSTATUS_INIT;
 	
 	// 0 = void, 1 = normal, 2 = edit, 3 = selectBranch
-	public static int PAINTSTATUS = 0;
+	public final static byte PAINTSTATUS_VOID = 0;
+	public final static byte PAINTSTATUS_NORMAL = 1;
+	public final static byte PAINTSTATUS_EDIT = 2;
+	public final static byte PAINTSTATUS_SELECTBRANCH = 3;
+	
+	public static byte PAINTSTATUS = 0;
 	
 	public static Element ELEMENTEDIT;
 	public static int EDITEXACTPOS;
@@ -43,7 +59,7 @@ public class GlobalVars {
 	public final static short[] HEALTH_WATER_THRESHOLD = { 10,30,50,60,90,100};
 	public final static short[] HEALTH_WATER_INC =       {-5, -1, 1, 3, 5,  7};
 
-	public final static short WATER_SOCIAL_THRESHOLD = 75; //Prozent drüber
+	public final static short WATER_SOCIAL_THRESHOLD = 75; //Prozent drï¿½ber
 
 	public final static short GROWTH_WATER_MIN = 40;
 	public final static short GROWTH_HEALTH_MIN = 70;
@@ -85,6 +101,20 @@ public class GlobalVars {
 
 	public final static int COLOR_CAN_INNER = 0x496A7D;
 	public final static int COLOR_CAN_OUTER = 0x97A4AD;
+
+	// IMAGE PATHS
+	public final static String MENU_IMG_PATH_WATER = "/watercan20black.png";
+	
+	public final static String MENU_IMG_PATH_EDIT = "/scissors20.png";
+	public final static String MENU_IMG_PATH_EDIT_CUT = "/question20.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT = "/question20.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_SEAL = "/question20.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL = "/question20.png";
+	public final static String MENU_IMG_PATH_EDIT_COLOR = "/question20.png";
+	public final static String MENU_IMG_PATH_EDIT_DUNG = "/question20.png";
+	
+	public final static String MENU_IMG_PATH_POT = "/question20.png";
+	
 	
 	public static Date TIME_STAMP;
 	public final static short VERSION_ID = 001;

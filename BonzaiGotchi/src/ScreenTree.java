@@ -39,18 +39,22 @@ public class ScreenTree extends Canvas implements Runnable {
 	private int canValue;
 	private int canSteps;
 	
-	// 0 = parent, 1 = EditElement, 2 = Can, 3 = Pot, 4 = editExact
+	// 0 = parent, 1 = EditElement, 2 = Can, 3 = Pot, 4 = editExact, 5 = menu
 	private int keyReceiver;
+	
+	private int menuId = -1;
+	private MenuItem[] menu;
+	private int menuItemSelected = 0;
 	
 	// Thread
 	public Thread threadInterval;
-	private boolean threadRun = false;
 	private boolean threadWaiting = false;
 	
-	private boolean animWatering = false;
-	private ScreenTreeFeedback parent;
+	//	private boolean animWatering = false;
 	
-	public ScreenTree(ScreenTreeFeedback tmpParent) {
+	private ReceiveFeedback parent;
+	
+	public ScreenTree(ReceiveFeedback tmpParent) {
 		super();
 		parent = tmpParent;
 
@@ -70,7 +74,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		logWaterRequest = log.getChildWaterRequest();
 	}
 	
-	public ScreenTree(ScreenTreeFeedback tmpParent, FileIO data) {
+	public ScreenTree(ReceiveFeedback tmpParent, FileIO data) {
 		
 		parent = tmpParent;
 				
@@ -88,11 +92,35 @@ public class ScreenTree extends Canvas implements Runnable {
 		can = new Can((short)0,(short)(GlobalVars.DISPLAY_X_WIDTH/2),(short)(GlobalVars.DISPLAY_Y_HEIGHT/2),(short)0);
 	}
 	
+	
 	protected void paint(Graphics g) {
 //		System.out.println("--- ScreenTree.paint BEGINN ---");
-//		Empty Screen
-		g.setColor(0xFFFFFF);
-		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
+
+		g.setFont(Font.getFont(Font.FACE_MONOSPACE,Font.STYLE_PLAIN,Font.SIZE_SMALL));		
+		drawBackground(g);
+		
+		switch (GlobalVars.APPSTATUS) {
+		
+			case GlobalVars.APPSTATUS_EDITEXACT:
+			// los ma wieder durchlafn ;)
+			case GlobalVars.APPSTATUS_MENU:
+				for (int i = 0; i < menu.length; i++) {
+					g.setClip(i * 20, 0, 20, 20);
+					menu[i].draw(g);
+					if (i == menuItemSelected) {
+						g.setColor(0xFF0000);
+						g.fillRect(i * 20, 18, 20, 2);
+						g.setClip(0, 20, 100, 20);
+						g.setColor(0x000000);
+						g.drawString(menu[i].getTitle(), 2, 24, Graphics.TOP|Graphics.LEFT);
+					}
+				}
+				break;
+		
+		}
+		
+		g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
+
 		
 		if (log != null) {
 		
@@ -128,6 +156,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 			
 	}
+	
+	private void drawBackground(Graphics g) {
+		g.setColor(0xFFFFFF);
+		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
+	}
 
 	private void drawWatering(Graphics g) {
 		/* graphic of pot */
@@ -157,7 +190,6 @@ public class ScreenTree extends Canvas implements Runnable {
 		//g.fillRect(x/2+gauge-50,y/2-10,5,20);
 		
 	}
-
 
 	private void drawPot(Graphics g){
 		//		drawing a pot
@@ -197,7 +229,132 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 
 	
-	public void watering(){
+	public void menuShow() {
+		menuShow(0);
+	}
+	
+	private void menuShow(int tmpMenuId) {
+		GlobalVars.APPSTATUS = 11;
+		menuId = tmpMenuId;
+		menuItemSelected = 0;
+		
+		switch (menuId) {
+			// MainMenu
+			case 0:
+				menu = new MenuItem[] {
+					new MenuItem(1, LangVars.CMD_TREEMENU_WATER, GlobalVars.MENU_IMG_PATH_WATER),
+					new MenuItem(2, LangVars.CMD_TREEMENU_EDIT,  GlobalVars.MENU_IMG_PATH_EDIT),
+					new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT)
+				};
+				break;		
+				
+			// Edit
+			case 2:
+				menu = new MenuItem[] {
+					new MenuItem(21, LangVars.CMD_SELBRANCH_CUT,      GlobalVars.MENU_IMG_PATH_EDIT_CUT),
+					new MenuItem(22, LangVars.CMD_SELBRANCH_EXACTCUT, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT),
+					new MenuItem(23, LangVars.CMD_SELBRANCH_COLOR,    GlobalVars.MENU_IMG_PATH_EDIT_COLOR),
+					new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG)
+				};
+				break;
+			
+			case 22:
+				menu = new MenuItem[] {
+						new MenuItem(221, LangVars.CMD_SELECTED_SEAL,     GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL),
+						new MenuItem(222, LangVars.CMD_SELECTED_DONTSEAL, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL)
+					};
+				break;
+		}
+		repaint();
+	}
+	
+	public void receiveBack() {
+		switch (GlobalVars.APPSTATUS) {
+			case 1:
+				if (menuId == 0) {
+					menuHide();
+					parent.receiveFeedback((byte)11);
+				} else {
+					menuShow(menuId / 10);
+				}
+				repaint();
+				break;
+				
+			case 4:
+				GlobalVars.APPSTATUS = 1;
+				repaint();
+				break;
+		}
+
+	}
+	
+	private void menuHide() {
+		GlobalVars.APPSTATUS = 1;
+		menuId = -1;
+		menu = null;
+		menuItemSelected = 0;
+	}
+	
+	private void menuSelect() {
+		switch (menu[menuItemSelected].getMenuId())
+		{
+			case 1:
+				menuHide();
+				GlobalVars.APPSTATUS = 4;
+				watering();
+				break;
+				
+			case 2:
+				menuHide();
+				GlobalVars.APPSTATUS = 3;
+				edit(false);
+				break;
+				
+			case 21:
+				menuHide();
+				GlobalVars.APPSTATUS = 3;
+				editKill();
+				edit(true);
+				break;
+								
+			case 22:
+				// keyreceiver????
+				menuShow(22);
+				GlobalVars.APPSTATUS = 31;
+				editExact();
+				break;
+				
+			case 221:
+				menuHide();
+				GlobalVars.APPSTATUS = 3;
+				editCut(true);
+				break;
+				
+			case 222:
+				menuHide();
+				GlobalVars.APPSTATUS = 3;
+				editCut(false);
+				break;
+								
+			case 23:
+				menuHide();
+				// Coloring -- coming soon ...
+				break;
+				
+			case 24:
+				menuHide();
+				// Dung -- coming soon ...
+				break;
+				
+			case 3:
+				menuHide();
+				GlobalVars.APPSTATUS = 5;
+				potChange();
+				break;
+		}
+	}
+	
+	private void watering(){
 		keyReceiver = 2;
 		canValue = 1;
 		canSteps = (potSize + 1) * 3;	
@@ -207,7 +364,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		this.repaint();
 	}
 
-	public void wateringAction(){
+	private void wateringAction(){
 		water += GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps ;
 
 		if (water > GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100)) {
@@ -220,18 +377,19 @@ public class ScreenTree extends Canvas implements Runnable {
 		//animWatering=false;
 	}
 	
-	public void potChange() {
+	private void potChange() {
 		keyReceiver = 3;
 		this.repaint();
 	}
 	
-	public void potChangeAction() {
+	private void potChangeAction() {
 		if (water > GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100)) {
 			water = GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100);
 		}		
 		parent.receiveFeedback((byte)11);
 		this.repaint();
 	}
+	
 	
 	public void interval() {
 		threadInterval = new Thread(this);
@@ -264,7 +422,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			}
 			else {
 				logWaterRequest = log.getChildWaterRequest();
-//				System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
+				System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
 			}
 			if (++counterDraw == 8) {
 					threadWaiting = true;
@@ -285,13 +443,14 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 	}
 	
-	public void edit(boolean resume) {
+	
+	private void edit(boolean resume) {
 		keyReceiver = 1;
 		if (!resume) { GlobalVars.ELEMENTEDIT = log; }
 		this.repaint();
 	}
 	
-	public void editKill() {
+	private void editKill() {
 		if (GlobalVars.ELEMENTEDIT == log) {
 			if (log != null) {
 				log.childKill();
@@ -314,175 +473,18 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
-	public void editExact() {
+	private void editExact() {
 		System.out.println("EditExact");
 		keyReceiver = 4;
 		GlobalVars.EDITEXACTPOS = GlobalVars.SPAWN_LENGTH_INIT/1000;
 		repaint();
 	}
 	
-	public void editCut(boolean seal) {
+	private void editCut(boolean seal) {
 		GlobalVars.ELEMENTEDIT.childKill();
 //		GlobalVars.ELEMENTEDIT.setSize();
 		// kill children and set to new length
 		// set growthStop = seal
-	}
-
-	
-	protected void keyPressed (int keyCode){
-//		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
-		if (GlobalVars.APPSTATUS == 3 || GlobalVars.APPSTATUS == 4 || GlobalVars.APPSTATUS == 5 || GlobalVars.APPSTATUS == 31) {
-			Element tmpElementEdit;
-			byte tmpRelative = 0;
-			
-			switch (keyReceiver) {
-				case 1: 
-//					System.out.println("keyreceiver==1");
-					switch (getGameAction(keyCode)) {
-					
-						case LEFT:
-							tmpRelative = (byte)1;
-							break;
-						case UP:
-							tmpRelative = (byte)2;
-							break;
-						case RIGHT:
-							tmpRelative = (byte)3;
-							break;
-						case DOWN:
-							tmpRelative = (byte)4;
-							break;
-						case FIRE:
-							parent.receiveFeedback((byte)21);
-							break;
-					}
-					
-					if (tmpRelative > 0) {
-						if ((tmpElementEdit = GlobalVars.ELEMENTEDIT.getRelative(tmpRelative)) != null) {
-							GlobalVars.ELEMENTEDIT = tmpElementEdit;
-							this.repaint();
-						}
-					}
-					
-					break;
-					// END CASE 1
-				
-				case 2:
-						
-//					System.out.println("keyreceiver==2");
-					switch (getGameAction(keyCode)) {
-						case LEFT:
-						case DOWN:
-						
-							canValue--;
-							if (canValue < 1) {
-								canValue = 1;
-							}
-							
-							can.setSize((short)canValue);
-							
-							this.repaint();
-							break;
-							
-						case RIGHT:
-						case UP:
-							
-							canValue++;
-							if (canValue > canSteps) {
-								canValue = canSteps;
-							}
-							
-							can.setSize((short)canValue);
-							
-							this.repaint();
-							break;
-						
-						case FIRE:
-							
-							wateringAction();
-							break;
-					}
-					break;
-					// END CASE 2
-				
-				case 3:
-//					System.out.println("keyreceiver==3");
-					switch (getGameAction(keyCode)) {
-						case LEFT:
-						case DOWN:
-						
-							potSize--;
-							if (potSize < 0) {
-								potSize = 0;
-							}
-							
-							this.repaint();
-							break;
-							
-						case RIGHT:
-						case UP:
-							
-							potSize++;
-							if (potSize > GlobalVars.POT_SIZE.length - 1) {
-								potSize = (byte)(GlobalVars.POT_SIZE.length - 1);
-							}
-												
-							this.repaint();
-							break;
-						
-						case FIRE:
-							
-							potChangeAction();
-							break;
-					}
-					break;
-					// END CASE 3
-					
-				case 4:
-//					System.out.println("keyreceiver==4");
-					switch (getGameAction(keyCode)) {
-						case LEFT:
-						case DOWN:
-							GlobalVars.EDITEXACTPOS--;
-							this.repaint();
-							break;
-						case RIGHT:
-						case UP:
-							GlobalVars.EDITEXACTPOS++;
-							this.repaint();
-							break;
-					}
-					break;
-					
-			} // END SWITCH
-			
-			// System.out.println("--- Key Pressed: "+ tmpRelative +"---");
-		}
-		
-		if (GlobalVars.APPSTATUS == 1) {
-		
-			if (getKeyName(keyCode).equals("4")) {
-//				System.out.println("--- Key Pressed: CHEATER ---");
-				GlobalVars.COUNTERCHEAT = 25;
-				GlobalVars.APPSTATUS = 2;
-				parent.receiveFeedback((byte)10);
-				interval();
-			}
-			if (getKeyName(keyCode).equals("5")) {
-//				System.out.println("--- Key Pressed: CHEATER ---");
-				GlobalVars.COUNTERCHEAT = 50;
-				GlobalVars.APPSTATUS = 2;
-				parent.receiveFeedback((byte)10);
-				interval();
-			}
-			if (getKeyName(keyCode).equals("6")) {
-//				System.out.println("--- Key Pressed: CHEATER ---");
-				GlobalVars.COUNTERCHEAT = 100;
-				GlobalVars.APPSTATUS = 2;
-				parent.receiveFeedback((byte)10);
-				interval();
-			}
-		}
 	}
 	
 	public void kill() {
@@ -492,6 +494,188 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
+	// appStatus
+	// 0 = init, 1 = standBy, 11 = menuAktiv, 2 = running, 3 = edit, 31 = edit exact, 4 = watering, 5 = potChange
+	// keyreceiver
+	// 0 = parent, 1 = EditElement, 2 = Can, 3 = Pot, 4 = editExact, 5 = menu
+	protected void keyPressed (int keyCode){
+//		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
+		
+		switch (GlobalVars.APPSTATUS) {
+		
+			// editExact
+			case 31:
+				switch (getGameAction(keyCode)) {
+					case UP:
+						GlobalVars.EDITEXACTPOS++;
+						this.repaint();
+						break;
+					case DOWN:
+						GlobalVars.EDITEXACTPOS--;
+						this.repaint();
+						break;
+				}
+			// kein Break -- läuft durch, da gleichzeitig menü aktiv sein muss
+				
+			// menu
+			case 11:
+				switch (getGameAction(keyCode)) {
+				
+					case LEFT:
+						menuItemSelected--;
+						if (menuItemSelected < 0) { menuItemSelected = 0; }
+						repaint();
+						break;
+					case RIGHT:
+						menuItemSelected++;
+						if (menuItemSelected > menu.length - 1) { menuItemSelected = menu.length - 1; }
+						repaint();
+						break;
+					case FIRE:
+						menuSelect();
+						break;
+				}
+				System.out.println("menuItemSelected: " + menuItemSelected);
+				break;
+			// END CASE 11
+				
+			// edit
+			case 3:
+				Element tmpElementEdit;
+				byte tmpRelative = 0;
+				
+				switch (getGameAction(keyCode)) {
+				
+					case LEFT:
+						tmpRelative = (byte)1;
+						break;
+					case UP:
+						tmpRelative = (byte)2;
+						break;
+					case RIGHT:
+						tmpRelative = (byte)3;
+						break;
+					case DOWN:
+						tmpRelative = (byte)4;
+						break;
+					case FIRE:
+						menuShow(2);
+						break;
+						
+				}
+			
+				if (tmpRelative > 0) {
+					if ((tmpElementEdit = GlobalVars.ELEMENTEDIT.getRelative(tmpRelative)) != null) {
+						GlobalVars.ELEMENTEDIT = tmpElementEdit;
+						this.repaint();
+					}
+				}
+				
+				break;
+			// END CASE 3
+			
+			// Watering
+			case 4:
+				
+				switch (getGameAction(keyCode)) {
+					case LEFT:
+					case DOWN:
+					
+						canValue--;
+						if (canValue < 1) {
+							canValue = 1;
+						}
+						
+						can.setSize((short)canValue);
+						
+						this.repaint();
+						break;
+						
+					case RIGHT:
+					case UP:
+						
+						canValue++;
+						if (canValue > canSteps) {
+							canValue = canSteps;
+						}
+						
+						can.setSize((short)canValue);
+						
+						this.repaint();
+						break;
+					
+					case FIRE:
+						
+						wateringAction();
+						break;
+				}
+				break;
+			// END CASE 4
+				
+			// Pot
+			case 5:
+
+				switch (getGameAction(keyCode)) {
+					case LEFT:
+					case DOWN:
+					
+						potSize--;
+						if (potSize < 0) {
+							potSize = 0;
+						}
+						
+						this.repaint();
+						break;
+						
+					case RIGHT:
+					case UP:
+						
+						potSize++;
+						if (potSize > GlobalVars.POT_SIZE.length - 1) {
+							potSize = (byte)(GlobalVars.POT_SIZE.length - 1);
+						}
+											
+						this.repaint();
+						break;
+					
+					case FIRE:
+						
+						potChangeAction();
+						break;
+				}
+				break;
+			// END CASE 5
+		
+			// Cheats
+			case 1:
+			
+				if (getKeyName(keyCode).equals("4")) {
+	//				System.out.println("--- Key Pressed: CHEATER ---");
+					GlobalVars.COUNTERCHEAT = 25;
+					GlobalVars.APPSTATUS = 2;
+					parent.receiveFeedback((byte)10);
+					interval();
+				}
+				else if (getKeyName(keyCode).equals("5")) {
+	//				System.out.println("--- Key Pressed: CHEATER ---");
+					GlobalVars.COUNTERCHEAT = 50;
+					GlobalVars.APPSTATUS = 2;
+					parent.receiveFeedback((byte)10);
+					interval();
+				}
+				else if (getKeyName(keyCode).equals("6")) {
+	//				System.out.println("--- Key Pressed: CHEATER ---");
+					GlobalVars.COUNTERCHEAT = 100;
+					GlobalVars.APPSTATUS = 2;
+					parent.receiveFeedback((byte)10);
+					interval();
+				}
+				break;
+			// END CASE 1
+		}
+	}
+	
+
 	public void writeData(FileIO data) {
 		data.writeData(GlobalVars.TIME_STAMP.getTime());
 		data.writeData(GlobalVars.COUNTERINTERVAL);

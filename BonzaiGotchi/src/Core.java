@@ -31,7 +31,6 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 	private Command cmdTMenu;
 	private Command cmdTBack;
-	private Command cmdTExit;
 
 	// Dead-Tree Menue Commando
 	private Command cmdDTExit;
@@ -46,24 +45,18 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		// ScreenMenu screeny = new ScreenMenu();
 		// screeny.initialize();
 
-		// TODO: Thread "Timer" starten, schlaeft bis GLOBALVARSirgendwas;
-		// ueberprueft Appstatus und wenn 1 => resume() sonst schlaf;
-
-		checkResume(); // Array bauen fuer Liste
-
 		// Hauptmenue Commandos
-		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT, mainElements, null);
 		cmdMSelect = new Command(LangVars.CMD_ALL_SELECT, Command.ITEM, 2);
 		cmdMExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
-		showMainMenu();
 
+		// ScreenTree Comandos
 		cmdTMenu = new Command(LangVars.CMD_TREEMENU_MENU, Command.OK, 1);
 		cmdTBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);
-		cmdTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 
 		// Dead Tree Menue Commando
 		cmdDTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
-
+		
+		showMainMenu();
 	}
 
 	private void checkResume() {
@@ -97,17 +90,11 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 	}
 
-	protected void pauseApp() {
-
-	}
+	protected void pauseApp() {}
 
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 		System.out.println("SYSTEM EXIT! Program shut down!");
 		this.notifyDestroyed();
-
-	}
-
-	public void receiveSelect() {
 
 	}
 
@@ -116,33 +103,34 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		if (mainElements.length == GlobalVars.MAINMENU_LIST_MAX) {
 			cori = 0;
 		}
-		;
 
-		if (c == cmdMSelect) // APPSTATUS: 0 = init, 1 = standBy, 2 =
-		// running, 3 = edit, 4 = watering
+		if (c == cmdMSelect)
 		{
 			switch (mainmenuList.getSelectedIndex() + cori) {
 
 			case 0: { // im Resume;
 //				System.out.println("0 = Im Resume");
-				loadTree();
-				GlobalVars.APPSTATUS = 2;
-				Display.getDisplay(this).setCurrent(screenTree);
-				System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-						+ GlobalVars.APPSTATUS + " ---");
-				// showTreeMenuCommand();
-				clearCommands();
-				screenTree.interval();
+				if (loadTree()) {
+					Display.getDisplay(this).setCurrent(screenTree);
+					screenTree.setCommandListener(this);
+					
+					GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_RUNNING;
+					System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
+					screenTree.interval();
+				}
+				else {
+					showMainMenu();
+				}
 				break;
 			}
 			case 1: { // New Tree
 //				System.out.println("1 = im New Tree");
 				screenTree = new ScreenTree(this);
-				// showTreeMenuCommand(); //TODO kommt weg... weil von
-				// Screentree aufgerufen!
+
 				Display.getDisplay(this).setCurrent(screenTree);
-				GlobalVars.APPSTATUS = 2;
-				clearCommands();
+				screenTree.setCommandListener(this);
+				
+				GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_RUNNING;
 				screenTree.interval();
 				break;
 			}
@@ -168,84 +156,60 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 		// BaumMenue
 
-		else if (c.equals(cmdTExit)) {
-			doExitToMain();
-		}
-		
 		else if (c.equals(cmdTMenu)) {
-			screenTree.menuShow();
-			showTreeMenuMenuActive();
+			showTreeMenu();
 		}
 
 		else if (c.equals(cmdTBack)) {
-			GlobalVars.APPSTATUS = 1;
 			screenTree.receiveBack();
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: "
-					+ GlobalVars.APPSTATUS + " ---");
+			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
 
 		} else if (c.equals(cmdDTExit)) {
-			// screenTree.kill();
 //			System.out.println("Im cmdDTExit!!");
-			screenTree.kill();
-			screenTree = null;
-			checkResume();
-			mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT,
-					mainElements, null);
-			showMainMenu();
-			// doExitToMain();
+			doExitToMain();
 		}
-
-	}
-
-
-	public void resetTreeMenu() {
-		GlobalVars.APPSTATUS = 1;
-		showTreeMenuCommand();
 	}
 
 	private void doExitToMain() {
-		saveTree();
+		if (GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_TREEDEAD) {
+			saveTree();
+		}
 		screenTree.kill();
 		screenTree = null;
-		checkResume();
-		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT,
-				mainElements, null);
 		showMainMenu();
 	}
 
 	private void clearCommands() {
-		screenTree.removeCommand(cmdMSelect);
-		screenTree.removeCommand(cmdMExit);
-
 		screenTree.removeCommand(cmdTMenu);
 		screenTree.removeCommand(cmdTBack);
-		screenTree.removeCommand(cmdTExit);
 		screenTree.removeCommand(cmdDTExit);
 	}
 
-	private void showMainMenu() {
-		GlobalVars.APPSTATUS = 1;
+	private void showMainMenu() {		
 		// mainmenuList.setSelectCommand(cmdMSelect); //NICHT MIDP 1.0 f�hig
+		checkResume(); // Array bauen fuer Liste
+		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT, mainElements, null);
+		
 		mainmenuList.addCommand(cmdMSelect);
 		mainmenuList.addCommand(cmdMExit);
+				
 		mainmenuList.setCommandListener(this);
 		Display.getDisplay(this).setCurrent(mainmenuList);
+		
+		GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_MAINMENU;
 		System.out.println("--- MAIN MENUE CREATED ---");
 
 	}
 
-	private void showTreeMenuCommand() {
+	private void showTreeCommands() {
 		clearCommands();
 		screenTree.addCommand(cmdTMenu);
-		screenTree.addCommand(cmdTExit);
-
-		screenTree.setCommandListener(this);
 	}
 	
-	private void showTreeMenuMenuActive() {
+	private void showTreeMenu() {
 		clearCommands();
 		screenTree.addCommand(cmdTBack);
-		screenTree.addCommand(cmdTExit);
+		screenTree.menuShow();
 	}
 
 
@@ -255,80 +219,86 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 	}
 
-	protected void loadTree() {
+	protected boolean loadTree() {
 
 		if (screenTree != null) {
 			screenTree.kill();
 		}
 //		System.out.println("Im load tree");
-		GlobalVars.COUNTERELEMENT = 0;
 
 		short tmpVer = data.readDataInit();
 		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) {
-			System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer
-					+ " ---");
+			System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer	+ " ---");
 			screenTree = new ScreenTree(this, data);
-
-			clearCommands();
-			// showTreeMenuCommand();
-
-			Display.getDisplay(this).setCurrent(screenTree);
 			data.readDataFinalize();
-		} // TODO: ausgabe + delete Record bzw. spaeter recordStore konverter
+			
+			return true;
+		}
+		else {
+			return false;
+		}
+		
+		// TODO: ausgabe + delete Record bzw. spaeter recordStore konverter
 
 	}
 
-	protected void saveTree() {
+	private void saveTree() {
 		data.writeDataInit(GlobalVars.SAVE_RECORDSTORE_VERSION);
 		screenTree.writeData(data);
 		data.writeDataFinalize();
 	}
 
-	public void receiveFeedback(byte code) {
+	public void receiveFeedback(short code) {
 		// code: 1x Commands - 10 = clearMenu, 11 = treeMenu, 12 = treeDead, 13 =
 		// screenInterval; 2x keyEvent - 21 = fireButton; 31 = saveTree();
 
 		System.out.println("feedback: " + code);
+				
 		switch (code) {
 		
-		case 10:
-			clearCommands();
-			break;
-		
-		case 11:
-			resetTreeMenu();
-			System.out.println("APPSTATUS: "+GlobalVars.APPSTATUS);
-			/*
-			 * if (screenTree.threadInterval.isAlive())
-			 * {System.out.println("Thread Interval is running");} else
-			 * {System.out.println("Thread Interval is not running");}
-			 */
-			/*while (screenTree.threadInterval.isAlive()) {
-				System.out.println("warten auf interval ende");
-			}*/
-			if (alarm == null || (alarm != null && !alarm.isAlive())) {
-//				System.out.println("Hallo Thread wird gestartet");
-				alarm = new Thread(this);
-				alarm.start();
+			case GlobalVars.APPSTATUS_MAINMENU:
+				GlobalVars.APPSTATUS = code;
+				doExitToMain();
+				break;				
+				
+			case GlobalVars.APPSTATUS_RUNNING:
+				GlobalVars.APPSTATUS = code;
+				clearCommands();
+				break;
+			
+			case GlobalVars.APPSTATUS_STANDBY:
+				GlobalVars.APPSTATUS = code;
+				showTreeCommands();
+				/*
+				 * if (screenTree.threadInterval.isAlive())
+				 * {System.out.println("Thread Interval is running");} else
+				 * {System.out.println("Thread Interval is not running");}
+				 */
+				/*while (screenTree.threadInterval.isAlive()) {
+					System.out.println("warten auf interval ende");
+				}*/
+				if (alarm == null || (alarm != null && !alarm.isAlive())) {
+	//				System.out.println("Hallo Thread wird gestartet");
+					alarm = new Thread(this);
+					alarm.start();
+				}
+				break;
+			case GlobalVars.APPSTATUS_TREEDEAD: {
+				GlobalVars.APPSTATUS = code;
+				data.deleteRecord();
+				showTreeDeadCommand();
+				break;
 			}
-			break;
-		case 12: {
-			GlobalVars.APPSTATUS = 19;
-			data.deleteRecord();
-			showTreeDeadCommand();
-//			System.out.println("Im 12er drin!!!!");
-			break;
+	
+			case 31:
+				saveTree();
+				break;
+				
+			default:
+				GlobalVars.APPSTATUS = code;
+				break;
 		}
-		case 13:
-
-			break;
-
-		case 31:
-			saveTree();
-			//GlobalVars.APPSTATUS=1;
-			break;
-		}
-
+		System.out.println("APPSTATUS: "+GlobalVars.APPSTATUS);
 	}
 
 	public void run() {
@@ -337,7 +307,6 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 //		System.out.println("im while");
 		try {
-
 			Thread.sleep(GlobalVars.GROWTH_INTERVAL);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -346,10 +315,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		}
 
 //		System.out.println("----Thread Interval----");
-		if (GlobalVars.APPSTATUS == 1) {
-			System.out.println("----Thread Interval Appstatus: 2 ----");
+		if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_STANDBY) {
+			System.out.println("----Thread Interval Appstatus: " + GlobalVars.APPSTATUS + " ----");
 			if (screenTree != null) {
-				GlobalVars.APPSTATUS=2;
+				GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_RUNNING;
 				clearCommands();
 				screenTree.interval();
 			}

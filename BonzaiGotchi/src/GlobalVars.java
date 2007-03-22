@@ -16,29 +16,30 @@ import java.util.Random;
 
 public class GlobalVars {
 	
-	// 0 = init, 1 = standBy, 11 = menuAktiv, 19 = treeDead, 2 = running, 3 = edit, 31 = edit exact, 4 = watering, 5 = potChange
-	// Dem komfort opfern wir jetzt mal 9 byte ;)
-	public final static byte APPSTATUS_INIT = 0;
-	public final static byte APPSTATUS_STANDBY = 1;
-	public final static byte APPSTATUS_MENU = 11;
-	public final static byte APPSTATUS_TREEDEAD = 19;
-	public final static byte APPSTATUS_RUNNING = 2;
-	public final static byte APPSTATUS_EDIT = 3;
-	public final static byte APPSTATUS_EDITEXACT = 31;
-	public final static byte APPSTATUS_WATERING = 4;
-	public final static byte APPSTATUS_POTCHANGE = 5;
-
-	public static byte APPSTATUS = APPSTATUS_INIT;
+	public final static short APPSTATUS_INIT = 0;
+	public final static short APPSTATUS_MAINMENU = 1;
+	public final static short APPSTATUS_STANDBY = 21;
+	public final static short APPSTATUS_MENU = 22;
+	public final static short APPSTATUS_RUNNING = 23;
+	public final static short APPSTATUS_EDIT = 24;
+	public final static short APPSTATUS_EDITEXACT = 241;
+	public final static short APPSTATUS_WATERING = 26;
+	public final static short APPSTATUS_POTCHANGE = 27;
+	public final static short APPSTATUS_TREEDEAD = 29;
 	
-	// 0 = void, 1 = normal, 2 = edit, 3 = selectBranch
+	public static short APPSTATUS = APPSTATUS_INIT;
+	
 	public final static byte PAINTSTATUS_VOID = 0;
 	public final static byte PAINTSTATUS_NORMAL = 1;
 	public final static byte PAINTSTATUS_EDIT = 2;
 	public final static byte PAINTSTATUS_SELECTBRANCH = 3;
+	public final static byte PAINTSTATUS_REPAINT = 4;
 	
 	public static byte PAINTSTATUS = 0;
 	
 	public static Element ELEMENTEDIT;
+	public static Element[] ELEMENTEDITREPAINT = new Element[3];
+	public static byte ELEMENTEDITREPAINTINDEX = 0;
 	public static int EDITEXACTPOS;
 	public static int EDITEXACTLENGTH = 3;
 	
@@ -114,6 +115,7 @@ public class GlobalVars {
 	public final static String MENU_IMG_PATH_EDIT_DUNG = "/question20.png";
 	
 	public final static String MENU_IMG_PATH_POT = "/question20.png";
+	public final static String MENU_IMG_PATH_EXIT = "/question20.png";
 	
 	
 	public static Date TIME_STAMP;

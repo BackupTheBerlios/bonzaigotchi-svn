@@ -304,9 +304,27 @@ public class Element {
 	public void draw(Graphics g) {
 		// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
-		if ( GlobalVars.PAINTSTATUS == 1 ||
-			(GlobalVars.PAINTSTATUS == 2 && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent)))) {
+		if (GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT && !(GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) {
+			for (int i = 0; i < GlobalVars.ELEMENTEDITREPAINT.length; i++) {
+				if (GlobalVars.ELEMENTEDITREPAINT[i].equals(this)) {
+					GlobalVars.ELEMENTEDITREPAINT[i] = null;
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_REPAINT;
+				}
+			}
+		}
+		
+		if ( GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_NORMAL ||
+			(GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) ||
+			 GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_REPAINT) {
 			// System.out.println("--- ID|PAINTSTATUS: "+ id +" | "+ GlobalVars.PAINTSTATUS +" ---");
+			
+			if (GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT) {
+				GlobalVars.ELEMENTEDITREPAINT[GlobalVars.ELEMENTEDITREPAINTINDEX] = this;
+				if (++GlobalVars.ELEMENTEDITREPAINTINDEX > GlobalVars.ELEMENTEDITREPAINT.length -1) {
+					GlobalVars.ELEMENTEDITREPAINTINDEX = 0;
+				}
+			}
+			
 			short tmpPosX = posX;
 			short tmpPosY = posY;
 			
@@ -333,7 +351,8 @@ public class Element {
 			int outerColor = 0;
 			
 			switch (GlobalVars.PAINTSTATUS) {
-				case 1:
+				case GlobalVars.PAINTSTATUS_NORMAL:
+				case GlobalVars.PAINTSTATUS_REPAINT:
 					if (health <= GlobalVars.GROWTH_HEALTH_MIN) {
 						if (health <= GlobalVars.GROWTH_HEALTH_DEATH) {
 							innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
@@ -351,7 +370,7 @@ public class Element {
 						outerColor = GlobalVars.COLOR_ELEMENT_OUTER;
 					}
 					break;
-				case 2:
+				case GlobalVars.PAINTSTATUS_EDIT:
 					if (GlobalVars.ELEMENTEDIT.equals(this)) {
 						innerColor = GlobalVars.COLOR_ELEMENT_EDIT_INNER;
 						outerColor = GlobalVars.COLOR_ELEMENT_EDIT_OUTER;
@@ -405,7 +424,7 @@ public class Element {
 				// System.out.println("--- LOOP END ---");			
 			}
 			
-		} // if Appstatus 1 || 2
+		} // if paintstatus 1 || 2
 		else if (GlobalVars.PAINTSTATUS == 3 && GlobalVars.ELEMENTEDIT.equals(this)) {
 			System.out.println("--- ID: "+ id +" | Element Draw.PS3 ---");
 			short tmpAngle = (short)(angle - 6);
@@ -451,6 +470,10 @@ public class Element {
 			
 		}
 		
+		if (GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_REPAINT) {
+			GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
+		}
+		
 		// so now my children shoud paint themselves
 		if (childLeft != null) {
 			childLeft.draw(g);
@@ -475,7 +498,7 @@ public class Element {
 		return tmpRandom;
 	}
 	
-	public short calcX2(short tmpX) {
+	private short calcX2(short tmpX) {
 		short tmpAngle = (short)(angle - 6);
 		if (tmpAngle < 0) {
 			tmpAngle += 24;
@@ -486,7 +509,7 @@ public class Element {
 		return (short)(tmpX + tmpPos.getShort());
 	}
 	
-	public short calcY2(short tmpY) {
+	private short calcY2(short tmpY) {
 		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[angle].value);
 		tmpPos.multiply(length);
 		return (short)(tmpY - tmpPos.getShort());

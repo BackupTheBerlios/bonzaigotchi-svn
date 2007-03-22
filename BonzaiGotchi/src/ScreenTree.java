@@ -23,7 +23,6 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Font;
 
-
 public class ScreenTree extends Canvas implements Runnable {
 
 	// Children
@@ -39,15 +38,12 @@ public class ScreenTree extends Canvas implements Runnable {
 	private int canValue;
 	private int canSteps;
 	
-	// 0 = parent, 1 = EditElement, 2 = Can, 3 = Pot, 4 = editExact, 5 = menu
-	private int keyReceiver;
-	
 	private int menuId = -1;
 	private MenuItem[] menu;
 	private int menuItemSelected = 0;
 	
 	// Thread
-	public Thread threadInterval;
+	private Thread threadInterval;
 	private boolean threadWaiting = false;
 	
 	//	private boolean animWatering = false;
@@ -97,56 +93,65 @@ public class ScreenTree extends Canvas implements Runnable {
 //		System.out.println("--- ScreenTree.paint BEGINN ---");
 
 		g.setFont(Font.getFont(Font.FACE_MONOSPACE,Font.STYLE_PLAIN,Font.SIZE_SMALL));		
-		drawBackground(g);
 		
-		switch (GlobalVars.APPSTATUS) {
 		
-			case GlobalVars.APPSTATUS_EDITEXACT:
-			// los ma wieder durchlafn ;)
-			case GlobalVars.APPSTATUS_MENU:
-				for (int i = 0; i < menu.length; i++) {
-					g.setClip(i * 20, 0, 20, 20);
-					menu[i].draw(g);
-					if (i == menuItemSelected) {
-						g.setColor(0xFF0000);
-						g.fillRect(i * 20, 18, 20, 2);
-						g.setClip(0, 20, 100, 20);
-						g.setColor(0x000000);
-						g.drawString(menu[i].getTitle(), 2, 24, Graphics.TOP|Graphics.LEFT);
+		if (GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_TREEDEAD) {
+			
+						
+			switch (GlobalVars.APPSTATUS) {
+			
+				case GlobalVars.APPSTATUS_RUNNING:
+					drawBackground(g);
+					
+					drawPot(g);
+					
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
+					log.draw(g);
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+					break;
+			
+				case GlobalVars.APPSTATUS_EDITEXACT:
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
+					log.draw(g);
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+					
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
+					log.draw(g);
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+					
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_SELECTBRANCH;
+					log.draw(g);
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+				// los ma wieder durchlafn ;)
+					
+				case GlobalVars.APPSTATUS_MENU:
+					for (int i = 0; i < menu.length; i++) {
+						g.setClip(i * 20, 0, 20, 20);
+						menu[i].draw(g);
+						if (i == menuItemSelected) {
+							g.setColor(0xFF0000);
+							g.fillRect(i * 20, 18, 20, 2);
+							g.setClip(0, 20, 100, 20);
+							g.setColor(0x000000);
+							g.drawString(menu[i].getTitle(), 2, 24, Graphics.TOP|Graphics.LEFT);
+						}
 					}
-				}
-				break;
-		
-		}
-		
-		g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-
-		
-		if (log != null) {
-		
-			drawPot(g);
-			
-			GlobalVars.PAINTSTATUS = 1;
-			log.draw(g);
-			GlobalVars.PAINTSTATUS = 0;					
-			
-			if (GlobalVars.APPSTATUS == 3 || GlobalVars.APPSTATUS == 31) {
-				GlobalVars.PAINTSTATUS = 2;
-				log.draw(g);
-				GlobalVars.PAINTSTATUS = 0;
+					g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
+					break;
+					
+				case GlobalVars.APPSTATUS_EDIT:	
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
+					log.draw(g);
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+					break;
+								
+				case GlobalVars.APPSTATUS_WATERING:
+					can.draw(g);
+					break;
 			}
-			
-			if (GlobalVars.APPSTATUS == 31) {
-				GlobalVars.PAINTSTATUS = 3;
-				log.draw(g);
-				GlobalVars.PAINTSTATUS = 0;
-			}
-			
-			if (GlobalVars.APPSTATUS == 4) {
-				can.draw(g);
-			}
-			
-			if (threadWaiting && GlobalVars.APPSTATUS == 2) {
+		
+		
+			if (threadWaiting && GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_RUNNING) {
 				interval();
 			}
 		}
@@ -234,7 +239,6 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	private void menuShow(int tmpMenuId) {
-		GlobalVars.APPSTATUS = 11;
 		menuId = tmpMenuId;
 		menuItemSelected = 0;
 		
@@ -244,7 +248,8 @@ public class ScreenTree extends Canvas implements Runnable {
 				menu = new MenuItem[] {
 					new MenuItem(1, LangVars.CMD_TREEMENU_WATER, GlobalVars.MENU_IMG_PATH_WATER),
 					new MenuItem(2, LangVars.CMD_TREEMENU_EDIT,  GlobalVars.MENU_IMG_PATH_EDIT),
-					new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT)
+					new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT),
+					new MenuItem(4, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT)
 				};
 				break;		
 				
@@ -260,102 +265,101 @@ public class ScreenTree extends Canvas implements Runnable {
 			
 			case 22:
 				menu = new MenuItem[] {
-						new MenuItem(221, LangVars.CMD_SELECTED_SEAL,     GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL),
-						new MenuItem(222, LangVars.CMD_SELECTED_DONTSEAL, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL)
-					};
+					new MenuItem(221, LangVars.CMD_SELECTED_SEAL,     GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL),
+					new MenuItem(222, LangVars.CMD_SELECTED_DONTSEAL, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL)
+				};
 				break;
 		}
+		parent.receiveFeedback(GlobalVars.APPSTATUS_MENU);
 		repaint();
 	}
 	
 	public void receiveBack() {
 		switch (GlobalVars.APPSTATUS) {
-			case 1:
-				if (menuId == 0) {
-					menuHide();
-					parent.receiveFeedback((byte)11);
-				} else {
-					menuShow(menuId / 10);
+			case GlobalVars.APPSTATUS_MENU:
+				switch (menuId) {
+					case 0:
+						menuKill();
+						break;
+					case 2:
+						edit(true);
+						break;
 				}
-				repaint();
+				menuId /= 10;
 				break;
+			
+			case GlobalVars.APPSTATUS_EDITEXACT:
+				menuShow(menuId/10);
 				
-			case 4:
-				GlobalVars.APPSTATUS = 1;
-				repaint();
+			default:
+				menuShow(menuId);
 				break;
 		}
 
 	}
 	
-	private void menuHide() {
-		GlobalVars.APPSTATUS = 1;
+	private void menuKill() {
 		menuId = -1;
 		menu = null;
 		menuItemSelected = 0;
+		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
+		repaint();
 	}
 	
 	private void menuSelect() {
 		switch (menu[menuItemSelected].getMenuId())
 		{
 			case 1:
-				menuHide();
-				GlobalVars.APPSTATUS = 4;
 				watering();
 				break;
 				
 			case 2:
-				menuHide();
-				GlobalVars.APPSTATUS = 3;
 				edit(false);
 				break;
 				
 			case 21:
-				menuHide();
-				GlobalVars.APPSTATUS = 3;
 				editKill();
 				edit(true);
 				break;
 								
 			case 22:
-				// keyreceiver????
 				menuShow(22);
-				GlobalVars.APPSTATUS = 31;
 				editExact();
 				break;
 				
 			case 221:
-				menuHide();
-				GlobalVars.APPSTATUS = 3;
+				parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
 				editCut(true);
 				break;
 				
 			case 222:
-				menuHide();
-				GlobalVars.APPSTATUS = 3;
+				parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
 				editCut(false);
 				break;
 								
 			case 23:
-				menuHide();
+				menuKill();
 				// Coloring -- coming soon ...
 				break;
 				
 			case 24:
-				menuHide();
+				menuKill();
 				// Dung -- coming soon ...
 				break;
 				
 			case 3:
-				menuHide();
-				GlobalVars.APPSTATUS = 5;
+				parent.receiveFeedback(GlobalVars.APPSTATUS_POTCHANGE);
 				potChange();
+				break;
+				
+			case 4:
+				parent.receiveFeedback(GlobalVars.APPSTATUS_MAINMENU);
 				break;
 		}
 	}
 	
 	private void watering(){
-		keyReceiver = 2;
+		parent.receiveFeedback(GlobalVars.APPSTATUS_WATERING);
 		canValue = 1;
 		canSteps = (potSize + 1) * 3;	
 		
@@ -372,13 +376,12 @@ public class ScreenTree extends Canvas implements Runnable {
 		}		
 			
 //		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps + " | " + water + " ---");
-		parent.receiveFeedback((byte)11);
+		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		this.repaint();
 		//animWatering=false;
 	}
 	
 	private void potChange() {
-		keyReceiver = 3;
 		this.repaint();
 	}
 	
@@ -386,7 +389,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		if (water > GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100)) {
 			water = GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100);
 		}		
-		parent.receiveFeedback((byte)11);
+		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		this.repaint();
 	}
 	
@@ -404,7 +407,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		int supply;
 
 		// anfangsstart
-		while ((log != null && GlobalVars.APPSTATUS == 2) && (GlobalVars.COUNTERCHEAT > 0 || ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) > 0)) {		
+		while ((log != null && GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_RUNNING) && (GlobalVars.COUNTERCHEAT > 0 || ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) > 0)) {		
 			System.out.println("--- INTERVAL|CHEATER: " + ++GlobalVars.COUNTERINTERVAL + " | " + GlobalVars.COUNTERCHEAT + " ---");
 //			System.out.println("--- TIME:" + ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) + " ---");
 			--GlobalVars.COUNTERCHEAT;
@@ -417,7 +420,7 @@ public class ScreenTree extends Canvas implements Runnable {
 				// System.out.println("--- ScreenTree.run: Log_Kill ---");
 				log.childKill();
 				log = null;
-				parent.receiveFeedback((byte)12);
+				parent.receiveFeedback(GlobalVars.APPSTATUS_TREEDEAD);
 //				System.out.println("--- ScreenTree.run: Log_Killed ---");
 			}
 			else {
@@ -437,7 +440,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		this.repaint();
 		
 		if (!threadWaiting && log != null) {
-			parent.receiveFeedback((byte)11);
+			parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		}
 
 		
@@ -445,7 +448,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	
 	private void edit(boolean resume) {
-		keyReceiver = 1;
+		parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
 		if (!resume) { GlobalVars.ELEMENTEDIT = log; }
 		this.repaint();
 	}
@@ -469,13 +472,12 @@ public class ScreenTree extends Canvas implements Runnable {
 		else  {
 			Element tmpParent = GlobalVars.ELEMENTEDIT.getRelative((byte)4);
 			tmpParent.childKill(GlobalVars.ELEMENTEDIT);
-			GlobalVars.ELEMENTEDIT = tmpParent; 
+			GlobalVars.ELEMENTEDIT = tmpParent;
 		}
 	}
 	
 	private void editExact() {
-		System.out.println("EditExact");
-		keyReceiver = 4;
+		parent.receiveFeedback(GlobalVars.APPSTATUS_EDITEXACT);
 		GlobalVars.EDITEXACTPOS = GlobalVars.SPAWN_LENGTH_INIT/1000;
 		repaint();
 	}
@@ -494,17 +496,13 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
-	// appStatus
-	// 0 = init, 1 = standBy, 11 = menuAktiv, 2 = running, 3 = edit, 31 = edit exact, 4 = watering, 5 = potChange
-	// keyreceiver
-	// 0 = parent, 1 = EditElement, 2 = Can, 3 = Pot, 4 = editExact, 5 = menu
 	protected void keyPressed (int keyCode){
 //		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
 		
 		switch (GlobalVars.APPSTATUS) {
 		
 			// editExact
-			case 31:
+			case GlobalVars.APPSTATUS_EDITEXACT:
 				switch (getGameAction(keyCode)) {
 					case UP:
 						GlobalVars.EDITEXACTPOS++;
@@ -518,7 +516,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			// kein Break -- läuft durch, da gleichzeitig menü aktiv sein muss
 				
 			// menu
-			case 11:
+			case GlobalVars.APPSTATUS_MENU:
 				switch (getGameAction(keyCode)) {
 				
 					case LEFT:
@@ -537,10 +535,10 @@ public class ScreenTree extends Canvas implements Runnable {
 				}
 				System.out.println("menuItemSelected: " + menuItemSelected);
 				break;
-			// END CASE 11
+			// END CASE MENU
 				
 			// edit
-			case 3:
+			case GlobalVars.APPSTATUS_EDIT:
 				Element tmpElementEdit;
 				byte tmpRelative = 0;
 				
@@ -572,10 +570,10 @@ public class ScreenTree extends Canvas implements Runnable {
 				}
 				
 				break;
-			// END CASE 3
+			// END CASE EDIT
 			
 			// Watering
-			case 4:
+			case GlobalVars.APPSTATUS_WATERING:
 				
 				switch (getGameAction(keyCode)) {
 					case LEFT:
@@ -610,10 +608,10 @@ public class ScreenTree extends Canvas implements Runnable {
 						break;
 				}
 				break;
-			// END CASE 4
+			// END CASE WATERING
 				
 			// Pot
-			case 5:
+			case GlobalVars.APPSTATUS_POTCHANGE:
 
 				switch (getGameAction(keyCode)) {
 					case LEFT:
@@ -644,34 +642,31 @@ public class ScreenTree extends Canvas implements Runnable {
 						break;
 				}
 				break;
-			// END CASE 5
+			// END CASE POT
 		
 			// Cheats
-			case 1:
+			case GlobalVars.APPSTATUS_STANDBY:
 			
 				if (getKeyName(keyCode).equals("4")) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
 					GlobalVars.COUNTERCHEAT = 25;
-					GlobalVars.APPSTATUS = 2;
-					parent.receiveFeedback((byte)10);
+					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
 					interval();
 				}
 				else if (getKeyName(keyCode).equals("5")) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
 					GlobalVars.COUNTERCHEAT = 50;
-					GlobalVars.APPSTATUS = 2;
-					parent.receiveFeedback((byte)10);
+					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
 					interval();
 				}
 				else if (getKeyName(keyCode).equals("6")) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
 					GlobalVars.COUNTERCHEAT = 100;
-					GlobalVars.APPSTATUS = 2;
-					parent.receiveFeedback((byte)10);
+					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
 					interval();
 				}
 				break;
-			// END CASE 1
+			// END CASE CHEATS
 		}
 	}
 	

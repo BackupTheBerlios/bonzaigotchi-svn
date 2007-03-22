@@ -1,6 +1,6 @@
 
 public interface ReceiveFeedback {
 
-	public void receiveFeedback (byte code);
+	public void receiveFeedback (short code);
 	
 }

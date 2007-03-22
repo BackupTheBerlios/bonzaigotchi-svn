@@ -306,7 +306,7 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
 		if (GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT && !(GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) {
 			for (int i = 0; i < GlobalVars.ELEMENTEDITREPAINT.length; i++) {
-				if (GlobalVars.ELEMENTEDITREPAINT[i].equals(this)) {
+				if (GlobalVars.ELEMENTEDITREPAINT[i] != null && GlobalVars.ELEMENTEDITREPAINT[i].equals(this)) {
 					GlobalVars.ELEMENTEDITREPAINT[i] = null;
 					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_REPAINT;
 				}

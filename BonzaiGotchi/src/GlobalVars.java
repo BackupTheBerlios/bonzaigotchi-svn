@@ -38,7 +38,7 @@ public class GlobalVars {
 	public static byte PAINTSTATUS = 0;
 	
 	public static Element ELEMENTEDIT;
-	public static Element[] ELEMENTEDITREPAINT = new Element[3];
+	public static Element[] ELEMENTEDITREPAINT = new Element[6];
 	public static byte ELEMENTEDITREPAINTINDEX = 0;
 	public static int EDITEXACTPOS;
 	public static int EDITEXACTLENGTH = 3;

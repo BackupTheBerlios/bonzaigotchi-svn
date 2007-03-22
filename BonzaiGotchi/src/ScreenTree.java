@@ -46,6 +46,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private Thread threadInterval;
 	private boolean threadWaiting = false;
 	
+	private boolean screenRefresh = false;
 	//	private boolean animWatering = false;
 	
 	private ReceiveFeedback parent;
@@ -98,64 +99,66 @@ public class ScreenTree extends Canvas implements Runnable {
 		if (GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_TREEDEAD) {
 			
 						
-			switch (GlobalVars.APPSTATUS) {
-			
-				case GlobalVars.APPSTATUS_RUNNING:
-					drawBackground(g);
-					
-					drawPot(g);
-					
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
-					log.draw(g);
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
-					break;
-			
-				case GlobalVars.APPSTATUS_EDITEXACT:
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
-					log.draw(g);
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
-					
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
-					log.draw(g);
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
-					
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_SELECTBRANCH;
-					log.draw(g);
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
-				// los ma wieder durchlafn ;)
-					
-				case GlobalVars.APPSTATUS_MENU:
-					for (int i = 0; i < menu.length; i++) {
-						g.setClip(i * 20, 0, 20, 20);
-						menu[i].draw(g);
-						if (i == menuItemSelected) {
-							g.setColor(0xFF0000);
-							g.fillRect(i * 20, 18, 20, 2);
-							g.setClip(0, 20, 100, 20);
-							g.setColor(0x000000);
-							g.drawString(menu[i].getTitle(), 2, 24, Graphics.TOP|Graphics.LEFT);
-						}
-					}
-					g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-					break;
-					
-				case GlobalVars.APPSTATUS_EDIT:	
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
-					log.draw(g);
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
-					break;
-								
-				case GlobalVars.APPSTATUS_WATERING:
-					can.draw(g);
-					break;
+			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_STANDBY ||
+				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_RUNNING ||
+				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITEXACT ||
+				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_WATERING ||
+				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_POTCHANGE ||
+				screenRefresh) {
+				
+				screenRefresh = false;
+				
+				drawBackground(g);
+				
+				drawPot(g);
+				
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
+				log.draw(g);
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
 			}
-		
+			
+			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDIT || 
+				GlobalVars.APPSTATUS_EDIT == GlobalVars.APPSTATUS_EDITEXACT) {
+					
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
+				log.draw(g);
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+			}
+			
+			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITEXACT) {
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_SELECTBRANCH;
+				log.draw(g);
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+			}
+					
+			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_MENU ||
+				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITEXACT) {
+				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, 40);
+				drawBackground(g);	
+				for (int i = 0; i < menu.length; i++) {						
+					g.setClip(i * 20, 0, 20, 20);
+					menu[i].draw(g);
+					if (i == menuItemSelected) {
+						g.setColor(0xFF0000);
+						g.fillRect(i * 20, 18, 20, 2);
+						g.setClip(0, 20, 100, 20);
+						g.setColor(0x000000);
+						g.drawString(menu[i].getTitle(), 2, 24, Graphics.TOP|Graphics.LEFT);
+					}
+				}
+				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
+			}
+
+			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_WATERING) {
+					can.draw(g);
+			}
 		
 			if (threadWaiting && GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_RUNNING) {
 				interval();
 			}
 		}
 		else {
+			drawBackground(g);
 			g.setColor(0x555555);
 			g.drawString(LangVars.DIE_MESSAGE, 0,0,0);
 		}
@@ -200,7 +203,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		//		drawing a pot
 		
 		if (water >= GlobalVars.POT_SIZE[potSize]) {
-						
+		
 			int overWater = (water - GlobalVars.POT_SIZE[potSize]) * 100 / GlobalVars.POT_SIZE[potSize];
 			if (overWater > GlobalVars.POT_HEIGHT[potSize]) {
 				overWater = GlobalVars.POT_HEIGHT[potSize];
@@ -286,6 +289,10 @@ public class ScreenTree extends Canvas implements Runnable {
 						break;
 				}
 				menuId /= 10;
+				break;
+			
+			case GlobalVars.APPSTATUS_EDIT:
+				menuShow(0);
 				break;
 			
 			case GlobalVars.APPSTATUS_EDITEXACT:
@@ -449,7 +456,11 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private void edit(boolean resume) {
 		parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
+		for (int i = 0; i < GlobalVars.ELEMENTEDITREPAINT.length; i++) {
+			GlobalVars.ELEMENTEDITREPAINT[i] = null;
+		}
 		if (!resume) { GlobalVars.ELEMENTEDIT = log; }
+		screenRefresh = true;
 		this.repaint();
 	}
 	

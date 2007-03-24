@@ -304,27 +304,11 @@ public class Element {
 	public void draw(Graphics g) {
 		// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
-		if (GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT && !(GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) {
-			for (int i = 0; i < GlobalVars.ELEMENTEDITREPAINT.length; i++) {
-				if (GlobalVars.ELEMENTEDITREPAINT[i] != null && GlobalVars.ELEMENTEDITREPAINT[i].equals(this)) {
-					GlobalVars.ELEMENTEDITREPAINT[i] = null;
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_REPAINT;
-				}
-			}
-		}
 		
 		if ( GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_NORMAL ||
-			(GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) ||
-			 GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_REPAINT) {
+			(GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent)))) {
 			// System.out.println("--- ID|PAINTSTATUS: "+ id +" | "+ GlobalVars.PAINTSTATUS +" ---");
-			
-			if (GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT) {
-				GlobalVars.ELEMENTEDITREPAINT[GlobalVars.ELEMENTEDITREPAINTINDEX] = this;
-				if (++GlobalVars.ELEMENTEDITREPAINTINDEX > GlobalVars.ELEMENTEDITREPAINT.length -1) {
-					GlobalVars.ELEMENTEDITREPAINTINDEX = 0;
-				}
-			}
-			
+					
 			short tmpPosX = posX;
 			short tmpPosY = posY;
 			
@@ -352,7 +336,6 @@ public class Element {
 			
 			switch (GlobalVars.PAINTSTATUS) {
 				case GlobalVars.PAINTSTATUS_NORMAL:
-				case GlobalVars.PAINTSTATUS_REPAINT:
 					if (health <= GlobalVars.GROWTH_HEALTH_MIN) {
 						if (health <= GlobalVars.GROWTH_HEALTH_DEATH) {
 							innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
@@ -469,11 +452,7 @@ public class Element {
 			g.drawLine(tmpPosX, tmpPosY, tmpPosX2, tmpPosY2);
 			
 		}
-		
-		if (GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_REPAINT) {
-			GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
-		}
-		
+				
 		// so now my children shoud paint themselves
 		if (childLeft != null) {
 			childLeft.draw(g);
@@ -578,6 +557,11 @@ public class Element {
 		}
 	}
 	
+	public void cut(int cutPos) {
+		childKill();
+		length = new MathFloat(cutPos * 1000);
+	}
+	
 	public Element getRelative(byte relative) {
 		
 		switch (relative) {
@@ -609,6 +593,10 @@ public class Element {
 		else {
 			return 0;
 		}
+	}
+	
+	public int getLength() {
+		return length.getInt();
 	}
 	
 	public void writeData(FileIO data) {

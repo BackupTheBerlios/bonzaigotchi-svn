@@ -17,11 +17,13 @@
 //			  added 	  	drawPot()
 //			  added 	  	actionWatering()
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Image;
 
 public class ScreenTree extends Canvas implements Runnable {
 
@@ -30,8 +32,11 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	// Pot
 	private byte potSize;
+	private byte potSizeChange;
 	private int water;
 	private int logWaterRequest;
+	private Image potChangeImgArrowLeft;
+	private Image potChangeImgArrowRight;
 	
 	// Gauge
 	private Can can;
@@ -46,29 +51,26 @@ public class ScreenTree extends Canvas implements Runnable {
 	private Thread threadInterval;
 	private boolean threadWaiting = false;
 	
-	private boolean screenRefresh = false;
 	//	private boolean animWatering = false;
 	
 	private ReceiveFeedback parent;
 	
 	public ScreenTree(ReceiveFeedback tmpParent) {
-		super();
+
 		parent = tmpParent;
 
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date();
-		GlobalVars.COUNTERELEMENT = 0;
 		GlobalVars.COUNTERINTERVAL = 0;
 		GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
 		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 
-		// Gauge
-		potSize=0;
-		can = new Can((short)0,(short)(GlobalVars.DISPLAY_X_WIDTH/2),(short)(GlobalVars.DISPLAY_Y_HEIGHT/2),(short)0);
-		
 		water = GlobalVars.POT_WATER_INIT;
-		log = new Element(null, (short)0, (short)(GlobalVars.DISPLAY_X_WIDTH / 2), GlobalVars.DISPLAY_Y_HEIGHT, 10000);
-		logWaterRequest = log.getChildWaterRequest();
+		potSize=0;
+		
+		log = new Element(null, (short)0, (short)(GlobalVars.DISPLAY_X_WIDTH / 2), GlobalVars.DISPLAY_Y_HEIGHT, 10000);	
+		
+		screenTreeInit();
 	}
 	
 	public ScreenTree(ReceiveFeedback tmpParent, FileIO data) {
@@ -77,16 +79,31 @@ public class ScreenTree extends Canvas implements Runnable {
 				
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date(data.readDataLong());
-		GlobalVars.COUNTERELEMENT = 0;
 		GlobalVars.COUNTERINTERVAL = data.readDataInt();
 		GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
 		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 		
 		water = data.readDataInt();
 		potSize = data.readDataByte();
+		
 		log = new Element(null, data);
-		logWaterRequest = log.getChildWaterRequest();
+		
+		screenTreeInit();
+	}
+	
+	private void screenTreeInit() {
+		
+		GlobalVars.COUNTERELEMENT = 0;
 		can = new Can((short)0,(short)(GlobalVars.DISPLAY_X_WIDTH/2),(short)(GlobalVars.DISPLAY_Y_HEIGHT/2),(short)0);
+		
+		try {
+			potChangeImgArrowLeft = Image.createImage("/arrow20.png");
+			potChangeImgArrowRight =  Image.createImage("/arrow20right.png");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		logWaterRequest = log.getChildWaterRequest();
 	}
 	
 	
@@ -97,28 +114,17 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 		
 		if (GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_TREEDEAD) {
+							
+			drawBackground(g);
 			
-						
-			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_STANDBY ||
-				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_RUNNING ||
-				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITEXACT ||
-				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_WATERING ||
-				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_POTCHANGE ||
-				screenRefresh) {
-				
-				screenRefresh = false;
-				
-				drawBackground(g);
-				
-				drawPot(g);
-				
-				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
-				log.draw(g);
-				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
-			}
+			drawPot(g);
 			
-			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDIT || 
-				GlobalVars.APPSTATUS_EDIT == GlobalVars.APPSTATUS_EDITEXACT) {
+			GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
+			log.draw(g);
+			GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+		
+			
+			if (GlobalVars.ELEMENTEDIT != null) {
 					
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
 				log.draw(g);
@@ -202,36 +208,56 @@ public class ScreenTree extends Canvas implements Runnable {
 	private void drawPot(Graphics g){
 		//		drawing a pot
 		
-		if (water >= GlobalVars.POT_SIZE[potSize]) {
+		byte potSizeDraw = potSize;
 		
-			int overWater = (water - GlobalVars.POT_SIZE[potSize]) * 100 / GlobalVars.POT_SIZE[potSize];
-			if (overWater > GlobalVars.POT_HEIGHT[potSize]) {
-				overWater = GlobalVars.POT_HEIGHT[potSize];
+		if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_POTCHANGE) {
+			potSizeDraw = potSizeChange;
+		}
+		
+		if (water >= GlobalVars.POT_SIZE[potSizeDraw] && GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_POTCHANGE) {
+		
+			int overWater = (water - GlobalVars.POT_SIZE[potSizeDraw]) * 100 / GlobalVars.POT_SIZE[potSizeDraw];
+			if (overWater > GlobalVars.POT_HEIGHT[potSizeDraw]) {
+				overWater = GlobalVars.POT_HEIGHT[potSizeDraw];
 			}
 			
 			g.setColor(GlobalVars.COLOR_POT_WATER);
 			for(int i=0; i <= overWater; i++) {
 				g.drawLine(
-						GlobalVars.DISPLAY_X_WIDTH / 2 - GlobalVars.POT_WIDTH[potSize] - i / 2,
-						GlobalVars.DISPLAY_Y_HEIGHT - i,
-						GlobalVars.DISPLAY_X_WIDTH / 2 + GlobalVars.POT_WIDTH[potSize] + i / 2,
-						GlobalVars.DISPLAY_Y_HEIGHT - i);
+					GlobalVars.DISPLAY_X_WIDTH / 2 - GlobalVars.POT_WIDTH[potSizeDraw] - i / 2,
+					GlobalVars.DISPLAY_Y_HEIGHT - i,
+					GlobalVars.DISPLAY_X_WIDTH / 2 + GlobalVars.POT_WIDTH[potSizeDraw] + i / 2,
+					GlobalVars.DISPLAY_Y_HEIGHT - i);
 			}
 		}
 		
 		g.setColor(100,50,50);
 		for (int i=0; i <= GlobalVars.POT_THICKNESS; i++) {
 			g.drawLine(
-					GlobalVars.DISPLAY_X_WIDTH / 2 - GlobalVars.POT_WIDTH[potSize] + i,
-					GlobalVars.DISPLAY_Y_HEIGHT,
-					GlobalVars.DISPLAY_X_WIDTH / 2 - GlobalVars.POT_WIDTH[potSize] - GlobalVars.POT_HEIGHT[potSize] /2 + i,
-					GlobalVars.DISPLAY_Y_HEIGHT - GlobalVars.POT_HEIGHT[potSize]);
+				GlobalVars.DISPLAY_X_WIDTH / 2 - GlobalVars.POT_WIDTH[potSizeDraw] + i,
+				GlobalVars.DISPLAY_Y_HEIGHT,
+				GlobalVars.DISPLAY_X_WIDTH / 2 - GlobalVars.POT_WIDTH[potSizeDraw] - GlobalVars.POT_HEIGHT[potSizeDraw] /2 + i,
+				GlobalVars.DISPLAY_Y_HEIGHT - GlobalVars.POT_HEIGHT[potSizeDraw]);
 			
 			g.drawLine(
-					GlobalVars.DISPLAY_X_WIDTH / 2 + GlobalVars.POT_WIDTH[potSize] - i,
-					GlobalVars.DISPLAY_Y_HEIGHT,
-					GlobalVars.DISPLAY_X_WIDTH / 2 + GlobalVars.POT_WIDTH[potSize] + GlobalVars.POT_HEIGHT[potSize] /2 - i,
-					GlobalVars.DISPLAY_Y_HEIGHT - GlobalVars.POT_HEIGHT[potSize]);			
+				GlobalVars.DISPLAY_X_WIDTH / 2 + GlobalVars.POT_WIDTH[potSizeDraw] - i,
+				GlobalVars.DISPLAY_Y_HEIGHT,
+				GlobalVars.DISPLAY_X_WIDTH / 2 + GlobalVars.POT_WIDTH[potSizeDraw] + GlobalVars.POT_HEIGHT[potSizeDraw] /2 - i,
+				GlobalVars.DISPLAY_Y_HEIGHT - GlobalVars.POT_HEIGHT[potSizeDraw]);			
+		}
+		
+		if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_POTCHANGE) {
+			g.drawImage(
+				potChangeImgArrowLeft,
+				GlobalVars.DISPLAY_X_WIDTH / 2 - GlobalVars.POT_WIDTH[potSizeDraw] - 40,
+				GlobalVars.DISPLAY_Y_HEIGHT - 30,
+				Graphics.TOP|Graphics.LEFT);
+			
+			g.drawImage(
+				potChangeImgArrowRight,
+				GlobalVars.DISPLAY_X_WIDTH / 2 + GlobalVars.POT_WIDTH[potSizeDraw] + 20,
+				GlobalVars.DISPLAY_Y_HEIGHT - 30,
+				Graphics.TOP|Graphics.LEFT);
 		}
 		
 	}
@@ -292,6 +318,7 @@ public class ScreenTree extends Canvas implements Runnable {
 				break;
 			
 			case GlobalVars.APPSTATUS_EDIT:
+				GlobalVars.ELEMENTEDIT = null;
 				menuShow(0);
 				break;
 			
@@ -302,7 +329,6 @@ public class ScreenTree extends Canvas implements Runnable {
 				menuShow(menuId);
 				break;
 		}
-
 	}
 	
 	private void menuKill() {
@@ -335,12 +361,10 @@ public class ScreenTree extends Canvas implements Runnable {
 				break;
 				
 			case 221:
-				parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
 				editCut(true);
 				break;
 				
 			case 222:
-				parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
 				editCut(false);
 				break;
 								
@@ -355,7 +379,6 @@ public class ScreenTree extends Canvas implements Runnable {
 				break;
 				
 			case 3:
-				parent.receiveFeedback(GlobalVars.APPSTATUS_POTCHANGE);
 				potChange();
 				break;
 				
@@ -383,19 +406,24 @@ public class ScreenTree extends Canvas implements Runnable {
 		}		
 			
 //		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps + " | " + water + " ---");
+		parent.receiveFeedback((short)31);
 		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		this.repaint();
 		//animWatering=false;
 	}
 	
 	private void potChange() {
+		parent.receiveFeedback(GlobalVars.APPSTATUS_POTCHANGE);
+		potSizeChange = potSize;
 		this.repaint();
 	}
 	
 	private void potChangeAction() {
+		potSize = potSizeChange;
 		if (water > GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100)) {
 			water = GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100);
 		}		
+		parent.receiveFeedback((short)31);
 		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		this.repaint();
 	}
@@ -456,11 +484,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private void edit(boolean resume) {
 		parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
-		for (int i = 0; i < GlobalVars.ELEMENTEDITREPAINT.length; i++) {
-			GlobalVars.ELEMENTEDITREPAINT[i] = null;
-		}
 		if (!resume) { GlobalVars.ELEMENTEDIT = log; }
-		screenRefresh = true;
 		this.repaint();
 	}
 	
@@ -485,6 +509,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			tmpParent.childKill(GlobalVars.ELEMENTEDIT);
 			GlobalVars.ELEMENTEDIT = tmpParent;
 		}
+		parent.receiveFeedback((short)31);
 	}
 	
 	private void editExact() {
@@ -494,7 +519,10 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	private void editCut(boolean seal) {
-		GlobalVars.ELEMENTEDIT.childKill();
+		GlobalVars.ELEMENTEDIT.cut(GlobalVars.EDITEXACTPOS);
+		parent.receiveFeedback((short)31);
+		parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
+		repaint();
 //		GlobalVars.ELEMENTEDIT.setSize();
 		// kill children and set to new length
 		// set growthStop = seal
@@ -516,11 +544,15 @@ public class ScreenTree extends Canvas implements Runnable {
 			case GlobalVars.APPSTATUS_EDITEXACT:
 				switch (getGameAction(keyCode)) {
 					case UP:
-						GlobalVars.EDITEXACTPOS++;
+						if (++GlobalVars.EDITEXACTPOS > GlobalVars.ELEMENTEDIT.getLength()) {
+							GlobalVars.EDITEXACTPOS = GlobalVars.ELEMENTEDIT.getLength();
+						}
 						this.repaint();
 						break;
 					case DOWN:
-						GlobalVars.EDITEXACTPOS--;
+						if (--GlobalVars.EDITEXACTPOS < GlobalVars.SPAWN_LENGTH_INIT / 1000) {
+							GlobalVars.EDITEXACTPOS = GlobalVars.SPAWN_LENGTH_INIT / 1000;
+						}
 						this.repaint();
 						break;
 				}
@@ -628,9 +660,9 @@ public class ScreenTree extends Canvas implements Runnable {
 					case LEFT:
 					case DOWN:
 					
-						potSize--;
-						if (potSize < 0) {
-							potSize = 0;
+						potSizeChange--;
+						if (potSizeChange < 0) {
+							potSizeChange = 0;
 						}
 						
 						this.repaint();
@@ -639,9 +671,9 @@ public class ScreenTree extends Canvas implements Runnable {
 					case RIGHT:
 					case UP:
 						
-						potSize++;
-						if (potSize > GlobalVars.POT_SIZE.length - 1) {
-							potSize = (byte)(GlobalVars.POT_SIZE.length - 1);
+						potSizeChange++;
+						if (potSizeChange > GlobalVars.POT_SIZE.length - 1) {
+							potSizeChange = (byte)(GlobalVars.POT_SIZE.length - 1);
 						}
 											
 						this.repaint();

@@ -62,8 +62,6 @@ public class ScreenTree extends Canvas implements Runnable {
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date();
 		GlobalVars.COUNTERINTERVAL = 0;
-		GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
-		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 
 		water = GlobalVars.POT_WATER_INIT;
 		potSize=0;
@@ -80,8 +78,6 @@ public class ScreenTree extends Canvas implements Runnable {
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date(data.readDataLong());
 		GlobalVars.COUNTERINTERVAL = data.readDataInt();
-		GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
-		GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 		
 		water = data.readDataInt();
 		potSize = data.readDataByte();
@@ -93,7 +89,13 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private void screenTreeInit() {
 		
+		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
+			GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
+			GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
+		}
+		
 		GlobalVars.COUNTERELEMENT = 0;
+		GlobalVars.COUNTERCHEAT = 0;
 		can = new Can((short)0,(short)(GlobalVars.DISPLAY_X_WIDTH/2),(short)(GlobalVars.DISPLAY_Y_HEIGHT/2),(short)0);
 		
 		try {
@@ -156,17 +158,19 @@ public class ScreenTree extends Canvas implements Runnable {
 			}
 
 			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_WATERING) {
-					can.draw(g);
+				can.draw(g);
 			}
 		
 			if (threadWaiting && GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_RUNNING) {
+				g.setColor(0x555555);
+				g.drawString("calculating ...", 0, 0, Graphics.TOP|Graphics.LEFT);
 				interval();
 			}
 		}
 		else {
 			drawBackground(g);
 			g.setColor(0x555555);
-			g.drawString(LangVars.DIE_MESSAGE, 0,0,0);
+			g.drawString(LangVars.DIE_MESSAGE, 0,0, Graphics.TOP|Graphics.LEFT);
 		}
 			
 	}
@@ -303,7 +307,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		repaint();
 	}
 	
-	public void receiveBack() {
+	private void menuBack() {
 		switch (GlobalVars.APPSTATUS) {
 			case GlobalVars.APPSTATUS_MENU:
 				switch (menuId) {
@@ -519,7 +523,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	private void editCut(boolean seal) {
-		GlobalVars.ELEMENTEDIT.cut(GlobalVars.EDITEXACTPOS);
+		GlobalVars.ELEMENTEDIT.cut(GlobalVars.EDITEXACTPOS, seal);
 		parent.receiveFeedback((short)31);
 		parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
 		repaint();
@@ -535,13 +539,16 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
-	protected void keyPressed (int keyCode){
+	protected void keyPressed (int keyCode) {
 //		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
+		
+		boolean checkBack = false;
 		
 		switch (GlobalVars.APPSTATUS) {
 		
 			// editExact
 			case GlobalVars.APPSTATUS_EDITEXACT:
+				checkBack = true;
 				switch (getGameAction(keyCode)) {
 					case UP:
 						if (++GlobalVars.EDITEXACTPOS > GlobalVars.ELEMENTEDIT.getLength()) {
@@ -560,6 +567,7 @@ public class ScreenTree extends Canvas implements Runnable {
 				
 			// menu
 			case GlobalVars.APPSTATUS_MENU:
+				checkBack = true;
 				switch (getGameAction(keyCode)) {
 				
 					case LEFT:
@@ -582,6 +590,7 @@ public class ScreenTree extends Canvas implements Runnable {
 				
 			// edit
 			case GlobalVars.APPSTATUS_EDIT:
+				checkBack = true;
 				Element tmpElementEdit;
 				byte tmpRelative = 0;
 				
@@ -617,7 +626,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			
 			// Watering
 			case GlobalVars.APPSTATUS_WATERING:
-				
+				checkBack = true;
 				switch (getGameAction(keyCode)) {
 					case LEFT:
 					case DOWN:
@@ -655,7 +664,7 @@ public class ScreenTree extends Canvas implements Runnable {
 				
 			// Pot
 			case GlobalVars.APPSTATUS_POTCHANGE:
-
+				checkBack = true;
 				switch (getGameAction(keyCode)) {
 					case LEFT:
 					case DOWN:
@@ -689,20 +698,24 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 			// Cheats
 			case GlobalVars.APPSTATUS_STANDBY:
+				
+				if (getGameAction(keyCode) == FIRE) {
+					menuShow();
+				}
 			
-				if (getKeyName(keyCode).equals("4")) {
+				else if (keyCode == KEY_NUM4) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
 					GlobalVars.COUNTERCHEAT = 25;
 					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
 					interval();
 				}
-				else if (getKeyName(keyCode).equals("5")) {
+				else if (keyCode == KEY_NUM5) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
 					GlobalVars.COUNTERCHEAT = 50;
 					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
 					interval();
 				}
-				else if (getKeyName(keyCode).equals("6")) {
+				else if (keyCode == KEY_NUM6) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
 					GlobalVars.COUNTERCHEAT = 100;
 					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
@@ -710,6 +723,12 @@ public class ScreenTree extends Canvas implements Runnable {
 				}
 				break;
 			// END CASE CHEATS
+		}
+		
+		if (checkBack) {
+			if (keyCode == KEY_POUND) {
+				menuBack();
+			}
 		}
 	}
 	

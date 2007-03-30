@@ -62,7 +62,7 @@ public class GlobalVars {
 
 	public final static short GROWTH_WATER_MIN = 40;
 	public final static short GROWTH_HEALTH_MIN = 70;
-	public final static short GROWTH_HEALTH_DEATH = 10;
+	public final static short GROWTH_HEALTH_DEATH = -100;
 
 	public final static MathFloat GROWTH_LENGTH_INC = new MathFloat(33);
 	public final static MathFloat GROWTH_THICKNESS_INC = new MathFloat(2);
@@ -75,14 +75,11 @@ public class GlobalVars {
 	public final static short SPAWN_CHANCE = 30;
 	public final static int SPAWN_WATER_CHILD = 10000;
 	
-	public final static short[] REQUEST_WATER_THRESHOLD =  {                 25,                   50,                  75,                  95,                 100};
-	public final static MathFloat[] REQUEST_WATER_FACTOR = {new MathFloat(3000), new MathFloat (2000), new MathFloat(1500), new MathFloat(1100), new MathFloat(1000)};
-
 	public final static int CAN_LENGTH_INIT = 10000;
 	public final static int CAN_THICKNESS_INIT = 10000;
 	
-	public static short DISPLAY_Y_HEIGHT;
-	public static short DISPLAY_X_WIDTH;
+	public static short DISPLAY_Y_HEIGHT = 0;
+	public static short DISPLAY_X_WIDTH = 0;
 
 	public final static int COLOR_ELEMENT_INNER = 0x76E273;
 	public final static int COLOR_ELEMENT_OUTER = 0x007809;
@@ -112,16 +109,21 @@ public class GlobalVars {
 	public final static String MENU_IMG_PATH_EDIT_COLOR = "/question20.png";
 	public final static String MENU_IMG_PATH_EDIT_DUNG = "/question20.png";
 	
-	public final static String MENU_IMG_PATH_POT = "/question20.png";
+	public final static String MENU_IMG_PATH_POT = "/pot20.png";
 	public final static String MENU_IMG_PATH_EXIT = "/question20.png";
 	
 	
 	public static Date TIME_STAMP;
 	public final static short VERSION_ID = 001;
-	public final static short SAVE_RECORDSTORE_VERSION = 003;
+	public final static short SAVE_RECORDSTORE_VERSION = 004;
 
 	// DEMAND_TABLE
 	public final static short[] GROWTH_WATER_DEMAND = {69,150,208,253,289,320,347,370,391,410,428,444,458,472,485,497,509,520,530,540,549,558,566,574,582,590,597,604,611};
+	public final static MathFloat GROWTH_WATER_DEMAND_NO_GROWTH_FACTOR = new MathFloat(500);
+	
+	public final static short[] REQUEST_WATER_THRESHOLD =  {                 25,                   50,                  75,                  95,                 100};
+	public final static MathFloat[] REQUEST_WATER_FACTOR = {new MathFloat(3000), new MathFloat (2000), new MathFloat(1500), new MathFloat(1100), new MathFloat(1000)};
+
 	
 	// COSINUS_TABLE [-6] = SINUS_TABLE
 	public final static MathFloat[] COSINUS_TABLE = { 

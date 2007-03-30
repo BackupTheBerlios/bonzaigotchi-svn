@@ -16,6 +16,7 @@ import javax.microedition.midlet.MIDletStateChangeException;
 public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Runnable {
 
 	private ScreenTree screenTree;
+	private ScreenHelp screenHelp;
 
 	// TODO: private ScreenMenu screenMenu;
 	// TODO: private ScreenHelp screenHelp;
@@ -29,18 +30,19 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 	private Command cmdMExit;
 
-	private Command cmdTMenu;
-	private Command cmdTBack;
-
 	// Dead-Tree Menue Commando
 	private Command cmdDTExit;
 
+	// HelpScreen Commandos
+	private Command cmdHExit;
+	
 	private FileIO data;
 
 	private Thread alarm;
 
-	protected void startApp() throws MIDletStateChangeException {
+	protected void startApp() throws MIDletStateChangeException {	
 		data = new FileIO("BonzaiGotchi");
+		screenHelp = new ScreenHelp();
 
 		// ScreenMenu screeny = new ScreenMenu();
 		// screeny.initialize();
@@ -49,12 +51,12 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		cmdMSelect = new Command(LangVars.CMD_ALL_SELECT, Command.ITEM, 2);
 		cmdMExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 
-		// ScreenTree Comandos
-		cmdTMenu = new Command(LangVars.CMD_TREEMENU_MENU, Command.OK, 1);
-		cmdTBack = new Command(LangVars.CMD_ALL_BACK, Command.OK, 1);
-
 		// Dead Tree Menue Commando
 		cmdDTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
+		
+		// HelpScreen Comandos
+		cmdHExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
+		screenHelp.addCommand(cmdHExit);
 		
 		showMainMenu();
 	}
@@ -135,7 +137,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 				break;
 			}
 			case 2: { // Im Tutorialauswahl
-				System.out.println("2 = im Tutorialauswahl");
+//				System.out.println("2 = im Tutorialauswahl");
+				Display.getDisplay(this).setCurrent(screenHelp);
+				screenHelp.setCommandListener(this);
+				screenHelp.repaint();
 				break;
 			}
 			case 3: { // im Creditsauswahl
@@ -156,17 +161,13 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 		// BaumMenue
 
-		else if (c.equals(cmdTMenu)) {
-			showTreeMenu();
-		}
-
-		else if (c.equals(cmdTBack)) {
-			screenTree.receiveBack();
-			System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
-
-		} else if (c.equals(cmdDTExit)) {
+		else if (c.equals(cmdDTExit)) {
 //			System.out.println("Im cmdDTExit!!");
 			doExitToMain();
+		}
+		
+		else if (c.equals(cmdHExit)) {
+			showMainMenu();
 		}
 	}
 
@@ -179,9 +180,8 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		showMainMenu();
 	}
 
+	// obsolete since there is only one button at the moment
 	private void clearCommands() {
-		screenTree.removeCommand(cmdTMenu);
-		screenTree.removeCommand(cmdTBack);
 		screenTree.removeCommand(cmdDTExit);
 	}
 
@@ -200,18 +200,6 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		System.out.println("--- MAIN MENUE CREATED ---");
 
 	}
-
-	private void showTreeCommands() {
-		clearCommands();
-		screenTree.addCommand(cmdTMenu);
-	}
-	
-	private void showTreeMenu() {
-		clearCommands();
-		screenTree.addCommand(cmdTBack);
-		screenTree.menuShow();
-	}
-
 
 	private void showTreeDeadCommand() {
 		clearCommands();
@@ -268,7 +256,6 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 			
 			case GlobalVars.APPSTATUS_STANDBY:
 				GlobalVars.APPSTATUS = code;
-				showTreeCommands();
 				/*
 				 * if (screenTree.threadInterval.isAlive())
 				 * {System.out.println("Thread Interval is running");} else
@@ -283,13 +270,12 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 					alarm.start();
 				}
 				break;
-			case GlobalVars.APPSTATUS_TREEDEAD: {
+			case GlobalVars.APPSTATUS_TREEDEAD:
 				GlobalVars.APPSTATUS = code;
 				data.deleteRecord();
 				showTreeDeadCommand();
 				break;
-			}
-	
+				
 			case 31:
 				saveTree();
 				break;

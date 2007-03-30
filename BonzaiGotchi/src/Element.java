@@ -27,7 +27,9 @@ public class Element {
 	private int water; 
 	private short health = 100; // tempValue
 	private int demand;
+	private short waterPercentage;
 	private MathFloat waterRequest;
+	private boolean growStop = false;
 
 	private int childWaterRequest = 0;
 	private byte childWaterDivider = 100;
@@ -53,6 +55,7 @@ public class Element {
 		posY = data.readDataShort();
 		water = data.readDataInt();
 		health = data.readDataShort();
+		growStop = data.readDataBoolean();
 		
 		// Check if I have children
 		boolean tmpChildLeft = data.readDataBoolean();
@@ -100,7 +103,7 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | Water: " + water + " ---");
 		demand = calcDemand();
 		// System.out.println("--- ID: "+ id +" | Demand: " + demand + " ---");
-		short waterPercentage = (short)(water * 100 / (demand * 100)); // water x 100 (to get percentage) / (demand x [maximum intervalls the capacity could last]
+		waterPercentage = (short)(water * 100 / (demand * 100)); // water x 100 (to get percentage) / (demand x [maximum intervalls the capacity could last]
 		// System.out.println("--- ID: "+ id +" | WaterPercentage: " + waterPercentage + " ---");
 		
 		childWaterRequest = 0;
@@ -161,7 +164,6 @@ public class Element {
 		// Usage
 		
 		int supplyTaken = 0;
-		short waterPercentage = (short)(water * 100 / (demand * 100));
 		
 		if ((childLeft != null || childCenter != null || childRight != null) && childWaterRequest/2 > supply && waterPercentage > GlobalVars.WATER_SOCIAL_THRESHOLD) {
 			// System.out.println("--- ID: "+ id +" | SOCIAL ACT ---");
@@ -199,14 +201,14 @@ public class Element {
 		
 		// grow
 		
-		if (childLeft != null || childCenter != null || childRight != null) {
+		if (growStop || childLeft != null || childCenter != null || childRight != null) {
 			
 			if (waterPercentage >= GlobalVars.GROWTH_WATER_MIN && health >= GlobalVars.GROWTH_HEALTH_MIN) {
 				thickness.add(GlobalVars.GROWTH_THICKNESS_ONLY_INC);
 				water -= demand;
 				// System.out.println("--- ID: "+ id +" | Thickness: " + thickness.getInt() + " ---");
 			} else {
-				water -= demand / 2;
+				water -= MathFloat.divide(demand, GlobalVars.GROWTH_WATER_DEMAND_NO_GROWTH_FACTOR).getInt();
 				if (water < 0) {
 					water = 0;
 					health--;
@@ -249,11 +251,11 @@ public class Element {
 				water -= demand;
 				// System.out.println("--- ID: "+ id +" | Length|Thickness: " + length.getInt() + "|" + thickness.getInt() + " ---");
 			} else {
-				water -= demand / 2;
+				water -= MathFloat.divide(demand, GlobalVars.GROWTH_WATER_DEMAND_NO_GROWTH_FACTOR).getInt();
 			}
 		}
 	
-		if (childLeft == null && childCenter == null && childRight == null && length.getInt() > GlobalVars.SPAWN_LENGTH_MIN && water > GlobalVars.SPAWN_WATER_MIN && getRandom(GlobalVars.SPAWN_CHANCE) == 3) {
+		if (!growStop && childLeft == null && childCenter == null && childRight == null && length.getInt() > GlobalVars.SPAWN_LENGTH_MIN && water > GlobalVars.SPAWN_WATER_MIN && getRandom(GlobalVars.SPAWN_CHANCE) == 3) {
 			short tmpRandom = (short)getRandom(3);
 			
 			// System.out.println("--- ID: "+ id +" | SpawnRandom: " + tmpRandom + " ---");
@@ -294,7 +296,7 @@ public class Element {
 			}
 		}
 		
-		if (health < -100) { return false; }
+		if (health < GlobalVars.GROWTH_HEALTH_DEATH) { return false; }
 		else { return true; }
 		// System.out.println("--- ID: "+ id +" | Element Grow END ---");
 	}
@@ -504,6 +506,7 @@ public class Element {
 	}
 	
 	private int calcDemand() {
+		// tmpDemand = index Value
 		int tmpDemand = (int)(((thickness.value * length.value / 1000000) -4) / 4);
 		if (tmpDemand < 0) {
 			tmpDemand = 0;
@@ -511,7 +514,13 @@ public class Element {
 		else if (tmpDemand >= GlobalVars.GROWTH_WATER_DEMAND.length) {
 			tmpDemand = GlobalVars.GROWTH_WATER_DEMAND.length - 1;
 		}
-		return GlobalVars.GROWTH_WATER_DEMAND[tmpDemand];
+		
+		// tmpDemand = real Value
+		tmpDemand = GlobalVars.GROWTH_WATER_DEMAND[tmpDemand];
+		if (growStop || childLeft != null || childCenter != null || childRight != null) {
+			tmpDemand = MathFloat.divide(tmpDemand, GlobalVars.GROWTH_WATER_DEMAND_NO_GROWTH_FACTOR).getInt();
+		}
+		return tmpDemand;
 	}
 	
 	// kill specific child
@@ -557,9 +566,12 @@ public class Element {
 		}
 	}
 	
-	public void cut(int cutPos) {
+	public void cut(int cutPos, boolean seal) {
 		childKill();
 		length = new MathFloat(cutPos * 1000);
+		if (seal) {
+			growStop = true;
+		}
 	}
 	
 	public Element getRelative(byte relative) {
@@ -625,6 +637,7 @@ public class Element {
 		data.writeData(posY);
 		data.writeData(water);
 		data.writeData(health);
+		data.writeData(growStop);
 
 		data.writeData(tmpChildLeft);
 		data.writeData(tmpChildCenter);

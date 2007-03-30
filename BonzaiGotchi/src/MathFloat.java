@@ -67,4 +67,10 @@ public class MathFloat {
 	public static MathFloat divide (int operand1, int operand2) {
 		return new MathFloat (operand1 * 1000 / operand2);
 	}
+	
+	public static MathFloat divide (int operand1, MathFloat operand2) {
+		MathFloat tmpMathFloat = new MathFloat (operand1 * 1000);
+		tmpMathFloat.divide(operand2);
+		return tmpMathFloat;
+	}
 }

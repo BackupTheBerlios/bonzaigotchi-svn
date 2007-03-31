@@ -1,5 +1,5 @@
 import javax.microedition.lcdui.Graphics;
-
+//
 public class Can {
 
 		private MathFloat length;

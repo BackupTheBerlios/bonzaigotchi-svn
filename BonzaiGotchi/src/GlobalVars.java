@@ -9,7 +9,7 @@
 //            altered GROWTH_WATER* TO REQUEST_WATER*
 // 2007-01-30 new Array-length for Menue-entries by fiips
 // 2007-03-12 GROWTH_INTERVAL implementiert, damit automatisch upgedated wird
-
+// 2007-04-10 Changed IMAGE Paths
 import java.util.Date;
 import java.util.Random;
 
@@ -99,18 +99,32 @@ public class GlobalVars {
 	public final static int COLOR_CAN_OUTER = 0x97A4AD;
 
 	// IMAGE PATHS
-	public final static String MENU_IMG_PATH_WATER = "/watercan20black.png";
-	
+	public final static String MENU_IMG_PATH_WATER = "/watercan20.png";
+	public final static String MENU_IMG_PATH_WATER_RAND = "/watercan20rand.png";
 	public final static String MENU_IMG_PATH_EDIT = "/scissors20.png";
-	public final static String MENU_IMG_PATH_EDIT_CUT = "/question20.png";
-	public final static String MENU_IMG_PATH_EDIT_EXACTCUT = "/question20.png";
-	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_SEAL = "/question20.png";
-	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL = "/question20.png";
-	public final static String MENU_IMG_PATH_EDIT_COLOR = "/question20.png";
-	public final static String MENU_IMG_PATH_EDIT_DUNG = "/question20.png";
-	
+	public final static String MENU_IMG_PATH_EDIT_RAND = "/scissors20rand.png";
 	public final static String MENU_IMG_PATH_POT = "/pot20.png";
+	public final static String MENU_IMG_PATH_POT_RAND = "/pot20rand.png";
 	public final static String MENU_IMG_PATH_EXIT = "/question20.png";
+	public final static String MENU_IMG_PATH_EXIT_RAND = "/question20rand.png";
+	
+	public final static String MENU_IMG_PATH_EDIT_CUT = "/cut20.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT = "/target20.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_SEAL = "/seal20.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL = "/dontseal20.png";
+	public final static String MENU_IMG_PATH_EDIT_COLOR = "/palette20.png";
+	public final static String MENU_IMG_PATH_EDIT_DUNG = "/dung20.png";
+	public final static String MENU_IMG_PATH_EDIT_CUT_RAND = "/cut20rand.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_RAND = "/target20rand.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_SEAL_RAND = "/seal20rand.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL_RAND = "/dontseal20rand.png";
+	public final static String MENU_IMG_PATH_EDIT_COLOR_RAND = "/palette20rand.png";
+	public final static String MENU_IMG_PATH_EDIT_DUNG_RAND = "/dung20rand.png";
+	
+	
+	//public final static String MENU_IMG_PATH_EXIT = "/arrow2.png";
+	
+	
 	
 	
 	public static Date TIME_STAMP;

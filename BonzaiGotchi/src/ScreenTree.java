@@ -16,9 +16,17 @@
 //			  added 	  	drawWatering()
 //			  added 	  	drawPot()
 //			  added 	  	actionWatering()
-
+// 2007-04-10 updated by Sven
+//			  added			whatTime() --> returns int[] (int[0]=hour, int[1]=minutes)
+//			  added			drawDay()  --> draws position of the sun according to the time of the day + background colour changing
+//     		  changed		menuShow()
+//			  changed 		menuSelect()
+//			  changed 		paint()
+//			  added 		getRandom()
+//			  added			randomizeStars()
 import java.io.IOException;
 import java.util.Date;
+import java.util.Random;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
@@ -45,6 +53,11 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private int menuId = -1;
 	private MenuItem[] menu;
+	private MenuItem[] menurand;
+	Random random = new Random(System.currentTimeMillis());
+	int[] starsx={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	int[] starsy={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	
 	private int menuItemSelected = 0;
 	
 	// Thread
@@ -57,6 +70,8 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	public ScreenTree(ReceiveFeedback tmpParent) {
 
+
+		
 		parent = tmpParent;
 
 		// setzten der GlobalVars
@@ -88,6 +103,8 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	private void screenTreeInit() {
+		
+		randomizeStars();
 		
 		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
 			GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
@@ -143,15 +160,31 @@ public class ScreenTree extends Canvas implements Runnable {
 				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITEXACT) {
 				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, 40);
 				drawBackground(g);	
+				int[] timeh=whatTime();
+				
 				for (int i = 0; i < menu.length; i++) {						
-					g.setClip(i * 20, 0, 20, 20);
+					//g.setClip(i * 20, 0, 20, 20);
+					g.setClip(i * 20+GlobalVars.DISPLAY_X_WIDTH/2-menu.length*10, 20+GlobalVars.DISPLAY_Y_HEIGHT/3, 20, 20);
 					menu[i].draw(g);
 					if (i == menuItemSelected) {
-						g.setColor(0xFF0000);
-						g.fillRect(i * 20, 18, 20, 2);
-						g.setClip(0, 20, 100, 20);
+						//g.setColor(0xFF0000);
+						//g.fillRect(i * 20, 18, 20, 2);
+						//g.setClip(0, 20, 100, 20);
+						
+						g.setClip(i * 20+GlobalVars.DISPLAY_X_WIDTH/2-menu.length*10, 20+GlobalVars.DISPLAY_Y_HEIGHT/3, 20, 20);
+						menurand[i].draw(g);
+						
+						//g.setClip(40, 60, 120, 60);
+						g.setClip(0,0,GlobalVars.DISPLAY_X_WIDTH,GlobalVars.DISPLAY_Y_HEIGHT);
 						g.setColor(0x000000);
-						g.drawString(menu[i].getTitle(), 2, 24, Graphics.TOP|Graphics.LEFT);
+						if(timeh[0]>18&&timeh[0]<24||timeh[0]>0&&timeh[0]<6)
+							{
+							g.setColor(0xFFFFFF);
+							System.out.println("Color gesetzt!");
+							}
+						//g.drawString(menu[i].getTitle(), 4, 24, Graphics.TOP|Graphics.LEFT);
+						g.drawString(menu[i].getTitle(), 20+GlobalVars.DISPLAY_X_WIDTH/2-menu.length*10, 60, Graphics.TOP|Graphics.LEFT);
+						
 					}
 				}
 				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
@@ -176,10 +209,113 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	private void drawBackground(Graphics g) {
-		g.setColor(0xFFFFFF);
-		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
+		
+		
+		// What a beautiful day...
+		
+		drawDay(g);
+		
 	}
-
+	public void randomizeStars()
+		{
+//		 Randomize the stars
+		for(int i=0;i<20;i++)
+		{
+		
+		starsx[i]=getRandom(GlobalVars.DISPLAY_X_WIDTH);
+		starsy[i]=getRandom(GlobalVars.DISPLAY_Y_HEIGHT);
+		}
+		//
+		}
+	public void drawDay(Graphics g){
+		
+		
+		int[] timeh = whatTime();
+		int hour=timeh[0];
+		int minutes=timeh[1];
+		System.out.println("Time: "+hour+":"+minutes);
+		if(hour>9&&hour<16){
+			g.setColor(0xFFFFFF);
+			System.out.println("Mittag");
+		}
+		if(hour>15&&hour<18){
+		g.setColor(0xFADDE0);
+		System.out.println("Nachmittag");
+		}
+		if(hour>17&&hour<19)
+		{
+			g.setColor(0xFD5F72);
+			System.out.println("Dämmerung");
+			}
+		if(hour>18&&hour<24||hour>0&&hour<6)
+		{
+			
+			g.setColor(0x000000);
+			System.out.println("Nacht");
+			
+			}
+		if(hour>5&&hour<10)
+		{
+			g.setColor(0xFBF782);
+			System.out.println("Morgen");
+			}
+		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
+		
+		g.setColor(0xFFFFFF);
+		
+		
+		for(int i=0;i<20;i++)
+			{
+			
+			g.drawArc(starsx[i], starsy[i], 1, 1, 0, 360);
+			}
+		
+		
+	
+		
+		int xsun=0;
+		int ysun=0;
+		if(hour>6&&hour<19){
+			if(hour<12){
+				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
+				ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
+					}
+			if(hour>11){
+				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
+				ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*(GlobalVars.DISPLAY_X_WIDTH/72)*360+(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
+				//ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
+			}
+			//System.out.println("x_width "+GlobalVars.DISPLAY_X_WIDTH);
+			//System.out.println("y_heigth "+GlobalVars.DISPLAY_Y_HEIGHT);
+			//System.out.println("xsun: "+xsun);
+			//System.out.println("ysun: "+ysun);
+			g.setColor(0xFDF401);
+			if(ysun<0)
+				ysun=ysun*(-1);
+			if(hour<12)
+			g.fillArc(xsun/10,GlobalVars.DISPLAY_Y_HEIGHT-ysun/11, 30, 30, 0, 360);
+			//+ysun/50
+			if(hour>11)
+				g.fillArc(xsun/10, ysun/10, 30, 30, 0, 360);
+		}
+	}
+	public int getRandom(int bound)
+		{
+		return Math.abs(random.nextInt()%bound);
+		
+		}
+	public int[] whatTime() { 
+		java.util.Date date = new java.util.Date();
+		java.util.Calendar rightNow = java.util.Calendar.getInstance();
+		rightNow.setTime(date); 
+		String hour = String.valueOf(rightNow.get(java.util.Calendar.HOUR_OF_DAY));
+		String min = String.valueOf(rightNow.get(java.util.Calendar.MINUTE)); 
+		String sec = String.valueOf(rightNow.get(java.util.Calendar.SECOND)); 
+		String time2 = hour;  //+":"+min;//+":" +sec; 
+		int[] timeh = {Integer.parseInt(hour),Integer.parseInt(min)};
+		return timeh;
+		}
+	
 	private void drawWatering(Graphics g) {
 		/* graphic of pot */
 		// while animation=overpainting set flag animWatering = true;
@@ -283,7 +419,13 @@ public class ScreenTree extends Canvas implements Runnable {
 					new MenuItem(2, LangVars.CMD_TREEMENU_EDIT,  GlobalVars.MENU_IMG_PATH_EDIT),
 					new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT),
 					new MenuItem(4, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT)
-				};
+					};
+				menurand = new MenuItem[] {
+						new MenuItem(1, LangVars.CMD_TREEMENU_WATER, GlobalVars.MENU_IMG_PATH_WATER_RAND),
+						new MenuItem(2, LangVars.CMD_TREEMENU_EDIT,  GlobalVars.MENU_IMG_PATH_EDIT_RAND),
+						new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT_RAND),
+						new MenuItem(4, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT_RAND)
+						};
 				break;		
 				
 			// Edit
@@ -292,8 +434,16 @@ public class ScreenTree extends Canvas implements Runnable {
 					new MenuItem(21, LangVars.CMD_SELBRANCH_CUT,      GlobalVars.MENU_IMG_PATH_EDIT_CUT),
 					new MenuItem(22, LangVars.CMD_SELBRANCH_EXACTCUT, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT),
 					new MenuItem(23, LangVars.CMD_SELBRANCH_COLOR,    GlobalVars.MENU_IMG_PATH_EDIT_COLOR),
-					new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG)
+					new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG),
+					new MenuItem(25, LangVars.CMD_ALL_EXIT,     GlobalVars.MENU_IMG_PATH_EXIT)
 				};
+				menurand = new MenuItem[] {
+						new MenuItem(21, LangVars.CMD_SELBRANCH_CUT,      GlobalVars.MENU_IMG_PATH_EDIT_CUT_RAND),
+						new MenuItem(22, LangVars.CMD_SELBRANCH_EXACTCUT, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_RAND),
+						new MenuItem(23, LangVars.CMD_SELBRANCH_COLOR,    GlobalVars.MENU_IMG_PATH_EDIT_COLOR_RAND),
+						new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG_RAND),
+						new MenuItem(25, LangVars.CMD_ALL_EXIT,     GlobalVars.MENU_IMG_PATH_EXIT_RAND)
+					};
 				break;
 			
 			case 22:
@@ -301,6 +451,10 @@ public class ScreenTree extends Canvas implements Runnable {
 					new MenuItem(221, LangVars.CMD_SELECTED_SEAL,     GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL),
 					new MenuItem(222, LangVars.CMD_SELECTED_DONTSEAL, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL)
 				};
+				menurand = new MenuItem[] {
+						new MenuItem(221, LangVars.CMD_SELECTED_SEAL,     GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL_RAND),
+						new MenuItem(222, LangVars.CMD_SELECTED_DONTSEAL, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL_RAND)
+					};
 				break;
 		}
 		parent.receiveFeedback(GlobalVars.APPSTATUS_MENU);
@@ -381,7 +535,9 @@ public class ScreenTree extends Canvas implements Runnable {
 				menuKill();
 				// Dung -- coming soon ...
 				break;
-				
+			case 25:
+				menuShow(0);
+				break;	
 			case 3:
 				potChange();
 				break;

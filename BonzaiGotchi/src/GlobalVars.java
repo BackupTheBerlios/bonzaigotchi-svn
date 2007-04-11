@@ -47,7 +47,7 @@ public class GlobalVars {
 	public static int COUNTERINTERVAL = 0;
 	public static int COUNTERCHEAT = 0;
 	
-	public static int GROWTH_INTERVAL = 10000;
+	public static int GROWTH_INTERVAL = 5000;
 	
 	public final static int POT_WATER_INIT = 200000;
 	public final static int[] POT_SIZE = {300000,1000000,9000000};
@@ -105,8 +105,8 @@ public class GlobalVars {
 	public final static String MENU_IMG_PATH_EDIT_RAND = "/scissors20rand.png";
 	public final static String MENU_IMG_PATH_POT = "/pot20.png";
 	public final static String MENU_IMG_PATH_POT_RAND = "/pot20rand.png";
-	public final static String MENU_IMG_PATH_EXIT = "/question20.png";
-	public final static String MENU_IMG_PATH_EXIT_RAND = "/question20rand.png";
+	public final static String MENU_IMG_PATH_EXIT = "/exit20.png";
+	public final static String MENU_IMG_PATH_EXIT_RAND = "/exit20rand.png";
 	
 	public final static String MENU_IMG_PATH_EDIT_CUT = "/cut20.png";
 	public final static String MENU_IMG_PATH_EDIT_EXACTCUT = "/target20.png";

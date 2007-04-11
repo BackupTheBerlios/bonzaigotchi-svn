@@ -104,12 +104,12 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private void screenTreeInit() {
 		
-		randomizeStars();
 		
 		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
 			GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
 			GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 		}
+		randomizeStars();
 		
 		GlobalVars.COUNTERELEMENT = 0;
 		GlobalVars.COUNTERCHEAT = 0;
@@ -233,6 +233,12 @@ public class ScreenTree extends Canvas implements Runnable {
 		int[] timeh = whatTime();
 		int hour=timeh[0];
 		int minutes=timeh[1];
+		System.out.println(GlobalVars.TIME_STAMP);
+		//Wed Apr 11 18:32:49 UTC 2007
+		System.out.println(GlobalVars.TIME_STAMP.toString().indexOf(":"));
+		hour=Integer.parseInt(GlobalVars.TIME_STAMP.toString().substring(GlobalVars.TIME_STAMP.toString().indexOf(":")-2,GlobalVars.TIME_STAMP.toString().indexOf(":")));
+		minutes=Integer.parseInt(GlobalVars.TIME_STAMP.toString().substring(GlobalVars.TIME_STAMP.toString().indexOf(":")+1,GlobalVars.TIME_STAMP.toString().indexOf(":")+3));
+		
 		System.out.println("Time: "+hour+":"+minutes);
 		if(hour>9&&hour<16){
 			g.setColor(0xFFFFFF);
@@ -296,7 +302,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			g.fillArc(xsun/10,GlobalVars.DISPLAY_Y_HEIGHT-ysun/11, 30, 30, 0, 360);
 			//+ysun/50
 			if(hour>11)
-				g.fillArc(xsun/10, ysun/10, 30, 30, 0, 360);
+				g.fillArc(xsun/10, ysun/11, 30, 30, 0, 360);
 		}
 	}
 	public int getRandom(int bound)

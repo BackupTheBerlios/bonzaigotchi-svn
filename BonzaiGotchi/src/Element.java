@@ -21,7 +21,7 @@ public class Element {
 
 	private MathFloat length;
 	private MathFloat thickness; 
-	private short angle; // angle * 15 = echter Winkel | 0 = verticalUp
+	private short angle; // angle * 11.25 = echter Winkel | 0 = verticalUp
 	private short posX;
 	private short posY;
 	private int water; 
@@ -40,12 +40,12 @@ public class Element {
 	
 	private Element parent = null;
 	
-	public Element(Element inputParent, FileIO data) {
+	public Element(Element parent, FileIO data) {
 	
 		id = ++GlobalVars.COUNTERELEMENT;
 		System.out.println("--- Element Constructor LOADED | "+ id +" ---");
 		
-		parent = inputParent;
+		this.parent = parent;
 		
 		// Load Vars
 		length = new MathFloat((int)data.readDataLong());
@@ -78,17 +78,17 @@ public class Element {
 				
 	}
 	
-	public Element(Element inputParent, short tmpAngle, short tmpPosX, short tmpPosY, int tmpWater) {
+	public Element(Element parent, short angle, short posX, short posY, int water) {
 	
 		id = ++GlobalVars.COUNTERELEMENT;
 		System.out.println("--- Element Constructor SPAWNED | "+ id +" ---");
 		
-		parent = inputParent;
+		this.parent = parent;
 		
-		angle = tmpAngle;
-		posX = tmpPosX;
-		posY = tmpPosY;
-		water = tmpWater;
+		this.angle = angle;
+		this.posX = posX;
+		this.posY = posY;
+		this.water = water;
 		
 		length = new MathFloat(GlobalVars.SPAWN_LENGTH_INIT);
 		thickness = new MathFloat(GlobalVars.SPAWN_THICKNESS_INIT);
@@ -255,42 +255,42 @@ public class Element {
 			}
 		}
 	
-		if (!growStop && childLeft == null && childCenter == null && childRight == null && length.getInt() > GlobalVars.SPAWN_LENGTH_MIN && water > GlobalVars.SPAWN_WATER_MIN && getRandom(GlobalVars.SPAWN_CHANCE) == 3) {
-			short tmpRandom = (short)getRandom(3);
+		if (!growStop && childLeft == null && childCenter == null && childRight == null && length.getInt() > GlobalVars.SPAWN_LENGTH_MIN && waterPercentage > GlobalVars.GROWTH_WATER_MIN && MathCalc.getRandom(GlobalVars.SPAWN_CHANCE) == 3) {
+			short tmpRandom = (short)MathCalc.getRandom(3);
 			
 			// System.out.println("--- ID: "+ id +" | SpawnRandom: " + tmpRandom + " ---");
 			
 			switch (tmpRandom + 3) {
 				case 0:
-					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childLeft   = new Element(this, calcAngle((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 1:
-					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childCenter = new Element(this, calcAngle((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 2:
-					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childRight  = new Element(this, calcAngle((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 3:
-					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
-					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childLeft   = new Element(this, calcAngle((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childCenter = new Element(this, calcAngle((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 					
 				case 4:
-					childLeft = new Element(this, calcAngle((short)20), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
-					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childLeft   = new Element(this, calcAngle((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childRight  = new Element(this, calcAngle((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 					
 				case 5:
-					childCenter = new Element(this, calcAngle((short)22), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
-					childRight = new Element(this, calcAngle((short)1), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childCenter = new Element(this, calcAngle((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childRight  = new Element(this, calcAngle((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 			}
@@ -316,7 +316,7 @@ public class Element {
 			
 			boolean drawHorizontal = false;
 			
-			if (angle >= 21 || angle <= 3 || (angle >= 9 && angle <= 15)) {
+			if (angle >= 28 || angle <= 4 || (angle >= 12 && angle <= 20)) {
 				drawHorizontal = true;
 				tmpPosX -= thickness.getShort() / 2;
 			}
@@ -338,13 +338,13 @@ public class Element {
 			
 			switch (GlobalVars.PAINTSTATUS) {
 				case GlobalVars.PAINTSTATUS_NORMAL:
-					if (health <= GlobalVars.GROWTH_HEALTH_MIN) {
+					if (health <= GlobalVars.COLOR_ELEMENT_DRY_THRESHOLD) {
 						if (health <= GlobalVars.GROWTH_HEALTH_DEATH) {
 							innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
 							outerColor = GlobalVars.COLOR_ELEMENT_DEAD;
 						}
 						else {
-							short steps = (short)((GlobalVars.GROWTH_HEALTH_MIN - GlobalVars.GROWTH_HEALTH_DEATH) / 10) +1; 
+							short steps = (short)((GlobalVars.COLOR_ELEMENT_DRY_THRESHOLD - GlobalVars.GROWTH_HEALTH_DEATH) / 10) +1; 
 							short ratio = (short)((health - GlobalVars.GROWTH_HEALTH_DEATH) / 10);
 							innerColor = MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_INNER, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
 							innerColor = MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_OUTER, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
@@ -412,10 +412,10 @@ public class Element {
 		} // if paintstatus 1 || 2
 		else if (GlobalVars.PAINTSTATUS == 3 && GlobalVars.ELEMENTEDIT.equals(this)) {
 			System.out.println("--- ID: "+ id +" | Element Draw.PS3 ---");
-			short tmpAngle = (short)(angle - 6);
+			short tmpAngle = (short)(angle - 8);
 			if (tmpAngle < 0) {
-				tmpAngle += 24;
-			}			
+				tmpAngle += 32;
+			}
 			MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
 			tmpPos.multiply(GlobalVars.EDITEXACTPOS);
 			int tmpPosCenterX = posX + tmpPos.getShort();
@@ -424,9 +424,9 @@ public class Element {
 			tmpPos.multiply(GlobalVars.EDITEXACTPOS);
 			int tmpPosCenterY = posY - tmpPos.getShort();
 			
-			tmpAngle = (short)(tmpAngle - 6);
+			tmpAngle = (short)(tmpAngle - 8);
 			if (tmpAngle < 0) {
-				tmpAngle += 24;
+				tmpAngle += 32;
 			}
 			
 			tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
@@ -437,9 +437,9 @@ public class Element {
 			tmpPos.multiply((GlobalVars.EDITEXACTLENGTH + thickness.getInt() / 2) * -1);
 			int tmpPosX2 = tmpPosCenterX + tmpPos.getShort();
 			
-			tmpAngle = (short)(angle - 6);
+			tmpAngle = (short)(angle - 8);
 			if (tmpAngle < 0) {
-				tmpAngle += 24;
+				tmpAngle += 32;
 			}
 			
 			tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
@@ -469,20 +469,10 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | Element Draw END ---");
 	}
 
-	private int getRandom(int range) {
-		int tmpRandom;
-
-		tmpRandom = GlobalVars.RANDOMGENERATOR.nextInt() % range;
-		if (tmpRandom < 0) {
-			tmpRandom *= -1;
-		}
-		return tmpRandom;
-	}
-	
 	private short calcX2(short tmpX) {
-		short tmpAngle = (short)(angle - 6);
+		short tmpAngle = (short)(angle - 8);
 		if (tmpAngle < 0) {
-			tmpAngle += 24;
+			tmpAngle += 32;
 		}
 		
 		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
@@ -496,11 +486,11 @@ public class Element {
 		return (short)(tmpY - tmpPos.getShort());
 	}
 
-	private short calcAngle(short inputAngle) {
-		short tmpAngle = (short)(getRandom(4) + angle + inputAngle);
+	private short calcAngle(short inputAngle, short range) {
+		short tmpAngle = (short)(MathCalc.getRandom(range) + angle + inputAngle);
 		
-		while (tmpAngle > 23) {
-			tmpAngle -= 24;
+		while (tmpAngle > 31) {
+			tmpAngle -= 32;
 		}
 		return tmpAngle;
 	}

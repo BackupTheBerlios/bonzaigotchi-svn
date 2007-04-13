@@ -68,11 +68,9 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private ReceiveFeedback parent;
 	
-	public ScreenTree(ReceiveFeedback tmpParent) {
-
-
+	public ScreenTree(ReceiveFeedback parent) {
 		
-		parent = tmpParent;
+		this.parent = parent;
 
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date();
@@ -81,14 +79,14 @@ public class ScreenTree extends Canvas implements Runnable {
 		water = GlobalVars.POT_WATER_INIT;
 		potSize=0;
 		
-		log = new Element(null, (short)0, (short)(GlobalVars.DISPLAY_X_WIDTH / 2), GlobalVars.DISPLAY_Y_HEIGHT, 10000);	
+		log = new Element(null, (short)0, (short)(GlobalVars.DISPLAY_X_WIDTH / 2), GlobalVars.DISPLAY_Y_HEIGHT, GlobalVars.SPAWN_WATER_CHILD);	
 		
 		screenTreeInit();
 	}
 	
-	public ScreenTree(ReceiveFeedback tmpParent, FileIO data) {
+	public ScreenTree(ReceiveFeedback parent, FileIO data) {
 		
-		parent = tmpParent;
+		this.parent = parent;
 				
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date(data.readDataLong());
@@ -251,7 +249,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		if(hour>17&&hour<19)
 		{
 			g.setColor(0xFD5F72);
-			System.out.println("Dämmerung");
+			System.out.println("Dï¿½mmerung");
 			}
 		if(hour>18&&hour<24||hour>0&&hour<6)
 		{
@@ -441,14 +439,12 @@ public class ScreenTree extends Canvas implements Runnable {
 					new MenuItem(22, LangVars.CMD_SELBRANCH_EXACTCUT, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT),
 					new MenuItem(23, LangVars.CMD_SELBRANCH_COLOR,    GlobalVars.MENU_IMG_PATH_EDIT_COLOR),
 					new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG),
-					new MenuItem(25, LangVars.CMD_ALL_EXIT,     GlobalVars.MENU_IMG_PATH_EXIT)
 				};
 				menurand = new MenuItem[] {
 						new MenuItem(21, LangVars.CMD_SELBRANCH_CUT,      GlobalVars.MENU_IMG_PATH_EDIT_CUT_RAND),
 						new MenuItem(22, LangVars.CMD_SELBRANCH_EXACTCUT, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_RAND),
 						new MenuItem(23, LangVars.CMD_SELBRANCH_COLOR,    GlobalVars.MENU_IMG_PATH_EDIT_COLOR_RAND),
 						new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG_RAND),
-						new MenuItem(25, LangVars.CMD_ALL_EXIT,     GlobalVars.MENU_IMG_PATH_EXIT_RAND)
 					};
 				break;
 			
@@ -541,9 +537,6 @@ public class ScreenTree extends Canvas implements Runnable {
 				menuKill();
 				// Dung -- coming soon ...
 				break;
-			case 25:
-				menuShow(0);
-				break;	
 			case 3:
 				potChange();
 				break;

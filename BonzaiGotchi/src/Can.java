@@ -12,12 +12,12 @@ public class Can {
 		
 		private Can child;
 		
-		public Can(short tmpAngle, short tmpPosX, short tmpPosY, short size) {
+		public Can(short angle, short posX, short posY, short size) {
 			System.out.println("--- Element Can LOADED ---");
 			
-			angle = tmpAngle;
-			posX = tmpPosX;
-			posY = tmpPosY;
+			this.angle = angle;
+			this.posX = posX;
+			this.posY = posY;
 			
 			setSize (size);
 		}
@@ -44,7 +44,7 @@ public class Can {
 			
 			boolean drawHorizontal = false;
 			
-			if (angle >= 21 || angle <= 3 || (angle >= 9 && angle <= 15)) {
+			if (angle >= 28 || angle <= 4 || (angle >= 12 && angle <= 20)) {
 				drawHorizontal = true;
 				tmpPosX -= thickness.getShort() / 2;
 			}
@@ -108,7 +108,7 @@ public class Can {
 			//g.drawLine(tmpPosX+i, tmpPosY -(tmpPosY-tmpPosY2)/2, tmpPosX-thickness.getInt()/2+i, tmpPosY2-thickness.getInt()/3);
 			}
 			
-			// Draw Gießkopf
+			// Draw Gieï¿½kopf
 			
 			
 			///////////////////////// Mein Dreieck ////////////////////////
@@ -122,7 +122,7 @@ public class Can {
 			///////////////////////////////////////////////////////////////
 			
 			
-			// Draw Gießarm
+			// Draw Gieï¿½arm
 			
 			for (int i = 0; i< (thickness.getInt()/5); i++)
 			{
@@ -196,9 +196,9 @@ public class Can {
 		}
 		
 		public short calcX2(short tmpX) {
-			short tmpAngle = (short)(angle - 6);
+			short tmpAngle = (short)(angle - 8);
 			if (tmpAngle < 0) {
-				tmpAngle += 24;
+				tmpAngle += 32;
 			}
 			
 			MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);

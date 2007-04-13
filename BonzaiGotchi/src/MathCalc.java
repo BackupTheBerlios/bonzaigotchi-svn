@@ -29,4 +29,13 @@ public class MathCalc {
 		return r * 0x10000 + g * 0x100 + b;
 	}
 	
+	public static int getRandom(int range) {
+		int tmpRandom;
+
+		tmpRandom = GlobalVars.RANDOMGENERATOR.nextInt() % range;
+		if (tmpRandom < 0) {
+			tmpRandom *= -1;
+		}
+		return tmpRandom;
+	}
 }

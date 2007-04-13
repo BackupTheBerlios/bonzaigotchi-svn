@@ -17,6 +17,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 	private ScreenTree screenTree;
 	private ScreenHelp screenHelp;
+	private ScreenCredits screenCredits;
 
 	// TODO: private ScreenMenu screenMenu;
 	// TODO: private ScreenHelp screenHelp;
@@ -36,6 +37,8 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	// HelpScreen Commandos
 	private Command cmdHExit;
 	
+	// CreditsScreen Commandos
+	private Command cmdCExit;
 	private FileIO data;
 
 	private Thread alarm;
@@ -43,6 +46,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	protected void startApp() throws MIDletStateChangeException {	
 		data = new FileIO("BonzaiGotchi");
 		screenHelp = new ScreenHelp();
+		screenCredits = new ScreenCredits();
 
 		// ScreenMenu screeny = new ScreenMenu();
 		// screeny.initialize();
@@ -57,6 +61,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		// HelpScreen Comandos
 		cmdHExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 		screenHelp.addCommand(cmdHExit);
+		
+		// HelpCredits Comandos
+		cmdCExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
+		screenHelp.addCommand(cmdCExit);
 		
 		showMainMenu();
 	}
@@ -144,8 +152,9 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 				break;
 			}
 			case 3: { // im Creditsauswahl
-				System.out.println("3 = im creditauswahl");
-				saveTree();
+				Display.getDisplay(this).setCurrent(screenCredits);
+				screenCredits.setCommandListener(this);
+				screenCredits.repaint();
 				break;
 			}
 			default: { // im default;

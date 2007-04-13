@@ -47,7 +47,10 @@ public class GlobalVars {
 	public static int COUNTERINTERVAL = 0;
 	public static int COUNTERCHEAT = 0;
 	
-	public static int GROWTH_INTERVAL = 5000;
+	public static int GROWTH_INTERVAL = 600000;
+	public static int GROWTH_INTERVAL_DAY = 600000;
+	public static int GROWTH_INTERVAL_NIGHT = 2000000;
+	
 	
 	public final static int POT_WATER_INIT = 200000;
 	public final static int[] POT_SIZE = {300000,1000000,9000000};

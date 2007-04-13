@@ -8,6 +8,7 @@ public class ScreenIntro extends Canvas implements Runnable {
 	private Image introbild;
 	private Image intro2bild;
 
+
 	private ReceiveFeedback parent;
 
 	private Thread introrun;
@@ -26,7 +27,7 @@ public class ScreenIntro extends Canvas implements Runnable {
 		try {
 			introbild = Image.createImage("/intro_screen.png");
 			intro2bild = Image.createImage("/intro2_screen.png");
-			// fixe Größe von 128x128 px
+			// fixe Größe von 128x128 px bzw. 128x153
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -46,7 +47,7 @@ public class ScreenIntro extends Canvas implements Runnable {
 		switch (count) {
 		case 1: {
 			int x = getXCenterImage(128);
-			int y = getYCenterImage(128);
+			int y = getYCenterImage(153);
 			g.drawImage(introbild, x, y, Graphics.TOP | Graphics.LEFT);
 			break;
 		}

@@ -18,7 +18,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	private ScreenTree screenTree;
 	private ScreenHelp screenHelp;
 	private ScreenCredits screenCredits;
-	private ScreenIntro introscreen;
+	private ScreenIntro screenIntro;
 
 	// TODO: private ScreenMenu screenMenu;
 	// TODO: private ScreenHelp screenHelp;
@@ -49,7 +49,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 		
 		data = new FileIO("BonzaiGotchi");
-		introscreen = new ScreenIntro(this);
+		screenIntro = new ScreenIntro(this);
 		screenHelp = new ScreenHelp();
 		screenCredits = new ScreenCredits();
 
@@ -72,8 +72,8 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		screenCredits.addCommand(cmdCExit);
 		
 		GlobalVars.APPSTATUS=GlobalVars.APPSTATUS_INTRO;
-		Display.getDisplay(this).setCurrent(introscreen);
-		introscreen.play();
+		Display.getDisplay(this).setCurrent(screenIntro);
+		screenIntro.play();
 
 	}
 
@@ -267,7 +267,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 			case GlobalVars.APPSTATUS_MAINMENU:
 				if (GlobalVars.APPSTATUS==GlobalVars.APPSTATUS_INTRO){
 					GlobalVars.APPSTATUS = code;
-					introscreen=null;
+					screenIntro=null;
 					showMainMenu();
 					
 				}

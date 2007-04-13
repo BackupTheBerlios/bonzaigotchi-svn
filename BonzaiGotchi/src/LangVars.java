@@ -36,6 +36,10 @@ public class LangVars {
 	
 	public static final String DIE_MESSAGE = "Your tree died a slowly and painfull death";
 	
+	public static final String QUES_SURE = "Are your sure?";
+	public static final String ANSWER_YES = "Yes";
+	public static final String ANSWER_NO = "No";
+	
 	
 	/* keine Verwendung! Nur Stringarray testing! Hier kommt noch die Funktion zum Auslesen
 	 * des lang.conf Datei wegen verschiedener Sprachen

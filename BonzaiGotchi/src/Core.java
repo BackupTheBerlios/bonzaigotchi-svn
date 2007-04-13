@@ -18,6 +18,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	private ScreenTree screenTree;
 	private ScreenHelp screenHelp;
 	private ScreenCredits screenCredits;
+	private Intro introscreen;
 
 	// TODO: private ScreenMenu screenMenu;
 	// TODO: private ScreenHelp screenHelp;
@@ -44,7 +45,11 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	private Thread alarm;
 
 	protected void startApp() throws MIDletStateChangeException {	
+
+
+		
 		data = new FileIO("BonzaiGotchi");
+		introscreen = new Intro(this);
 		screenHelp = new ScreenHelp();
 		screenCredits = new ScreenCredits();
 
@@ -66,7 +71,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		cmdCExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 		screenCredits.addCommand(cmdCExit);
 		
-		showMainMenu();
+		GlobalVars.APPSTATUS=GlobalVars.APPSTATUS_INTRO;
+		Display.getDisplay(this).setCurrent(introscreen);
+		introscreen.play();
+
 	}
 
 	private void checkResume() {
@@ -197,7 +205,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		screenTree.removeCommand(cmdDTExit);
 	}
 
-	private void showMainMenu() {		
+	public void showMainMenu() {		
 		// mainmenuList.setSelectCommand(cmdMSelect); //NICHT MIDP 1.0 f�hig
 		checkResume(); // Array bauen fuer Liste
 		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT, mainElements, null);
@@ -257,8 +265,16 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		switch (code) {
 		
 			case GlobalVars.APPSTATUS_MAINMENU:
-				GlobalVars.APPSTATUS = code;
-				doExitToMain();
+				if (GlobalVars.APPSTATUS==GlobalVars.APPSTATUS_INTRO){
+					GlobalVars.APPSTATUS = code;
+					introscreen=null;
+					showMainMenu();
+					
+				}
+				else {
+					GlobalVars.APPSTATUS = code;
+					doExitToMain();
+				}
 				break;				
 				
 			case GlobalVars.APPSTATUS_RUNNING:

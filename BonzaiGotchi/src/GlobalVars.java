@@ -18,6 +18,7 @@ public class GlobalVars {
 	
 	public final static short APPSTATUS_INIT = 0;
 	public final static short APPSTATUS_MAINMENU = 1;
+	public final static short APPSTATUS_INTRO = 11;
 	public final static short APPSTATUS_STANDBY = 21;
 	public final static short APPSTATUS_MENU = 22;
 	public final static short APPSTATUS_RUNNING = 23;
@@ -48,8 +49,8 @@ public class GlobalVars {
 	public static int COUNTERCHEAT = 0;
 	
 	public static int GROWTH_INTERVAL = 600000;
-	public static final int GROWTH_INTERVAL_DAY = 600000;
-	public static final int GROWTH_INTERVAL_NIGHT = 2000000;
+	public final static int GROWTH_INTERVAL_DAY = 600000;
+	public final static int GROWTH_INTERVAL_NIGHT = 2000000;
 	
 	
 	public final static int POT_WATER_INIT = 200000;

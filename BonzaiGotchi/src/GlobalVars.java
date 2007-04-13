@@ -50,7 +50,7 @@ public class GlobalVars {
 	
 	public static int GROWTH_INTERVAL = 600000;
 	public final static int GROWTH_INTERVAL_DAY = 600000;
-	public final static int GROWTH_INTERVAL_NIGHT = 2000000;
+	public final static int GROWTH_INTERVAL_NIGHT = 2400000;
 	
 	
 	public final static int POT_WATER_INIT = 200000;
@@ -59,8 +59,8 @@ public class GlobalVars {
 	public final static int[] POT_HEIGHT = {10,15,20};
 	public final static int POT_THICKNESS = 3;
 	
-	public final static short[] HEALTH_WATER_THRESHOLD = { 10,30,50,60,90,100};
-	public final static short[] HEALTH_WATER_INC =       {-5, -1, 1, 3, 5,  7};
+	public final static short[] HEALTH_WATER_THRESHOLD = { 0, 10, 30,50,60,90,100};
+	public final static short[] HEALTH_WATER_INC =       {-5,  0,  1, 3, 4, 5,  7};
 
 	public final static short WATER_SOCIAL_THRESHOLD = 75; //Prozent dr�ber
 
@@ -75,7 +75,6 @@ public class GlobalVars {
 	public final static int SPAWN_LENGTH_INIT = 2000;
 	public final static int SPAWN_THICKNESS_INIT = 1000;
 	public final static short SPAWN_LENGTH_MIN = 15;
-	public final static int SPAWN_WATER_MIN = 30000;
 	public final static short SPAWN_CHANCE = 30;
 	public final static int SPAWN_WATER_CHILD = 10000;
 	
@@ -85,6 +84,7 @@ public class GlobalVars {
 	public static short DISPLAY_Y_HEIGHT = 0;
 	public static short DISPLAY_X_WIDTH = 0;
 
+	public final static short COLOR_ELEMENT_DRY_THRESHOLD = 0;
 	public final static int COLOR_ELEMENT_INNER = 0x76E273;
 	public final static int COLOR_ELEMENT_OUTER = 0x007809;
 	public final static int COLOR_ELEMENT_DRY = 0xA3731A;
@@ -136,7 +136,7 @@ public class GlobalVars {
 	public final static short SAVE_RECORDSTORE_VERSION = 004;
 
 	// DEMAND_TABLE
-	public final static short[] GROWTH_WATER_DEMAND = {69,150,208,253,289,320,347,370,391,410,428,444,458,472,485,497,509,520,530,540,549,558,566,574,582,590,597,604,611};
+	public final static short[] GROWTH_WATER_DEMAND = {60,90,120,150,180,210,240,265,290,315,340,360,380,400,420,435,450,465,480,490,500,510,520,530,535,540,545,550,555};
 	public final static MathFloat GROWTH_WATER_DEMAND_NO_GROWTH_FACTOR = new MathFloat(500);
 	
 	public final static short[] REQUEST_WATER_THRESHOLD =  {                 25,                   50,                  75,                  95,                 100};

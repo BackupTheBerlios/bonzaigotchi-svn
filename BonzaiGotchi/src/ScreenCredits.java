@@ -15,7 +15,7 @@ public class ScreenCredits extends Canvas {
 		g.setColor(0x00FF00);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 		g.setColor(0x000000);
-		g.drawString("Help", 0, 0, Graphics.TOP|Graphics.LEFT);
+		g.drawString("Credits", 0, 0, Graphics.TOP|Graphics.LEFT);
 	}
 	
 	protected void keyPressed (int keyCode) {

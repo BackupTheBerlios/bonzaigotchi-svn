@@ -64,7 +64,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		
 		// HelpCredits Comandos
 		cmdCExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
-		screenHelp.addCommand(cmdCExit);
+		screenCredits.addCommand(cmdCExit);
 		
 		showMainMenu();
 	}
@@ -176,6 +176,9 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		}
 		
 		else if (c.equals(cmdHExit)) {
+			showMainMenu();
+		}
+		else if (c.equals(cmdCExit)) {
 			showMainMenu();
 		}
 	}

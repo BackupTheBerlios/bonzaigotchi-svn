@@ -34,7 +34,7 @@ public class GlobalVars {
 	public final static byte PAINTSTATUS_NORMAL = 1;
 	public final static byte PAINTSTATUS_EDIT = 2;
 	public final static byte PAINTSTATUS_SELECTBRANCH = 3;
-	public final static byte PAINTSTATUS_REPAINT = 4;
+	public final static byte PAINTSTATUS_LEAF = 4;
 	
 	public static byte PAINTSTATUS = 0;
 	
@@ -84,6 +84,11 @@ public class GlobalVars {
 	public static short DISPLAY_Y_HEIGHT = 0;
 	public static short DISPLAY_X_WIDTH = 0;
 
+//	resetPos, angle, length
+	public final static int[] LEAF = {0 ,0 ,6000, 0, -4, 3000, 1, 0, 5000, 1, 8, 3000, 0, 4, 3000, 1, 0, 5000, -1};
+	public final static int LEAF_LENGTH_MIN = 10;
+	public final static int LEAF_THICKNESS_MAX = 6;
+	
 	public final static short COLOR_ELEMENT_DRY_THRESHOLD = 0;
 	public final static int COLOR_ELEMENT_INNER = 0x76E273;
 	public final static int COLOR_ELEMENT_OUTER = 0x007809;

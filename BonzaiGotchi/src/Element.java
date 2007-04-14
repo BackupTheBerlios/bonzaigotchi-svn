@@ -262,35 +262,35 @@ public class Element {
 			
 			switch (tmpRandom + 3) {
 				case 0:
-					childLeft   = new Element(this, calcAngle((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childLeft   = new Element(this, calcAngleRandom((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 1:
-					childCenter = new Element(this, calcAngle((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childCenter = new Element(this, calcAngleRandom((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 2:
-					childRight  = new Element(this, calcAngle((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childRight  = new Element(this, calcAngleRandom((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 3:
-					childLeft   = new Element(this, calcAngle((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
-					childCenter = new Element(this, calcAngle((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childLeft   = new Element(this, calcAngleRandom((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childCenter = new Element(this, calcAngleRandom((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 					
 				case 4:
-					childLeft   = new Element(this, calcAngle((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
-					childRight  = new Element(this, calcAngle((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childLeft   = new Element(this, calcAngleRandom((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childRight  = new Element(this, calcAngleRandom((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 					
 				case 5:
-					childCenter = new Element(this, calcAngle((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
-					childRight  = new Element(this, calcAngle((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childCenter = new Element(this, calcAngleRandom((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childRight  = new Element(this, calcAngleRandom((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
 					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 			}
@@ -308,7 +308,8 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
 		
 		if ( GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_NORMAL ||
-			(GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent)))) {
+			(GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) ||
+			 GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_LEAF) {
 			// System.out.println("--- ID|PAINTSTATUS: "+ id +" | "+ GlobalVars.PAINTSTATUS +" ---");
 					
 			short tmpPosX = posX;
@@ -336,8 +337,9 @@ public class Element {
 			int innerColor = 0;
 			int outerColor = 0;
 			
-			switch (GlobalVars.PAINTSTATUS) {
+			switch (GlobalVars.PAINTSTATUS) { 
 				case GlobalVars.PAINTSTATUS_NORMAL:
+				case GlobalVars.PAINTSTATUS_LEAF:
 					if (health <= GlobalVars.COLOR_ELEMENT_DRY_THRESHOLD) {
 						if (health <= GlobalVars.GROWTH_HEALTH_DEATH) {
 							innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
@@ -379,43 +381,77 @@ public class Element {
 					break;
 			}
 			
-			
-			short colorSteps = (short)(thickness.getShort() / 2 + thickness.getShort() % 2 - 1);
-			// System.out.println("--- ColorSteps: " + colorSteps + " ---");
-					
-			short n = colorSteps;
-			if (colorSteps < 1) {
-				colorSteps = 1;
-			}
-			boolean nIncrement = false;
-			
-			for (int i = 0; i < thickness.getInt(); i++) {
-				// System.out.println("--- LOOP BEGINN ---");
-				
-				if (n < 0) {
-					if (thickness.getInt() % 2 == 0) { n = 0; }
-					else                             { n = 1; }
-					nIncrement = true;
-				}
+			if (GlobalVars.PAINTSTATUS != GlobalVars.PAINTSTATUS_LEAF) {
+				// draw the Branch
+				short colorSteps = (short)(thickness.getShort() / 2 + thickness.getShort() % 2 - 1);
+				// System.out.println("--- ColorSteps: " + colorSteps + " ---");
 						
-				g.setColor(MathCalc.colorCombine(outerColor, innerColor, n, (short)(colorSteps - n)));
+				short n = colorSteps;
+				if (colorSteps < 1) {
+					colorSteps = 1;
+				}
+				boolean nIncrement = false;
 				
-				if (nIncrement) { n++; }
-				else            { n--; }
-				
-				if (drawHorizontal) { g.drawLine(tmpPosX + i, tmpPosY, tmpPosX2 + i, tmpPosY2); }
-				else                { g.drawLine(tmpPosX, tmpPosY + i, tmpPosX2, tmpPosY2 + i); }
-				
-				// System.out.println("--- LOOP END ---");			
+				for (int i = 0; i < thickness.getInt(); i++) {
+					// System.out.println("--- LOOP BEGINN ---");
+					
+					if (n < 0) {
+						if (thickness.getInt() % 2 == 0) { n = 0; }
+						else                             { n = 1; }
+						nIncrement = true;
+					}
+							
+					g.setColor(MathCalc.colorCombine(outerColor, innerColor, n, (short)(colorSteps - n)));
+					
+					if (nIncrement) { n++; }
+					else            { n--; }
+					
+					if (drawHorizontal) { g.drawLine(tmpPosX + i, tmpPosY, tmpPosX2 + i, tmpPosY2); }
+					else                { g.drawLine(tmpPosX, tmpPosY + i, tmpPosX2, tmpPosY2 + i); }
+					
+					// System.out.println("--- LOOP END ---");			
+				}
 			}
-			
+			else {
+				// draw the leafs
+				if (length.getInt() >= GlobalVars.LEAF_LENGTH_MIN && thickness.getInt() < GlobalVars.LEAF_THICKNESS_MAX) {
+					
+					boolean first = true;
+					MathFloat leafLength = new MathFloat(0);
+					short leafAngle = calcAngle(angle, (short)-10);
+					short tmpLeafAngle = 0;
+					short leafPosX = 0;
+					short leafPosY = 0;
+					g.setColor(innerColor);
+
+					for (int i = 0; i < GlobalVars.LEAF.length; i += 3) {
+						if (GlobalVars.LEAF[i] == -1) {
+							if (first) {
+								first = false;
+								i = 0;
+								if (drawHorizontal) tmpPosX2 += thickness.getInt();
+								else tmpPosY2 += thickness.getInt();
+								leafAngle = calcAngle(angle, (short)10);
+							}
+							else break;
+						}
+							if (GlobalVars.LEAF[i] == 0) {
+								leafPosX = tmpPosX2;
+								leafPosY = tmpPosY2;
+							}
+							tmpLeafAngle = calcAngle(leafAngle, (short)GlobalVars.LEAF[i+1]);
+							leafLength.value = GlobalVars.LEAF[i+2];
+							g.drawLine(leafPosX, leafPosY, leafPosX = calcX2(leafPosX, tmpLeafAngle, leafLength), leafPosY = calcY2(leafPosY, tmpLeafAngle, leafLength));
+					}
+				}				
+			}
+				
 		} // if paintstatus 1 || 2
 		else if (GlobalVars.PAINTSTATUS == 3 && GlobalVars.ELEMENTEDIT.equals(this)) {
-			System.out.println("--- ID: "+ id +" | Element Draw.PS3 ---");
-			short tmpAngle = (short)(angle - 8);
-			if (tmpAngle < 0) {
-				tmpAngle += 32;
-			}
+//			System.out.println("--- ID: "+ id +" | Element Draw.PS3 ---");
+			
+			short tmpAngle = calcAngle(angle, (short)-8);
+
 			MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
 			tmpPos.multiply(GlobalVars.EDITEXACTPOS);
 			int tmpPosCenterX = posX + tmpPos.getShort();
@@ -424,10 +460,7 @@ public class Element {
 			tmpPos.multiply(GlobalVars.EDITEXACTPOS);
 			int tmpPosCenterY = posY - tmpPos.getShort();
 			
-			tmpAngle = (short)(tmpAngle - 8);
-			if (tmpAngle < 0) {
-				tmpAngle += 32;
-			}
+			tmpAngle = calcAngle(tmpAngle, (short)-8);
 			
 			tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
 			tmpPos.multiply(GlobalVars.EDITEXACTLENGTH + thickness.getInt() / 2);
@@ -437,10 +470,7 @@ public class Element {
 			tmpPos.multiply((GlobalVars.EDITEXACTLENGTH + thickness.getInt() / 2) * -1);
 			int tmpPosX2 = tmpPosCenterX + tmpPos.getShort();
 			
-			tmpAngle = (short)(angle - 8);
-			if (tmpAngle < 0) {
-				tmpAngle += 32;
-			}
+			tmpAngle = calcAngle(angle, (short)-8);
 			
 			tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
 			tmpPos.multiply(GlobalVars.EDITEXACTLENGTH + thickness.getInt() / 2);
@@ -454,6 +484,7 @@ public class Element {
 			g.drawLine(tmpPosX, tmpPosY, tmpPosX2, tmpPosY2);
 			
 		}
+
 				
 		// so now my children shoud paint themselves
 		if (childLeft != null) {
@@ -470,28 +501,42 @@ public class Element {
 	}
 
 	private short calcX2(short tmpX) {
-		short tmpAngle = (short)(angle - 8);
-		if (tmpAngle < 0) {
-			tmpAngle += 32;
-		}
-		
+		return calcX2(tmpX, angle, length);
+	}
+	
+	private short calcX2(short tmpX, short tmpAngle, MathFloat tmpLength) {
+		tmpAngle = calcAngle(tmpAngle, (short)-8);
 		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
-		tmpPos.multiply(length);
+		tmpPos.multiply(tmpLength);
 		return (short)(tmpX + tmpPos.getShort());
 	}
 	
 	private short calcY2(short tmpY) {
-		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[angle].value);
-		tmpPos.multiply(length);
-		return (short)(tmpY - tmpPos.getShort());
+		
+		return calcY2(tmpY, angle, length);
 	}
+	
+	private short calcY2(short tmpY, short tmpAngle, MathFloat tmpLength) {
+		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
+		tmpPos.multiply(tmpLength);
+		return (short)(tmpY - tmpPos.getShort());
+	}	
 
-	private short calcAngle(short inputAngle, short range) {
+	private short calcAngleRandom(short inputAngle, short range) {
 		short tmpAngle = (short)(MathCalc.getRandom(range) + angle + inputAngle);
 		
 		while (tmpAngle > 31) {
 			tmpAngle -= 32;
 		}
+		return tmpAngle;
+	}
+	
+	private short calcAngle(short tmpAngle, short degree) {
+		tmpAngle += degree;
+		
+		if (tmpAngle > 31) tmpAngle -= 32;
+		else if (tmpAngle < 0) tmpAngle += 32;
+
 		return tmpAngle;
 	}
 	

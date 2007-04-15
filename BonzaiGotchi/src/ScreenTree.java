@@ -56,8 +56,8 @@ public class ScreenTree extends Canvas implements Runnable {
 	private Image menuRand = null;
 	Random random = new Random(System.currentTimeMillis());
 	
-	int[] starsx={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	int[] starsy={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	short[] starsx={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	short[] starsy={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	
 	private int menuItemSelected = 0;
 	
@@ -173,8 +173,11 @@ public class ScreenTree extends Canvas implements Runnable {
 				g.setColor(0xFFFFFF);
 				g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 				g.setColor(0x000000);
-				g.drawLine(0, 42, GlobalVars.DISPLAY_X_WIDTH, 42);
 				
+					
+				g.setColor(0x000000);
+				g.drawLine(0, 42, GlobalVars.DISPLAY_X_WIDTH, 42);
+							
 				for (int i = 0; i < menu.length; i++) {			
 					if (i == menuItemSelected) {						
 						g.setClip(i * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - menu.length * 12, 2, 24, 24);
@@ -227,20 +230,20 @@ public class ScreenTree extends Canvas implements Runnable {
 	public void randomizeStars()
 		{
 //		 Randomize the stars
-		for(int i=0;i<20;i++)
+		for(int i=0;i<starsx.length;i++)
 		{
 		
-		starsx[i]=getRandom(GlobalVars.DISPLAY_X_WIDTH);
-		starsy[i]=getRandom(GlobalVars.DISPLAY_Y_HEIGHT);
+		starsx[i]=(short)getRandom(GlobalVars.DISPLAY_X_WIDTH);
+		starsy[i]=(short)getRandom(GlobalVars.DISPLAY_Y_HEIGHT);
 		}
 		//
 		}
 	public void drawDay(Graphics g){
 		
 		
-		int[] timeh = whatTime();
-		int hour=timeh[0];
-		int minutes=timeh[1];
+		//int[] timeh = whatTime();
+		int hour=0;//timeh[0];
+		int minutes=0;//timeh[1];
 		System.out.println(GlobalVars.TIME_STAMP);
 		//Wed Apr 11 18:32:49 UTC 2007
 		System.out.println(GlobalVars.TIME_STAMP.toString().indexOf(":"));
@@ -248,27 +251,27 @@ public class ScreenTree extends Canvas implements Runnable {
 		minutes=Integer.parseInt(GlobalVars.TIME_STAMP.toString().substring(GlobalVars.TIME_STAMP.toString().indexOf(":")+1,GlobalVars.TIME_STAMP.toString().indexOf(":")+3));
 		
 		System.out.println("Time: "+hour+":"+minutes);
-		if(hour>9&&hour<16){
+		if(hour>=GlobalVars.MIDDAY&&hour<=GlobalVars.AFTERNOON){
 			g.setColor(0xFFFFFF);
 			System.out.println("Mittag");
 		}
-		if(hour>15&&hour<18){
+		if(hour>GlobalVars.AFTERNOON&&hour<GlobalVars.DAWN){
 		g.setColor(0xFADDE0);
 		System.out.println("Nachmittag");
 		}
-		if(hour>17&&hour<19)
+		if(hour>=GlobalVars.DAWN&&hour<GlobalVars.EVENING)
 		{
 			g.setColor(0xFD5F72);
 			System.out.println("D�mmerung");
 			}
-		if(hour>18&&hour<24||hour>0&&hour<6)
+		if(hour>=GlobalVars.EVENING&&hour<GlobalVars.NIGHT||hour>=GlobalVars.OVERNIGHT&&hour<GlobalVars.DUSK)
 		{
 			
 			g.setColor(0x000000);
 			System.out.println("Nacht");
 			
 			}
-		if(hour>5&&hour<10)
+		if(hour>=GlobalVars.DUSK&&hour<GlobalVars.MIDDAY)
 		{
 			g.setColor(0xFBF782);
 			System.out.println("Morgen");

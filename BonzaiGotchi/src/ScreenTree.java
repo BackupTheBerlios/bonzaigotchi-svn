@@ -233,8 +233,8 @@ public class ScreenTree extends Canvas implements Runnable {
 		for(int i=0;i<starsx.length;i++)
 		{
 		
-		starsx[i]=(short)getRandom(GlobalVars.DISPLAY_X_WIDTH);
-		starsy[i]=(short)getRandom(GlobalVars.DISPLAY_Y_HEIGHT);
+		starsx[i]=(short)MathCalc.getRandom(GlobalVars.DISPLAY_X_WIDTH);
+		starsy[i]=(short)MathCalc.getRandom(GlobalVars.DISPLAY_Y_HEIGHT);
 		}
 		//
 		}
@@ -292,14 +292,21 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 		int xsun=0;
 		int ysun=0;
-		if(hour>6&&hour<19){
+		if(hour>=6&&hour<=19){
 			if(hour<12){
 				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
-				ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
-					}
+				//ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
+				
+				ysun=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((hour-6)*60+minutes);
+				
+				}
 			if(hour>11){
 				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
-				ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*(GlobalVars.DISPLAY_X_WIDTH/72)*360+(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
+				
+				ysun=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((hour-6)*60+minutes);
+				
+				//ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*(GlobalVars.DISPLAY_X_WIDTH/72)*360+(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
+				
 				//ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
 			}
 			//System.out.println("x_width "+GlobalVars.DISPLAY_X_WIDTH);
@@ -307,32 +314,68 @@ public class ScreenTree extends Canvas implements Runnable {
 			//System.out.println("xsun: "+xsun);
 			//System.out.println("ysun: "+ysun);
 			g.setColor(0xFDF401);
-			if(ysun<0)
-				ysun=ysun*(-1);
-			if(hour<12)
-			g.fillArc(xsun/10,GlobalVars.DISPLAY_Y_HEIGHT-ysun/11, 30, 30, 0, 360);
-			//+ysun/50
-			if(hour>11)
-				g.fillArc(xsun/10, ysun/11, 30, 30, 0, 360);
-		}
+			//if(ysun<0)
+			//	ysun=ysun*(-1);
+			int yhelp=0;
+			if(hour>=12)
+			{
+					
+				yhelp=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((12-6)*60);
+				yhelp=GlobalVars.DISPLAY_Y_HEIGHT-yhelp/7;
+			}
+			
+			if(hour<12){
+				g.fillArc(xsun/10,GlobalVars.DISPLAY_Y_HEIGHT-ysun/7, 30, 30, 0, 360);
+				}
+			if(hour>11){
+				
+				g.fillArc(xsun/10, yhelp+(yhelp-(GlobalVars.DISPLAY_Y_HEIGHT-ysun/7)), 30, 30, 0, 360);
+				}
+			}
+		if(hour<6||hour>18) {
+			//System.out.println("ES IST NACHT");
+			if(hour>18&&hour<24)
+			hour-=13;
+			else
+			hour+=11;
+			if(hour<12){
+				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
+				ysun=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((hour-6)*60+minutes);
+				
+				}
+			if(hour>11){
+				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
+				
+				ysun=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((hour-6)*60+minutes);
+				
+			}
+			
+			g.setColor(0xFDFAFF);
+			
+			int yhelp=0;
+			if(hour>=12)
+			{
+					
+				yhelp=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((12-6)*60);
+				yhelp=GlobalVars.DISPLAY_Y_HEIGHT-yhelp/7;
+			}
+			
+			if(hour<12){
+				g.fillArc(xsun/10,GlobalVars.DISPLAY_Y_HEIGHT-ysun/7, 30, 30, 0, 360);
+				g.setColor(0x000000);
+				g.fillArc(xsun/10-10,GlobalVars.DISPLAY_Y_HEIGHT-ysun/7-2, 30, 30, 0, 360);
+				
+				}
+			if(hour>11){
+				
+				g.fillArc(xsun/10, yhelp+(yhelp-(GlobalVars.DISPLAY_Y_HEIGHT-ysun/7)), 30, 30, 0, 360);
+				g.setColor(0x000000);
+				g.fillArc(xsun/10-10, yhelp+(yhelp-(GlobalVars.DISPLAY_Y_HEIGHT-ysun/7))-2, 30, 30, 0, 360);
+				
+				}
+			}
 	}
-	public int getRandom(int bound)
-		{
-		return Math.abs(random.nextInt()%bound);
-		
-		}
-	public int[] whatTime() { 
-		java.util.Date date = new java.util.Date();
-		java.util.Calendar rightNow = java.util.Calendar.getInstance();
-		rightNow.setTime(date); 
-		String hour = String.valueOf(rightNow.get(java.util.Calendar.HOUR_OF_DAY));
-		String min = String.valueOf(rightNow.get(java.util.Calendar.MINUTE)); 
-		String sec = String.valueOf(rightNow.get(java.util.Calendar.SECOND)); 
-		String time2 = hour;  //+":"+min;//+":" +sec; 
-		int[] timeh = {Integer.parseInt(hour),Integer.parseInt(min)};
-		return timeh;
-		}
-
+	
 //	private void drawWatering(Graphics g) {
 		/* graphic of pot */
 		// while animation=overpainting set flag animWatering = true;

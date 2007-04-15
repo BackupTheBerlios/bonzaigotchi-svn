@@ -123,6 +123,20 @@ public class GlobalVars {
 	
 	//public final static String MENU_IMG_PATH_EXIT = "/arrow2.png";
 	
+	// DAY TIME
+	
+	public final static short DUSK = 6;
+	public final static short DAWN = 18;
+	public final static short MIDDAY = 10;
+	public final static short EVENING = 19;
+	public final static short AFTERNOON = 15;
+	public final static short NIGHT = 24;
+	public final static short OVERNIGHT = 0;
+	
+	
+	
+	
+	
 	
 	
 	

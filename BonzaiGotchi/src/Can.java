@@ -7,10 +7,6 @@ public class Can {
 		private short angle; // angle * 15 = echter Winkel | 0 = verticalUp
 		private short posX;
 		private short posY;
-	
-		private short size;
-		
-		private Can child;
 		
 		public Can(short angle, short posX, short posY, short size) {
 			System.out.println("--- Element Can LOADED ---");
@@ -195,7 +191,7 @@ public class Can {
 			// System.out.println("--- ID: "+ id +" | Element Draw END ---");
 		}
 		
-		public short calcX2(short tmpX) {
+		private short calcX2(short tmpX) {
 			short tmpAngle = (short)(angle - 8);
 			if (tmpAngle < 0) {
 				tmpAngle += 32;
@@ -206,7 +202,7 @@ public class Can {
 			return (short)(tmpX + tmpPos.getShort());
 		}
 		
-		public short calcY2(short tmpY) {
+		private short calcY2(short tmpY) {
 			MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[angle].value);
 			tmpPos.multiply(length);
 			return (short)(tmpY - tmpPos.getShort());

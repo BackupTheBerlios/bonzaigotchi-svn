@@ -109,27 +109,17 @@ public class GlobalVars {
 
 	// IMAGE PATHS
 	public final static String MENU_IMG_PATH_WATER = "/watercan20.png";
-	public final static String MENU_IMG_PATH_WATER_RAND = "/watercan20rand.png";
 	public final static String MENU_IMG_PATH_EDIT = "/scissors20.png";
-	public final static String MENU_IMG_PATH_EDIT_RAND = "/scissors20rand.png";
 	public final static String MENU_IMG_PATH_POT = "/pot20.png";
-	public final static String MENU_IMG_PATH_POT_RAND = "/pot20rand.png";
 	public final static String MENU_IMG_PATH_EXIT = "/exit20.png";
-	public final static String MENU_IMG_PATH_EXIT_RAND = "/exit20rand.png";
 	
 	public final static String MENU_IMG_PATH_EDIT_CUT = "/cut20.png";
 	public final static String MENU_IMG_PATH_EDIT_EXACTCUT = "/target20.png";
-	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_SEAL = "/seal20.png";
-	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL = "/dontseal20.png";
 	public final static String MENU_IMG_PATH_EDIT_COLOR = "/palette20.png";
 	public final static String MENU_IMG_PATH_EDIT_DUNG = "/dung20.png";
-	public final static String MENU_IMG_PATH_EDIT_CUT_RAND = "/cut20rand.png";
-	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_RAND = "/target20rand.png";
-	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_SEAL_RAND = "/seal20rand.png";
-	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL_RAND = "/dontseal20rand.png";
-	public final static String MENU_IMG_PATH_EDIT_COLOR_RAND = "/palette20rand.png";
-	public final static String MENU_IMG_PATH_EDIT_DUNG_RAND = "/dung20rand.png";
-	
+
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_SEAL = "/seal20.png";
+	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL = "/dontseal20.png";
 	
 	//public final static String MENU_IMG_PATH_EXIT = "/arrow2.png";
 	

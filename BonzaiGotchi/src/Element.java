@@ -422,7 +422,7 @@ public class Element {
 					short tmpLeafAngle = 0;
 					short leafPosX = 0;
 					short leafPosY = 0;
-					g.setColor(innerColor);
+					g.setColor(outerColor);
 
 					for (int i = 0; i < GlobalVars.LEAF.length; i += 3) {
 						if (GlobalVars.LEAF[i] == -1) {

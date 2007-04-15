@@ -53,8 +53,9 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private int menuId = -1;
 	private MenuItem[] menu;
-	private MenuItem[] menurand;
+	private Image menuRand = null;
 	Random random = new Random(System.currentTimeMillis());
+	
 	int[] starsx={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	int[] starsy={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	
@@ -68,6 +69,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private ReceiveFeedback parent;
 	
+	// TODO: When switching ScreenSize (eg: Iam flipping the Screen of my MDA) the Tree is somewhere and the BG is wrong aswell | very low priority
 	public ScreenTree(ReceiveFeedback parent) {
 		
 		this.parent = parent;
@@ -107,6 +109,13 @@ public class ScreenTree extends Canvas implements Runnable {
 			GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
 			GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
 		}
+		
+		try {
+			menuRand = Image.createImage("/rand.png");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 		randomizeStars();
 		
 		GlobalVars.COUNTERELEMENT = 0;
@@ -136,9 +145,11 @@ public class ScreenTree extends Canvas implements Runnable {
 			
 			drawPot(g);
 			
-			GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
-			log.draw(g);
-			GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+			if (GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_MAINMENU) {
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
+				log.draw(g);
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
+			}
 		
 			
 			if (GlobalVars.ELEMENTEDIT != null) {
@@ -157,34 +168,27 @@ public class ScreenTree extends Canvas implements Runnable {
 					
 			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_MENU ||
 				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITEXACT) {
-				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, 40);
-				drawBackground(g);	
-				int[] timeh=whatTime();
 				
-				for (int i = 0; i < menu.length; i++) {						
-					//g.setClip(i * 20, 0, 20, 20);
-					g.setClip(i * 20+GlobalVars.DISPLAY_X_WIDTH/2-menu.length*10, 20+GlobalVars.DISPLAY_Y_HEIGHT/3, 20, 20);
-					menu[i].draw(g);
-					if (i == menuItemSelected) {
-						//g.setColor(0xFF0000);
-						//g.fillRect(i * 20, 18, 20, 2);
-						//g.setClip(0, 20, 100, 20);
+				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, 43);
+				g.setColor(0xFFFFFF);
+				g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
+				g.setColor(0x000000);
+				g.drawLine(0, 42, GlobalVars.DISPLAY_X_WIDTH, 42);
+				
+				for (int i = 0; i < menu.length; i++) {			
+					if (i == menuItemSelected) {						
+						g.setClip(i * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - menu.length * 12, 2, 24, 24);
+						g.drawImage(menuRand, g.getClipX(), g.getClipY(), Graphics.TOP|Graphics.LEFT);
 						
-						g.setClip(i * 20+GlobalVars.DISPLAY_X_WIDTH/2-menu.length*10, 20+GlobalVars.DISPLAY_Y_HEIGHT/3, 20, 20);
-						menurand[i].draw(g);
-						
-						//g.setClip(40, 60, 120, 60);
-						g.setClip(0,0,GlobalVars.DISPLAY_X_WIDTH,GlobalVars.DISPLAY_Y_HEIGHT);
+						g.setClip(0, 30, GlobalVars.DISPLAY_X_WIDTH, 12);
 						g.setColor(0x000000);
-						if(timeh[0]>18&&timeh[0]<24||timeh[0]>0&&timeh[0]<6)
-							{
-							g.setColor(0xFFFFFF);
-							System.out.println("Color gesetzt!");
-							}
-						//g.drawString(menu[i].getTitle(), 4, 24, Graphics.TOP|Graphics.LEFT);
-						g.drawString(menu[i].getTitle(), 20+GlobalVars.DISPLAY_X_WIDTH/2-menu.length*10, 60, Graphics.TOP|Graphics.LEFT);
+						g.drawString(menu[i].getTitle(), GlobalVars.DISPLAY_X_WIDTH / 2, g.getClipY(), Graphics.TOP|Graphics.HCENTER);
 						
 					}
+					
+					g.setClip(i * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - menu.length * 12 + 2, 4, 20, 20);
+					menu[i].draw(g);
+
 				}
 				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 			}
@@ -325,8 +329,8 @@ public class ScreenTree extends Canvas implements Runnable {
 		int[] timeh = {Integer.parseInt(hour),Integer.parseInt(min)};
 		return timeh;
 		}
-	
-	private void drawWatering(Graphics g) {
+
+//	private void drawWatering(Graphics g) {
 		/* graphic of pot */
 		// while animation=overpainting set flag animWatering = true;
 		/* animation for watering */
@@ -353,7 +357,8 @@ public class ScreenTree extends Canvas implements Runnable {
 		//g.setColor(50,50,50);
 		//g.fillRect(x/2+gauge-50,y/2-10,5,20);
 		
-	}
+//	}
+
 
 	private void drawPot(Graphics g){
 		//		drawing a pot
@@ -430,13 +435,13 @@ public class ScreenTree extends Canvas implements Runnable {
 					new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT),
 					new MenuItem(4, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT)
 					};
-				menurand = new MenuItem[] {
+/*				menurand = new MenuItem[] {
 						new MenuItem(1, LangVars.CMD_TREEMENU_WATER, GlobalVars.MENU_IMG_PATH_WATER_RAND),
 						new MenuItem(2, LangVars.CMD_TREEMENU_EDIT,  GlobalVars.MENU_IMG_PATH_EDIT_RAND),
 						new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT_RAND),
 						new MenuItem(4, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT_RAND)
 						};
-				break;		
+*/				break;		
 				
 			// Edit
 			case 2:
@@ -446,24 +451,24 @@ public class ScreenTree extends Canvas implements Runnable {
 					new MenuItem(23, LangVars.CMD_SELBRANCH_COLOR,    GlobalVars.MENU_IMG_PATH_EDIT_COLOR),
 					new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG),
 				};
-				menurand = new MenuItem[] {
+/*				menurand = new MenuItem[] {
 						new MenuItem(21, LangVars.CMD_SELBRANCH_CUT,      GlobalVars.MENU_IMG_PATH_EDIT_CUT_RAND),
 						new MenuItem(22, LangVars.CMD_SELBRANCH_EXACTCUT, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_RAND),
 						new MenuItem(23, LangVars.CMD_SELBRANCH_COLOR,    GlobalVars.MENU_IMG_PATH_EDIT_COLOR_RAND),
 						new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG_RAND),
 					};
-				break;
+*/				break;
 			
 			case 22:
 				menu = new MenuItem[] {
 					new MenuItem(221, LangVars.CMD_SELECTED_SEAL,     GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL),
 					new MenuItem(222, LangVars.CMD_SELECTED_DONTSEAL, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL)
 				};
-				menurand = new MenuItem[] {
+/*				menurand = new MenuItem[] {
 						new MenuItem(221, LangVars.CMD_SELECTED_SEAL,     GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL_RAND),
 						new MenuItem(222, LangVars.CMD_SELECTED_DONTSEAL, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL_RAND)
 					};
-				break;
+*/				break;
 		}
 		parent.receiveFeedback(GlobalVars.APPSTATUS_MENU);
 		repaint();

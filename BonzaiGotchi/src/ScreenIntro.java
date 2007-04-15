@@ -83,7 +83,7 @@ public class ScreenIntro extends Canvas implements Runnable {
 		for (int i = 0; i < 2; i++) {
 			repaint();
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(1000);
 				count++;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

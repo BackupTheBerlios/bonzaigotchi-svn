@@ -36,7 +36,9 @@ public class GlobalVars {
 	public final static byte PAINTSTATUS_SELECTBRANCH = 3;
 	public final static byte PAINTSTATUS_LEAF = 4;
 	
-	public static byte PAINTSTATUS = 0;
+	public static byte PAINTSTATUS = PAINTSTATUS_VOID;
+	
+	public final static short INTRO_TIMEOUT = 1000;
 	
 	public static Element ELEMENTEDIT;
 	public static int EDITEXACTPOS;
@@ -87,7 +89,7 @@ public class GlobalVars {
 //	resetPos, angle, length
 	public final static int[] LEAF = {0 ,0 ,6000, 0, -4, 3000, 1, 0, 5000, 1, 8, 3000, 0, 4, 3000, 1, 0, 5000, -1};
 	public final static int LEAF_LENGTH_MIN = 10;
-	public final static int LEAF_THICKNESS_MAX = 6;
+	public final static int LEAF_THICKNESS_MAX = 5;
 	
 	public final static short COLOR_ELEMENT_DRY_THRESHOLD = 0;
 	public final static int COLOR_ELEMENT_INNER = 0x76E273;
@@ -106,7 +108,16 @@ public class GlobalVars {
 
 	public final static int COLOR_CAN_INNER = 0x496A7D;
 	public final static int COLOR_CAN_OUTER = 0x97A4AD;
+	
+	public final static int COLOR_BG_DAWN = 0xFBF782;
+	public final static int COLOR_BG_MIDDAY = 0xFFFFFF;
+	public final static int COLOR_BG_AFTERNOON = 0xFADDE0;
+	public final static int COLOR_BG_DUSK = 0xFD5F72;
+	public final static int COLOR_BG_NIGHT = 0x000000; 
 
+	public final static int COLOR_BG_SUN = 0xFDF401;	
+	public final static short BG_SUN_SIZE = 30;
+	
 	// IMAGE PATHS
 	public final static String MENU_IMG_PATH_WATER = "/watercan20.png";
 	public final static String MENU_IMG_PATH_EDIT = "/scissors20.png";
@@ -124,24 +135,16 @@ public class GlobalVars {
 	//public final static String MENU_IMG_PATH_EXIT = "/arrow2.png";
 	
 	// DAY TIME
-	
-	public final static short DUSK = 6;
-	public final static short DAWN = 18;
-	public final static short MIDDAY = 10;
-	public final static short EVENING = 19;
-	public final static short AFTERNOON = 15;
-	public final static short NIGHT = 24;
-	public final static short OVERNIGHT = 0;
-	
-	
-	
-	
-	
-	
+	// HOUR OF DAY * 10
+	public final static short TIME_DAWN = 60;
+	public final static short TIME_MIDDAY = 85;
+	public final static short TIME_AFTERNOON = 165;
+	public final static short TIME_DUSK = 180;
+	public final static short TIME_NIGHT = 210;
+		
 	
 	
 	public static Date TIME_STAMP;
-	public final static short VERSION_ID = 001;
 	public final static short SAVE_RECORDSTORE_VERSION = 004;
 
 	// DEMAND_TABLE

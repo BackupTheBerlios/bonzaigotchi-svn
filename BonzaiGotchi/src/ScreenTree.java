@@ -26,7 +26,6 @@
 //			  added			randomizeStars()
 import java.io.IOException;
 import java.util.Date;
-import java.util.Random;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
@@ -37,6 +36,7 @@ public class ScreenTree extends Canvas implements Runnable {
 
 	// Children
 	private Element log;
+	private byte timeZone = 1;
 	
 	// Pot
 	private byte potSize;
@@ -51,15 +51,17 @@ public class ScreenTree extends Canvas implements Runnable {
 	private int canValue;
 	private int canSteps;
 	
+	// Menu
 	private int menuId = -1;
 	private MenuItem[] menu;
-	private Image menuRand = null;
-	Random random = new Random(System.currentTimeMillis());
-	
-	short[] starsx={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	short[] starsy={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	
+	private Image menuSelected = null;
 	private int menuItemSelected = 0;
+	
+	// Background
+	private short currentHour = 0;
+	private int bgColor = 0;
+	private short[] bgStarsX = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	private short[] bgStarsY = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	
 	// Thread
 	private Thread threadInterval;
@@ -111,12 +113,13 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 		
 		try {
-			menuRand = Image.createImage("/rand.png");
+			menuSelected = Image.createImage("/rand.png");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		
 		randomizeStars();
+		calcTime();
 		
 		GlobalVars.COUNTERELEMENT = 0;
 		GlobalVars.COUNTERCHEAT = 0;
@@ -132,6 +135,14 @@ public class ScreenTree extends Canvas implements Runnable {
 		logWaterRequest = log.getChildWaterRequest();
 	}
 	
+	public void randomizeStars(){
+//		Randomize the stars
+		for(int i=0; i < bgStarsX.length; i++) {
+		
+			bgStarsX[i]=(short)MathCalc.getRandom(GlobalVars.DISPLAY_X_WIDTH);
+			bgStarsY[i]=(short)MathCalc.getRandom(GlobalVars.DISPLAY_Y_HEIGHT);
+		}
+	}
 	
 	protected void paint(Graphics g) {
 //		System.out.println("--- ScreenTree.paint BEGINN ---");
@@ -181,7 +192,7 @@ public class ScreenTree extends Canvas implements Runnable {
 				for (int i = 0; i < menu.length; i++) {			
 					if (i == menuItemSelected) {						
 						g.setClip(i * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - menu.length * 12, 2, 24, 24);
-						g.drawImage(menuRand, g.getClipX(), g.getClipY(), Graphics.TOP|Graphics.LEFT);
+						g.drawImage(menuSelected, g.getClipX(), g.getClipY(), Graphics.TOP|Graphics.LEFT);
 						
 						g.setClip(0, 30, GlobalVars.DISPLAY_X_WIDTH, 12);
 						g.setColor(0x000000);
@@ -221,161 +232,53 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private void drawBackground(Graphics g) {
 		
-		
 		// What a beautiful day...
-		
-		drawDay(g);
-		
-	}
-	public void randomizeStars()
-		{
-//		 Randomize the stars
-		for(int i=0;i<starsx.length;i++)
-		{
-		
-		starsx[i]=(short)MathCalc.getRandom(GlobalVars.DISPLAY_X_WIDTH);
-		starsy[i]=(short)MathCalc.getRandom(GlobalVars.DISPLAY_Y_HEIGHT);
-		}
-		//
-		}
-	public void drawDay(Graphics g){
-		
-		
-		//int[] timeh = whatTime();
-		int hour=0;//timeh[0];
-		int minutes=0;//timeh[1];
-		System.out.println(GlobalVars.TIME_STAMP);
-		//Wed Apr 11 18:32:49 UTC 2007
-		System.out.println(GlobalVars.TIME_STAMP.toString().indexOf(":"));
-		hour=Integer.parseInt(GlobalVars.TIME_STAMP.toString().substring(GlobalVars.TIME_STAMP.toString().indexOf(":")-2,GlobalVars.TIME_STAMP.toString().indexOf(":")));
-		minutes=Integer.parseInt(GlobalVars.TIME_STAMP.toString().substring(GlobalVars.TIME_STAMP.toString().indexOf(":")+1,GlobalVars.TIME_STAMP.toString().indexOf(":")+3));
-		
-		System.out.println("Time: "+hour+":"+minutes);
-		if(hour>=GlobalVars.MIDDAY&&hour<=GlobalVars.AFTERNOON){
-			g.setColor(0xFFFFFF);
-			System.out.println("Mittag");
-		}
-		if(hour>GlobalVars.AFTERNOON&&hour<GlobalVars.DAWN){
-		g.setColor(0xFADDE0);
-		System.out.println("Nachmittag");
-		}
-		if(hour>=GlobalVars.DAWN&&hour<GlobalVars.EVENING)
-		{
-			g.setColor(0xFD5F72);
-			System.out.println("D�mmerung");
-			}
-		if(hour>=GlobalVars.EVENING&&hour<GlobalVars.NIGHT||hour>=GlobalVars.OVERNIGHT&&hour<GlobalVars.DUSK)
-		{
-			
-			g.setColor(0x000000);
-			System.out.println("Nacht");
-			
-			}
-		if(hour>=GlobalVars.DUSK&&hour<GlobalVars.MIDDAY)
-		{
-			g.setColor(0xFBF782);
-			System.out.println("Morgen");
-			}
+		// Background
+		g.setColor(bgColor);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 		
+
+		// Stars
+		g.setColor(0xFFFFFF);		
+		for(int i=0; i < bgStarsX.length; i++) {
+			g.fillArc(bgStarsX[i], bgStarsY[i], 1, 1, 0, 360);
+		}
+		
+		// temp
 		g.setColor(0xFFFFFF);
-		
-		
-		for(int i=0;i<20;i++)
-			{
-			
-			g.drawArc(starsx[i], starsy[i], 1, 1, 0, 360);
-			}
-		
-		
-	
-		
-		int xsun=0;
-		int ysun=0;
-		if(hour>=6&&hour<=19){
-			if(hour<12){
-				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
-				//ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
-				
-				ysun=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((hour-6)*60+minutes);
-				
-				}
-			if(hour>11){
-				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
-				
-				ysun=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((hour-6)*60+minutes);
-				
-				//ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*(GlobalVars.DISPLAY_X_WIDTH/72)*360+(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
-				
-				//ysun=(GlobalVars.DISPLAY_Y_HEIGHT-(GlobalVars.DISPLAY_X_WIDTH/72)*xsun);
-			}
-			//System.out.println("x_width "+GlobalVars.DISPLAY_X_WIDTH);
-			//System.out.println("y_heigth "+GlobalVars.DISPLAY_Y_HEIGHT);
-			//System.out.println("xsun: "+xsun);
-			//System.out.println("ysun: "+ysun);
-			g.setColor(0xFDF401);
-			//if(ysun<0)
-			//	ysun=ysun*(-1);
-			int yhelp=0;
-			if(hour>=12)
-			{
-					
-				yhelp=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((12-6)*60);
-				yhelp=GlobalVars.DISPLAY_Y_HEIGHT-yhelp/7;
-			}
-			
-			if(hour<12){
-				g.fillArc(xsun/10,GlobalVars.DISPLAY_Y_HEIGHT-ysun/7, 30, 30, 0, 360);
-				}
-			if(hour>11){
-				
-				g.fillArc(xsun/10, yhelp+(yhelp-(GlobalVars.DISPLAY_Y_HEIGHT-ysun/7)), 30, 30, 0, 360);
-				}
-			}
-		if(hour<6||hour>18) {
-			//System.out.println("ES IST NACHT");
-			if(hour>18&&hour<24)
-			hour-=13;
-			else
-			hour+=11;
-			if(hour<12){
-				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
-				ysun=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((hour-6)*60+minutes);
-				
-				}
-			if(hour>11){
-				xsun=(GlobalVars.DISPLAY_X_WIDTH/72)*((hour-6)*60+minutes);
-				
-				ysun=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((hour-6)*60+minutes);
-				
-			}
-			
-			g.setColor(0xFDFAFF);
-			
-			int yhelp=0;
-			if(hour>=12)
-			{
-					
-				yhelp=(GlobalVars.DISPLAY_Y_HEIGHT/72)*((12-6)*60);
-				yhelp=GlobalVars.DISPLAY_Y_HEIGHT-yhelp/7;
-			}
-			
-			if(hour<12){
-				g.fillArc(xsun/10,GlobalVars.DISPLAY_Y_HEIGHT-ysun/7, 30, 30, 0, 360);
-				g.setColor(0x000000);
-				g.fillArc(xsun/10-10,GlobalVars.DISPLAY_Y_HEIGHT-ysun/7-2, 30, 30, 0, 360);
-				
-				}
-			if(hour>11){
-				
-				g.fillArc(xsun/10, yhelp+(yhelp-(GlobalVars.DISPLAY_Y_HEIGHT-ysun/7)), 30, 30, 0, 360);
-				g.setColor(0x000000);
-				g.fillArc(xsun/10-10, yhelp+(yhelp-(GlobalVars.DISPLAY_Y_HEIGHT-ysun/7))-2, 30, 30, 0, 360);
-				
-				}
-			}
+		g.fillRect(0, 10, GlobalVars.DISPLAY_X_WIDTH, 20);
+		g.setColor(0x000000);
+		g.drawString("Time: "+currentHour, 0, 10, Graphics.TOP|Graphics.LEFT);
+
+		// Sun
+		drawSun(g);
 	}
-	
+
+
+	private void drawSun(Graphics g) {
+		
+		short sunX = 0;
+		short sunY = 0;
+		
+		if(currentHour >= GlobalVars.TIME_DAWN && currentHour < GlobalVars.TIME_DUSK) {
+			
+			sunX=(short)((GlobalVars.DISPLAY_X_WIDTH + GlobalVars.BG_SUN_SIZE) * (currentHour - GlobalVars.TIME_DAWN) / (GlobalVars.TIME_DUSK - GlobalVars.TIME_DAWN) - GlobalVars.BG_SUN_SIZE);
+			
+			short midday = (GlobalVars.TIME_DUSK + GlobalVars.TIME_DAWN) / 2;
+			
+			if(currentHour <= midday) {
+				sunY = (short)(GlobalVars.DISPLAY_Y_HEIGHT * (midday - currentHour) / (midday - GlobalVars.TIME_DAWN) / 2 + (GlobalVars.DISPLAY_Y_HEIGHT / 4));
+
+			}
+			else {
+				sunY = (short)(GlobalVars.DISPLAY_Y_HEIGHT * (currentHour - midday) / (GlobalVars.TIME_DUSK - midday) / 2 + (GlobalVars.DISPLAY_Y_HEIGHT / 4));
+			}
+
+			g.setColor(GlobalVars.COLOR_BG_SUN);
+			g.fillArc(sunX, sunY, GlobalVars.BG_SUN_SIZE, GlobalVars.BG_SUN_SIZE, 0, 360);
+		}
+	}
+
 //	private void drawWatering(Graphics g) {
 		/* graphic of pot */
 		// while animation=overpainting set flag animWatering = true;
@@ -481,13 +384,7 @@ public class ScreenTree extends Canvas implements Runnable {
 					new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT),
 					new MenuItem(4, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT)
 					};
-/*				menurand = new MenuItem[] {
-						new MenuItem(1, LangVars.CMD_TREEMENU_WATER, GlobalVars.MENU_IMG_PATH_WATER_RAND),
-						new MenuItem(2, LangVars.CMD_TREEMENU_EDIT,  GlobalVars.MENU_IMG_PATH_EDIT_RAND),
-						new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT_RAND),
-						new MenuItem(4, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT_RAND)
-						};
-*/				break;		
+				break;		
 				
 			// Edit
 			case 2:
@@ -497,24 +394,14 @@ public class ScreenTree extends Canvas implements Runnable {
 					new MenuItem(23, LangVars.CMD_SELBRANCH_COLOR,    GlobalVars.MENU_IMG_PATH_EDIT_COLOR),
 					new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG),
 				};
-/*				menurand = new MenuItem[] {
-						new MenuItem(21, LangVars.CMD_SELBRANCH_CUT,      GlobalVars.MENU_IMG_PATH_EDIT_CUT_RAND),
-						new MenuItem(22, LangVars.CMD_SELBRANCH_EXACTCUT, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_RAND),
-						new MenuItem(23, LangVars.CMD_SELBRANCH_COLOR,    GlobalVars.MENU_IMG_PATH_EDIT_COLOR_RAND),
-						new MenuItem(24, LangVars.CMD_SELBRANCH_DUNG,     GlobalVars.MENU_IMG_PATH_EDIT_DUNG_RAND),
-					};
-*/				break;
+				break;
 			
 			case 22:
 				menu = new MenuItem[] {
 					new MenuItem(221, LangVars.CMD_SELECTED_SEAL,     GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL),
 					new MenuItem(222, LangVars.CMD_SELECTED_DONTSEAL, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL)
 				};
-/*				menurand = new MenuItem[] {
-						new MenuItem(221, LangVars.CMD_SELECTED_SEAL,     GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL_RAND),
-						new MenuItem(222, LangVars.CMD_SELECTED_DONTSEAL, GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL_RAND)
-					};
-*/				break;
+			break;
 		}
 		parent.receiveFeedback(GlobalVars.APPSTATUS_MENU);
 		repaint();
@@ -644,60 +531,6 @@ public class ScreenTree extends Canvas implements Runnable {
 		this.repaint();
 	}
 	
-	
-	public void interval() {
-		threadInterval = new Thread(this);
-		threadWaiting = false;
-		threadInterval.start();
-	}
-
-	public void run() {
-		
-		//TODO: Wurzeln; Krankheit durch Wasser; 
-		int counterDraw = 0;
-		int supply;
-
-		// anfangsstart
-		while ((log != null && GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_RUNNING) && (GlobalVars.COUNTERCHEAT > 0 || ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / GlobalVars.GROWTH_INTERVAL) > 0)) {		
-			System.out.println("--- INTERVAL|CHEATER: " + ++GlobalVars.COUNTERINTERVAL + " | " + GlobalVars.COUNTERCHEAT + " ---");
-//			System.out.println("--- TIME:" + ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) + " ---");
-			--GlobalVars.COUNTERCHEAT;
-			
-			GlobalVars.TIME_STAMP.setTime(GlobalVars.TIME_STAMP.getTime() + GlobalVars.GROWTH_INTERVAL);
-			
-			supply = Math.min(water, logWaterRequest);
-			water -= supply;
-			if (!log.grow(supply)) {
-				// System.out.println("--- ScreenTree.run: Log_Kill ---");
-				log.childKill();
-				log = null;
-				parent.receiveFeedback(GlobalVars.APPSTATUS_TREEDEAD);
-//				System.out.println("--- ScreenTree.run: Log_Killed ---");
-			}
-			else {
-				logWaterRequest = log.getChildWaterRequest();
-				System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
-			}
-			if (++counterDraw == 8) {
-					threadWaiting = true;
-					break;
-			}
-
-		}
-//		System.out.println("--- INTERVAL END LOOP ---");
-		if (log != null) {
-			parent.receiveFeedback((byte)31);
-		}
-		this.repaint();
-		
-		if (!threadWaiting && log != null) {
-			parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
-		}
-
-		
-	}
-	
-	
 	private void edit(boolean resume) {
 		parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
 		if (!resume) { GlobalVars.ELEMENTEDIT = log; }
@@ -750,6 +583,96 @@ public class ScreenTree extends Canvas implements Runnable {
 			log = null;
 		}
 	}
+	
+	public void interval() {
+		threadInterval = new Thread(this);
+		threadWaiting = false;
+		threadInterval.start();
+	}
+
+	public void run() {
+		
+		//TODO: Wurzeln; Krankheit durch Wasser; 
+		int counterDraw = 0;
+		int supply;
+
+		// anfangsstart
+		while ((log != null && GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_RUNNING) && (GlobalVars.COUNTERCHEAT > 0 || ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / GlobalVars.GROWTH_INTERVAL) > 0)) {		
+			++GlobalVars.COUNTERINTERVAL;
+			--GlobalVars.COUNTERCHEAT;
+			System.out.println("--- INTERVAL|CHEATER: " + GlobalVars.COUNTERINTERVAL + " | " + GlobalVars.COUNTERCHEAT + " ---");
+//			System.out.println("--- TIME:" + ((new Date().getTime() - GlobalVars.TIME_STAMP.getTime()) / 10000) + " ---");
+
+			
+			GlobalVars.TIME_STAMP.setTime(GlobalVars.TIME_STAMP.getTime() + GlobalVars.GROWTH_INTERVAL);
+			
+			supply = Math.min(water, logWaterRequest);
+			water -= supply;
+			if (!log.grow(supply)) {
+				// System.out.println("--- ScreenTree.run: Log_Kill ---");
+				log.childKill();
+				log = null;
+				parent.receiveFeedback(GlobalVars.APPSTATUS_TREEDEAD);
+//				System.out.println("--- ScreenTree.run: Log_Killed ---");
+			}
+			else {
+				logWaterRequest = log.getChildWaterRequest();
+				System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
+				calcTime();
+			}
+			if (++counterDraw == 1) {
+					threadWaiting = true;
+					break;
+			}
+
+		}
+//		System.out.println("--- INTERVAL END LOOP ---");
+		if (log != null) {
+			parent.receiveFeedback((byte)31);
+		}
+		this.repaint();
+		
+		if (!threadWaiting && log != null) {
+			parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
+		}
+
+		
+	}
+	
+	private void calcTime() {
+		// Hour of Day ((UTC + timeZone) * 10)
+		currentHour = (short)(GlobalVars.TIME_STAMP.getTime() % 86400000 / 360000 + timeZone * 10);
+				
+		if (currentHour < GlobalVars.TIME_DAWN || currentHour >= GlobalVars.TIME_NIGHT) {
+			//night
+			bgColor = GlobalVars.COLOR_BG_NIGHT;
+			GlobalVars.GROWTH_INTERVAL = GlobalVars.GROWTH_INTERVAL_NIGHT;
+		}
+		else if (currentHour < GlobalVars.TIME_MIDDAY) {
+			//dawn
+			bgColor = GlobalVars.COLOR_BG_DAWN;
+			GlobalVars.GROWTH_INTERVAL = GlobalVars.GROWTH_INTERVAL_DAY;
+		}
+		else if (currentHour < GlobalVars.TIME_AFTERNOON) {
+			//midday
+			bgColor = GlobalVars.COLOR_BG_MIDDAY;
+			GlobalVars.GROWTH_INTERVAL = GlobalVars.GROWTH_INTERVAL_DAY;
+		}
+		else if (currentHour < GlobalVars.TIME_DUSK) {
+			//afternoon
+			bgColor = GlobalVars.COLOR_BG_AFTERNOON;
+			GlobalVars.GROWTH_INTERVAL = GlobalVars.GROWTH_INTERVAL_DAY;
+		}
+		else if (currentHour < GlobalVars.TIME_NIGHT) {
+			// dusk
+			bgColor = GlobalVars.COLOR_BG_DUSK;
+			GlobalVars.GROWTH_INTERVAL = GlobalVars.GROWTH_INTERVAL_DAY;
+		} else {
+			// shouldn get here
+			System.out.println("unexpected Time: " + GlobalVars.TIME_STAMP.toString());
+		}
+	}
+	
 	
 	protected void keyPressed (int keyCode) {
 //		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
@@ -915,19 +838,19 @@ public class ScreenTree extends Canvas implements Runnable {
 					menuShow();
 				}
 			
-				else if (keyCode == KEY_NUM4) {
+				else if (keyCode == KEY_NUM7) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
-					GlobalVars.COUNTERCHEAT = 25;
+					GlobalVars.COUNTERCHEAT = 1;
 					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
 					interval();
 				}
-				else if (keyCode == KEY_NUM5) {
+				else if (keyCode == KEY_NUM8) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
 					GlobalVars.COUNTERCHEAT = 50;
 					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
 					interval();
 				}
-				else if (keyCode == KEY_NUM6) {
+				else if (keyCode == KEY_NUM9) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
 					GlobalVars.COUNTERCHEAT = 100;
 					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);

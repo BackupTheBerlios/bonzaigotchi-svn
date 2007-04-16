@@ -42,7 +42,7 @@ public class GlobalVars {
 	
 	public static byte PAINTSTATUS = PAINTSTATUS_VOID;
 	
-	public final static short INTRO_TIMEOUT = 100;
+	public final static short INTRO_TIMEOUT = 3000;
 	
 	public static Element ELEMENTEDIT;
 	public static int EDITEXACTPOS;

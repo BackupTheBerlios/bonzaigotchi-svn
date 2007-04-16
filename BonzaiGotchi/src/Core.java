@@ -359,7 +359,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 				break;
 				
 			case GlobalVars.APPSTATUS_HELP_WORK:
-				screenHBS = new ScreenHelpButtonsShow(GlobalVars.TU_ACTUAL);
+				screenHBS = new ScreenHelpButtonsShow();
 				screenHBS.addCommand(cmdHSBack);
 				screenHBS.setCommandListener(this);
 				Display.getDisplay(this).setCurrent(screenHBS);

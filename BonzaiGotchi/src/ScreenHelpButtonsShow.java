@@ -8,9 +8,9 @@ public class ScreenHelpButtonsShow extends Form{
 	private TextField tf_first;
 	private int index;
 
-	public ScreenHelpButtonsShow(int i) {
+	public ScreenHelpButtonsShow() {
 		super("Help / Tutorial");	
-		index=i;
+		index = GlobalVars.TU_ACTUAL;
 		tf_first = new TextField(LangVars.TU_BUTTON_NAMES[index],LangVars.TU_BUTTONS[index],LangVars.TU_BUTTONS[index].length(),TextField.ANY);
 		append(tf_first);
 	}

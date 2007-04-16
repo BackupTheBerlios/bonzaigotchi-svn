@@ -19,6 +19,9 @@ public class GlobalVars {
 	public final static short APPSTATUS_INIT = 0;
 	public final static short APPSTATUS_MAINMENU = 1;
 	public final static short APPSTATUS_INTRO = 11;
+	public final static short APPSTATUS_HELP = 12;
+	public final static short APPSTATUS_HELP_WORK = 121;
+	public final static short APPSTATUS_CREDITS = 13;
 	public final static short APPSTATUS_STANDBY = 21;
 	public final static short APPSTATUS_MENU = 22;
 	public final static short APPSTATUS_RUNNING = 23;
@@ -131,6 +134,10 @@ public class GlobalVars {
 
 	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_SEAL = "/seal20.png";
 	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL = "/dontseal20.png";
+	
+	public final static String MENU_IMG_PATH_BACKBUTTON = "/hashsign.png";
+	
+	public static short TU_ACTUAL=0;
 	
 	//public final static String MENU_IMG_PATH_EXIT = "/arrow2.png";
 	

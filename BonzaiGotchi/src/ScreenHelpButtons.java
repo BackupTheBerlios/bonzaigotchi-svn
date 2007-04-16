@@ -2,12 +2,13 @@ import java.io.IOException;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 
-public class ScreenHelpButtons extends List implements CommandListener {
+public class ScreenHelpButtons extends List implements CommandListener{
 	private List buttonsList;
 
 	private TextField tf_first;
@@ -17,20 +18,22 @@ public class ScreenHelpButtons extends List implements CommandListener {
 	private Command cmdItems;
 
 	private Command cmdBack;
-	private ReceiveFeedback parent;
+
 	private Image imageArray[];
+	private ReceiveFeedback parent;
+
+	//private ScreenHelpButtonsShow screenHBS;
 	
-
-
 	public ScreenHelpButtons(ReceiveFeedback parent) {
-		super("Test",List.IMPLICIT);
-		//super("Help / Tutorial");
+		super("Buttons List",List.IMPLICIT);
+
 		this.parent = parent;
 		
 		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
 			GlobalVars.DISPLAY_X_WIDTH = (short) super.getWidth();
 			GlobalVars.DISPLAY_Y_HEIGHT = (short) super.getHeight();
 		}
+
 		init();
 
 	}
@@ -40,17 +43,21 @@ public class ScreenHelpButtons extends List implements CommandListener {
 		//append(tf_first);
 		//append("");
 
+		setCommandListener(this);
+		cmdItems = new Command(LangVars.CMD_ALL_SELECT, Command.ITEM, 2);
 		cmdBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);
-		//this.addCommand(cmdBack);
+		this.addCommand(cmdItems);
+		this.addCommand(cmdBack);
 		buildImages();
 		//append(buttonsList);
+
 		
 	}
 
 	private void buildImages() {
 		// Hier wird der Array aufgebaut für die Items
 
-	imageArray = new Image[10];
+	imageArray = new Image[11];
 		try {
 			imageArray[0]=Image.createImage(GlobalVars.MENU_IMG_PATH_WATER);
 			imageArray[1]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT);
@@ -62,12 +69,13 @@ public class ScreenHelpButtons extends List implements CommandListener {
 			imageArray[7]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL);
 			imageArray[8]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_COLOR);
 			imageArray[9]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_DUNG);
+			imageArray[10]=Image.createImage(GlobalVars.MENU_IMG_PATH_BACKBUTTON);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 		
-		mainElements = new String[10];
+		mainElements = new String[11];
 
 		mainElements[0]=LangVars.CMD_TREEMENU_WATER;
 		mainElements[1]=LangVars.CMD_TREEMENU_EDIT;
@@ -79,13 +87,14 @@ public class ScreenHelpButtons extends List implements CommandListener {
 		mainElements[7]=LangVars.CMD_SELECTED_DONTSEAL;
 		mainElements[8]=LangVars.CMD_SELBRANCH_COLOR;
 		mainElements[9]=LangVars.CMD_SELBRANCH_DUNG;
+		mainElements[10]=LangVars.CMD_BACKBUTTON;
 
 
 		for (int i=0;i<mainElements.length;i++) {
 			super.append(mainElements[i], imageArray[i]);
 			
 		}
-		buttonsList = new List(LangVars.TU_LIST_TITLE, List.IMPLICIT, mainElements, imageArray);
+		//buttonsList = new List(LangVars.TU_LIST_TITLE, List.IMPLICIT, mainElements, imageArray);
 		
 		//mainElements = new String[GlobalVars.MAINMENU_LIST_MAX + check]; // anlegen
 
@@ -111,14 +120,36 @@ public class ScreenHelpButtons extends List implements CommandListener {
 	 * case DOWN: repaint(); break; } }
 	 */
 
-	public void commandAction(Command arg0, Displayable arg1) {
+	public void commandAction(Command c, Displayable arg1) {
 		// TODO Auto-generated method stub
-		if (arg0==cmdBack)
+		System.out.println("Bin da!");
+		if (c==cmdBack)
 
 		{
-			
 			parent.receiveFeedback(GlobalVars.APPSTATUS_MAINMENU);
-			
+		}
+		else if (c==cmdItems){
+
+			GlobalVars.TU_ACTUAL=(short)this.getSelectedIndex();
+			parent.receiveFeedback(GlobalVars.APPSTATUS_HELP_WORK);
+			/*switch (si) {
+
+			case 0: { // im Water;
+				System.out.println("0 = Water");
+				//screenHBS=new ScreenHelpButtonsShow(si);
+				
+				break;
+			}
+			case 1: { // im Edit;
+				System.out.println("1 = Edit");
+				break;
+			}
+			default: { // im default;
+				System.out.println("Wie hast du das geschafft? Im Default....");
+				break;
+			}
+
+			}*/
 		}
 	}
 }

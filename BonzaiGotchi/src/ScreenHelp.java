@@ -8,17 +8,12 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 
-public class ScreenHelp extends Form implements CommandListener {
+public class ScreenHelp extends Form{
 
 	private TextField tf_first;
 
-
-	private Command cmdItems;
-	private Command cmdBack;
 	
 	private ReceiveFeedback parent;
-
-	
 
 
 	public ScreenHelp(ReceiveFeedback parent) {
@@ -38,20 +33,7 @@ public class ScreenHelp extends Form implements CommandListener {
 		append(tf_first);
 		append("");
 
-		cmdBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);
-		this.addCommand(cmdBack);
-		this.setCommandListener(this);
 	}
 
-	public void commandAction(Command arg0, Displayable arg1) {
-		// TODO Auto-generated method stub
-		System.out.println("Button pressed");
-		if (arg0==cmdBack)
 
-		{
-			System.out.println("Back pressed");
-			parent.receiveFeedback(GlobalVars.APPSTATUS_MAINMENU);
-			
-		}
-	}
 }

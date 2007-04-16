@@ -17,6 +17,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 	private ScreenTree screenTree;
 	private ScreenHelp screenHelp;
+	private ScreenHelpButtons screenHelpButtons;
 	private ScreenCredits screenCredits;
 	private ScreenIntro screenIntro;
 
@@ -37,6 +38,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 	// HelpScreen Commandos
 	private Command cmdHExit;
+	private Command cmdHButtons;
+	
+	// HelpScreenButtons Commandos
+	private Command cmdHBack;
 	
 	// CreditsScreen Commandos
 	private Command cmdCExit;
@@ -52,6 +57,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		screenIntro = new ScreenIntro(this);
 		screenHelp = new ScreenHelp(this);
 		screenCredits = new ScreenCredits();
+		screenHelpButtons = new ScreenHelpButtons(this);
 
 		// ScreenMenu screeny = new ScreenMenu();
 		// screeny.initialize();
@@ -63,14 +69,16 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		// Dead Tree Menue Commando
 		cmdDTExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
 		
-		// HelpScreen Comandos
+		// ScreenHelp Commandos
 		cmdHExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
-		//screenHelp.addCommand(cmdHExit);
-		//screenHelp.setCommandListener(this);
+		cmdHButtons = new Command("Buttons", Command.OK, 1);
 		
-		// HelpCredits Comandos
+		// ScreenHelpButtons Commandos
+		cmdHBack = new  Command(LangVars.CMD_ALL_BACK, Command.CANCEL, 1);
+		
+		// ScreenCredits Comandos
 		cmdCExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
-		//screenCredits.addCommand(cmdCExit);
+		screenCredits.addCommand(cmdCExit);
 		
 		
 		GlobalVars.APPSTATUS=GlobalVars.APPSTATUS_INTRO;
@@ -156,6 +164,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 			}
 			case 2: { // Im Tutorialauswahl
 //				System.out.println("2 = im Tutorialauswahl");
+				//clearCommands();
+				GlobalVars.APPSTATUS=GlobalVars.APPSTATUS_HELP;
+				screenHelp.addCommand(cmdHExit);
+				screenHelp.addCommand(cmdHButtons);
 				screenHelp.setCommandListener(this);
 				Display.getDisplay(this).setCurrent(screenHelp);
 				
@@ -189,8 +201,20 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		else if (c.equals(cmdHExit)) {
 			showMainMenu();
 		}
+		else if (c.equals(cmdHBack)) {
+			Display.getDisplay(this).setCurrent(screenHelp);
+			
+		}
 		else if (c.equals(cmdCExit)) {
 			showMainMenu();
+		}
+		else if (c.equals(cmdHButtons)) {
+			//clearCommands();
+			//screenHelpButtons.addCommand(cmdHExit);
+			//screenHelpButtons.addCommand(cmdHBack);
+			//screenHelpButtons.setCommandListener(screenHelpButtons);
+			Display.getDisplay(this).setCurrent(screenHelpButtons);
+			
 		}
 	}
 
@@ -206,6 +230,14 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	// obsolete since there is only one button at the moment
 	private void clearCommands() {
 		screenTree.removeCommand(cmdDTExit);
+		/*screenTree.removeCommand(cmdMSelect);
+		screenTree.removeCommand(cmdMExit);
+
+		screenHelp.removeCommand(cmdHExit);
+		screenHelp.removeCommand(cmdHButtons);		
+		screenHelpButtons.removeCommand(cmdHExit);
+		screenHelpButtons.removeCommand(cmdHBack);
+		screenCredits.removeCommand(cmdCExit); */
 	}
 
 	public void showMainMenu() {		
@@ -273,6 +305,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 					screenIntro=null;
 					showMainMenu();
 					
+				}
+				else if (GlobalVars.APPSTATUS==GlobalVars.APPSTATUS_HELP) {
+					GlobalVars.APPSTATUS = code;
+					showMainMenu();
 				}
 				else {
 					GlobalVars.APPSTATUS = code;

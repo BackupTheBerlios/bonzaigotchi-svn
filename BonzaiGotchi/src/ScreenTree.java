@@ -379,22 +379,26 @@ public class ScreenTree extends Canvas implements Runnable {
 	private void drawSelectColor(Graphics g) {
 		g.setColor(0xFFFFFF);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, 40);
+		g.setColor(0x000000);
+		g.drawLine(0, 40, GlobalVars.DISPLAY_X_WIDTH, 40);
 		
 		for (int i = 0; i < selectColor.length; i++) {
 			if (i == selectColorSelected) {
 				g.drawImage(menuSelected, i * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - selectColor.length * 12, 2, Graphics.TOP|Graphics.LEFT);
 			}
-			System.out.println("i|value " + i + " | " + selectColor[i]);
-			
-			int tmpFactor = (i - 2) * 0x100;
-			if (tmpFactor == 0) tmpFactor = 1;
-			
-			g.setColor(selectColor[i] * tmpFactor);
-			g.fillRect(i * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - selectColor.length * 12 + 2, 4, 20, 20);
+			g.setColor(0x000000);
+			g.drawString(""+selectColor[i], i * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - selectColor.length * 12 + 2, 24, Graphics.TOP|Graphics.LEFT);
 		}
 		
+		g.setColor(0xFF0000);
+		g.fillRect(0 * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - selectColor.length * 12 + 2, 4, 20, 20);
+		g.setColor(0x00FF00);
+		g.fillRect(1 * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - selectColor.length * 12 + 2, 4, 20, 20);
+		g.setColor(0x0000FF);
+		g.fillRect(2 * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - selectColor.length * 12 + 2, 4, 20, 20);
 		
-		
+		g.setColor(selectColor[0]*0x10000 + selectColor[1]*0x100 + selectColor[2]);
+		g.fillRect(3 * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - selectColor.length * 12 + 2, 2, 36, 36);		
 	}
 	
 	private void menuShow() {
@@ -573,6 +577,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private void selectColorAction() {
 		GlobalVars.ELEMENTEDIT.setColor(selectColor[0]*0x10000 + selectColor[1]*0x100 + selectColor[2]);
+		GlobalVars.ELEMENTEDIT = null;
 		parent.receiveFeedback((short)31);
 		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		this.repaint();
@@ -894,12 +899,14 @@ public class ScreenTree extends Canvas implements Runnable {
 						this.repaint();
 						break;
 						
-					case UP:						
-						if (++selectColor[selectColorSelected] > 255) selectColor[selectColorSelected] = 255; 
+					case UP:		
+						selectColor[selectColorSelected] += 5;
+						if (selectColor[selectColorSelected] > 255) selectColor[selectColorSelected] = 255; 
 						this.repaint();
 						break;
 					case DOWN:
-						if (--selectColor[selectColorSelected] < 0)   selectColor[selectColorSelected] = 0; 
+						selectColor[selectColorSelected] -= 5;
+						if (selectColor[selectColorSelected] < 0)   selectColor[selectColorSelected] = 0; 
 						this.repaint();
 						break;				
 					

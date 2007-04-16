@@ -31,6 +31,7 @@ public class Element {
 	private MathFloat waterRequest;
 	private boolean growStop = false;
 	private int color = -1;
+	private boolean colorNoAdaption = false;
 
 	private int childWaterRequest = 0;
 	private byte childWaterDivider = 100;
@@ -58,6 +59,7 @@ public class Element {
 		health = data.readDataShort();
 		growStop = data.readDataBoolean();
 		color = data.readDataInt();
+		colorNoAdaption = data.readDataBoolean();
 		
 		// Check if I have children
 		boolean tmpChildLeft = data.readDataBoolean();
@@ -80,6 +82,15 @@ public class Element {
 				
 	}
 	
+//	public Element(Element parent, short angle, short posX, short posY, int water) {
+//		element(parent, angle, posX, posY, water);
+//	}
+	
+	public Element(Element parent, short angle, short posX, short posY, int water, int color) {
+		this(parent, angle, posX, posY, water);
+		this.color = color;
+	}
+	
 	public Element(Element parent, short angle, short posX, short posY, int water) {
 	
 //		id = ++GlobalVars.COUNTERELEMENT;
@@ -96,6 +107,8 @@ public class Element {
 		thickness = new MathFloat(GlobalVars.SPAWN_THICKNESS_INIT);
 		
 	}
+	
+
 	
 	public int getChildWaterRequest() {
 		// System.out.println("--- ID: "+ id +" | Element WaterRequest BEGINN ---");
@@ -165,8 +178,9 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
 		// Usage
 		
-		if (colorAdaption >= 0) {
-			color = MathCalc.colorCombine(color, colorAdaption, (short)8, (short)1);
+		if (colorAdaption >= 0 && !colorNoAdaption) {
+			if (color == -1) color = GlobalVars.COLOR_ELEMENT_INNER;
+			color = MathCalc.colorCombine(color, colorAdaption, (short)16, (short)1);
 		}
 		
 		int supplyTaken = 0;
@@ -272,35 +286,35 @@ public class Element {
 			
 			switch (tmpRandom + 3) {
 				case 0:
-					childLeft   = new Element(this, calcAngleRandom((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childLeft   = new Element(this, calcAngleRandom((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD, color);
 					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 1:
-					childCenter = new Element(this, calcAngleRandom((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childCenter = new Element(this, calcAngleRandom((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD, color);
 					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 2:
-					childRight  = new Element(this, calcAngleRandom((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childRight  = new Element(this, calcAngleRandom((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD, color);
 					water -= GlobalVars.SPAWN_WATER_CHILD;
 					break;
 					
 				case 3:
-					childLeft   = new Element(this, calcAngleRandom((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
-					childCenter = new Element(this, calcAngleRandom((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childLeft   = new Element(this, calcAngleRandom((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD, color);
+					childCenter = new Element(this, calcAngleRandom((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD, color);
 					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 					
 				case 4:
-					childLeft   = new Element(this, calcAngleRandom((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
-					childRight  = new Element(this, calcAngleRandom((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childLeft   = new Element(this, calcAngleRandom((short)27, (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD, color);
+					childRight  = new Element(this, calcAngleRandom((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD, color);
 					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 					
 				case 5:
-					childCenter = new Element(this, calcAngleRandom((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
-					childRight  = new Element(this, calcAngleRandom((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD);
+					childCenter = new Element(this, calcAngleRandom((short)31, (short)3), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD, color);
+					childRight  = new Element(this, calcAngleRandom((short)2,  (short)4), calcX2(posX), calcY2(posY), GlobalVars.SPAWN_WATER_CHILD, color);
 					water -= GlobalVars.SPAWN_WATER_CHILD * 2;
 					break;
 			}
@@ -321,7 +335,7 @@ public class Element {
 			(GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_EDIT && (GlobalVars.ELEMENTEDIT.equals(this) || GlobalVars.ELEMENTEDIT.equals(parent))) ||
 			 GlobalVars.PAINTSTATUS == GlobalVars.PAINTSTATUS_LEAF) {
 			// System.out.println("--- ID|PAINTSTATUS: "+ id +" | "+ GlobalVars.PAINTSTATUS +" ---");
-					
+			
 			short tmpPosX = posX;
 			short tmpPosY = posY;
 			
@@ -347,32 +361,33 @@ public class Element {
 			int innerColor = 0;
 			int outerColor = 0;
 			
+			if (color >= 0) {
+				innerColor = color;
+				outerColor = MathCalc.colorCombine(color, 0x000000, (short)4, (short)1);
+			}
+			else {
+				innerColor = GlobalVars.COLOR_ELEMENT_INNER;
+				outerColor = GlobalVars.COLOR_ELEMENT_OUTER;
+			}
+			
 			switch (GlobalVars.PAINTSTATUS) { 
 				case GlobalVars.PAINTSTATUS_NORMAL:
 				case GlobalVars.PAINTSTATUS_LEAF:
 					if (health <= GlobalVars.COLOR_ELEMENT_DRY_THRESHOLD) {
 						if (health <= GlobalVars.GROWTH_HEALTH_DEATH) {
-							if (color >= 0) {
-								innerColor = color;
-								outerColor = MathCalc.colorCombine(color, 0x000000, (short)4, (short)1);
-							}
-							else {
-								innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
-								outerColor = GlobalVars.COLOR_ELEMENT_DEAD;
-							}
+							innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
+							outerColor = GlobalVars.COLOR_ELEMENT_DEAD;
 						}
 						else {
 							short steps = (short)((GlobalVars.COLOR_ELEMENT_DRY_THRESHOLD - GlobalVars.GROWTH_HEALTH_DEATH) / 10) +1; 
 							short ratio = (short)((health - GlobalVars.GROWTH_HEALTH_DEATH) / 10);
-							innerColor = MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_INNER, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
-							innerColor = MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_OUTER, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
+							innerColor = MathCalc.colorCombine(innerColor, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
+							innerColor = MathCalc.colorCombine(outerColor, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
 							// System.out.println("--- ID: "+ id +" | GROW - STEPS|RATIO|HEALTH: "+ steps + " | "+ ratio +" | "+ health +" ---");
 						}
-					} else {
-						innerColor = GlobalVars.COLOR_ELEMENT_INNER;
-						outerColor = GlobalVars.COLOR_ELEMENT_OUTER;
 					}
 					break;
+					
 				case GlobalVars.PAINTSTATUS_EDIT:
 					if (GlobalVars.ELEMENTEDIT.equals(this)) {
 						innerColor = GlobalVars.COLOR_ELEMENT_EDIT_INNER;
@@ -576,6 +591,7 @@ public class Element {
 	
 	public void setColor(int color) {
 		this.color = color;
+		colorNoAdaption = true;
 	}
 	
 	// kill specific child
@@ -694,6 +710,7 @@ public class Element {
 		data.writeData(health);
 		data.writeData(growStop);
 		data.writeData(color);
+		data.writeData(colorNoAdaption);
 
 		data.writeData(tmpChildLeft);
 		data.writeData(tmpChildCenter);

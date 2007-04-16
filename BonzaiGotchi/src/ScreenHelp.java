@@ -1,40 +1,57 @@
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
+import java.io.IOException;
+
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.TextField;
+
+public class ScreenHelp extends Form implements CommandListener {
+
+	private TextField tf_first;
 
 
-public class ScreenHelp extends Canvas {
+	private Command cmdItems;
+	private Command cmdBack;
+	
+	private ReceiveFeedback parent;
 
-	public ScreenHelp() {
+	
+
+
+	public ScreenHelp(ReceiveFeedback parent) {
+		super("Help / Tutorial");
+		this.parent = parent;
+		
 		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
-			GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
-			GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
+			GlobalVars.DISPLAY_X_WIDTH = (short) super.getWidth();
+			GlobalVars.DISPLAY_Y_HEIGHT = (short) super.getHeight();
 		}
-	}
-	
-	protected void paint(Graphics g) {
-		g.setColor(0xFF0000);
-		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-		g.setColor(0x000000);
-		g.drawString("Help", 0, 0, Graphics.TOP|Graphics.LEFT);
-	}
-	
-	protected void keyPressed (int keyCode) {
-		switch (getGameAction(keyCode)) {
-			case LEFT:
-				repaint();
-				break;	
-			
-			case RIGHT:
-				repaint();
-				break;
-			
-			case UP:
-				repaint();
-				break;
+		init();
 
-			case DOWN:
-				repaint();
-				break;
+	}
+
+	private void init() {
+		tf_first = new TextField(LangVars.TU_HELPTEXT_TITLE,LangVars.TU_HELPTEXT,LangVars.TU_HELPTEXT.length(),TextField.ANY);
+		append(tf_first);
+		append("");
+
+		cmdBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);
+		this.addCommand(cmdBack);
+		this.setCommandListener(this);
+	}
+
+	public void commandAction(Command arg0, Displayable arg1) {
+		// TODO Auto-generated method stub
+		System.out.println("Button pressed");
+		if (arg0==cmdBack)
+
+		{
+			System.out.println("Back pressed");
+			parent.receiveFeedback(GlobalVars.APPSTATUS_MAINMENU);
+			
 		}
 	}
 }

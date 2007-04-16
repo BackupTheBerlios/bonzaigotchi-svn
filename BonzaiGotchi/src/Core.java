@@ -50,7 +50,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		
 		data = new FileIO("BonzaiGotchi");
 		screenIntro = new ScreenIntro(this);
-		screenHelp = new ScreenHelp();
+		screenHelp = new ScreenHelp(this);
 		screenCredits = new ScreenCredits();
 
 		// ScreenMenu screeny = new ScreenMenu();
@@ -65,11 +65,13 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		
 		// HelpScreen Comandos
 		cmdHExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
-		screenHelp.addCommand(cmdHExit);
+		//screenHelp.addCommand(cmdHExit);
+		//screenHelp.setCommandListener(this);
 		
 		// HelpCredits Comandos
 		cmdCExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
-		screenCredits.addCommand(cmdCExit);
+		//screenCredits.addCommand(cmdCExit);
+		
 		
 		GlobalVars.APPSTATUS=GlobalVars.APPSTATUS_INTRO;
 		Display.getDisplay(this).setCurrent(screenIntro);
@@ -154,9 +156,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 			}
 			case 2: { // Im Tutorialauswahl
 //				System.out.println("2 = im Tutorialauswahl");
-				Display.getDisplay(this).setCurrent(screenHelp);
 				screenHelp.setCommandListener(this);
-				screenHelp.repaint();
+				Display.getDisplay(this).setCurrent(screenHelp);
+				
+				//screenHelp.repaint();
 				break;
 			}
 			case 3: { // im Creditsauswahl

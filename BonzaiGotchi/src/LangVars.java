@@ -40,6 +40,19 @@ public class LangVars {
 	public static final String ANSWER_YES = "Yes";
 	public static final String ANSWER_NO = "No";
 	
+	//Tutorial
+	public static final String TU_HELPTEXT_TITLE = "Hilfe";
+	public static final String TU_HELPTEXT = "Herzlich Willkommen im Tutorial von BonzaiGotchi.\n\n"
+		+"Hier lernen Sie wie sie ihren Baum anlegen und pflegen können. \n \n"
+		+"Der „Select“ Knopf (Mitte der Kreis oder Taste 5) wählt immer das Menü aus.\n"
+		+"Mit der # - Taste kommen sie immer einen Schritt bzw. Menü zurück.\n"
+		+"Der Baum wächst wie jede natürliche Pflanze nur wenn man ihn genügend gießt. "
+		+"Allerdings kann zuviel gießen dem BonzaiGotchi Schaden zufügen. "
+		+"Diesen kann man an den braunen Ästen erkennen.\nGespeichert wird der Baum "
+		+"automatisch nach jeder getanen Aktion. Es ist somit nicht möglich Tätigkeiten "
+		+"rückgängig zu machen.";
+	
+	public static final String TU_LIST_TITLE = "Buttonsliste";
 	
 	/* keine Verwendung! Nur Stringarray testing! Hier kommt noch die Funktion zum Auslesen
 	 * des lang.conf Datei wegen verschiedener Sprachen

@@ -277,11 +277,11 @@ public class ScreenTree extends Canvas implements Runnable {
 			short midday = (GlobalVars.TIME_DUSK + GlobalVars.TIME_DAWN) / 2;
 			
 			if(currentHour <= midday) {
-				sunY = (short)(GlobalVars.DISPLAY_Y_HEIGHT * (midday - currentHour) / (midday - GlobalVars.TIME_DAWN) / 2 + (GlobalVars.DISPLAY_Y_HEIGHT / 4));
+				sunY = (short)(GlobalVars.DISPLAY_Y_HEIGHT/45 * MathCalc.power(midday - currentHour,2) / (midday - GlobalVars.TIME_DAWN) / 3 + (GlobalVars.DISPLAY_Y_HEIGHT / 6));
 
 			}
 			else {
-				sunY = (short)(GlobalVars.DISPLAY_Y_HEIGHT * (currentHour - midday) / (GlobalVars.TIME_DUSK - midday) / 2 + (GlobalVars.DISPLAY_Y_HEIGHT / 4));
+				sunY = (short)(GlobalVars.DISPLAY_Y_HEIGHT/45 * MathCalc.power(currentHour - midday,2) / (GlobalVars.TIME_DUSK - midday) / 3 + (GlobalVars.DISPLAY_Y_HEIGHT / 6));
 			}
 
 			g.setColor(GlobalVars.COLOR_BG_SUN);

@@ -53,7 +53,7 @@ public class LangVars {
 		+"Johannes Greschitz:\n"
 		+"   - Programmer\n"
 		+"   - Graphics\n\n"
-		+"Special Thanxs to:\n"
+		+"Special Thanks to:\n"
 		+"Michael Cramer:\n"
 		+"- Idea / Bugfixing";
 	

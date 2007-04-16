@@ -25,8 +25,8 @@ public class ScreenIntro extends Canvas implements Runnable {
 			GlobalVars.DISPLAY_Y_HEIGHT = (short) super.getHeight();
 		}
 		try {
-			introbild = Image.createImage("/intro_screen.png");
-			intro2bild = Image.createImage("/intro2_screen.png");
+			introbild = Image.createImage(GlobalVars.INTRO_IMAGE_FIRST);
+			intro2bild = Image.createImage(GlobalVars.INTRO_IMAGE_SECOND);
 			// fixe Gr��e von 128x128 px bzw. 128x153
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

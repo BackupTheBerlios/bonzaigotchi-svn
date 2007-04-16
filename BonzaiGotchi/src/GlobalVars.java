@@ -138,6 +138,9 @@ public class GlobalVars {
 	
 	public final static String MENU_IMG_PATH_BACKBUTTON = "/hashsign.png";
 	
+	public final static String INTRO_IMAGE_FIRST = "/intro_screen.png";	
+	public final static String INTRO_IMAGE_SECOND = "/intro2_screen.png";	
+	
 	public static short TU_ACTUAL=0;
 	
 	//public final static String MENU_IMG_PATH_EXIT = "/arrow2.png";

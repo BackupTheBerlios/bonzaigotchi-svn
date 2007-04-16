@@ -46,6 +46,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private int logWaterRequest;
 	private Image potChangeImgArrowLeft;
 	private Image potChangeImgArrowRight;
+	private Image cloudImage;
 	
 	// Gauge
 	private Can can;
@@ -133,6 +134,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		try {
 			potChangeImgArrowLeft = Image.createImage("/arrow20.png");
 			potChangeImgArrowRight =  Image.createImage("/arrow20right.png");
+			//cloudImage = Image.createImage("/wolke.png");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -247,7 +249,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		g.setColor(bgColor);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 		
-
+		
 		// Stars
 		g.setColor(0xFFFFFF);		
 		for(int i=0; i < bgStarsX.length; i++) {
@@ -262,9 +264,17 @@ public class ScreenTree extends Canvas implements Runnable {
 
 		// Sun
 		drawSun(g);
+		drawClouds(g);
 	}
 
-
+    private void drawClouds(Graphics g)
+    {
+    	if(MathCalc.getRandom(5)==4)
+    		{
+    		//g.drawImage(cloudImage,30,40,Graphics.TOP|Graphics.LEFT);
+    		}
+    	
+    }
 	private void drawSun(Graphics g) {
 		
 		short sunX = 0;

@@ -1,40 +1,27 @@
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.StringItem;
 
+public class ScreenCredits extends Form {
 
-public class ScreenCredits extends Canvas {
+	private StringItem tf_first;
 
 	public ScreenCredits() {
+		super("Credits");
+		
 		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
-			GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
-			GlobalVars.DISPLAY_Y_HEIGHT = (short)super.getHeight();
+			GlobalVars.DISPLAY_X_WIDTH = (short) super.getWidth();
+			GlobalVars.DISPLAY_Y_HEIGHT = (short) super.getHeight();
 		}
-	}
-	
-	protected void paint(Graphics g) {
-		g.setColor(0x00FF00);
-		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-		g.setColor(0x000000);
-		g.drawString("Credits", 0, 0, Graphics.TOP|Graphics.LEFT);
-	}
-	
-	protected void keyPressed (int keyCode) {
-		switch (getGameAction(keyCode)) {
-			case LEFT:
-				repaint();
-				break;	
-			
-			case RIGHT:
-				repaint();
-				break;
-			
-			case UP:
-				repaint();
-				break;
+		init();
 
-			case DOWN:
-				repaint();
-				break;
-		}
 	}
+
+	private void init() {
+		tf_first = new StringItem(LangVars.CR_TITLE,LangVars.CR_TEXT);
+		append(tf_first);
+		append("");
+
+	}
+
+
 }

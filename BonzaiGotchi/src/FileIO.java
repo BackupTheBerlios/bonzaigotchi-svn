@@ -34,13 +34,13 @@ public class FileIO {
 	
 	// writeDataInit has to be started before writing can begin
 	public void writeDataInit(short versionSave) {
-		System.out.println("--- IO WRITE INIT BEGINN ---");
+//		System.out.println("--- IO WRITE INIT BEGINN ---");
 		
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
 		
 		writeData (versionSave);
-		System.out.println("--- IO WRITE INIT ENDE ---");
+//		System.out.println("--- IO WRITE INIT ENDE ---");
 	}
 	
 	public void writeData(String data) {
@@ -132,15 +132,15 @@ public class FileIO {
 	
 	// execute when reading has been finished
 	public boolean writeDataFinalize() {
-		System.out.println("--- IO WRITE FINALIZE BEGINN ---");
+//		System.out.println("--- IO WRITE FINALIZE BEGINN ---");
 		
 		byte[] record = baos.toByteArray();
 		
 		try {
 			RecordStore.deleteRecordStore(recordName);
-			System.out.println("--- IO DELETE RECORD ---");
+//			System.out.println("--- IO DELETE RECORD ---");
 		} catch (RecordStoreException e) {
-			System.out.println("--- IO DELETE RECORD ERROR ---");
+//			System.out.println("--- IO DELETE RECORD ERROR ---");
 		}
 		
 
@@ -148,9 +148,9 @@ public class FileIO {
 			rs = RecordStore.openRecordStore(recordName, true);
 			rs.addRecord(record, 0, record.length);
 			rs.closeRecordStore();
-			System.out.println("--- IO RECORD " + recordName + " SAVED | " + record.length + " BYTES WRITTEN ---");
+//			System.out.println("--- IO RECORD " + recordName + " SAVED | " + record.length + " BYTES WRITTEN ---");
 		} catch (RecordStoreException e) {
-			System.out.println("--- IO WRITE RECORD ERROR ---");
+//			System.out.println("--- IO WRITE RECORD ERROR ---");
 			return false;
 		}
 		
@@ -158,14 +158,14 @@ public class FileIO {
 		baos = null;
 		dos = null;
 		
-		System.out.println("--- IO WRITE FINALIZE ENDE ---");
+//		System.out.println("--- IO WRITE FINALIZE ENDE ---");
 		return true;
 	}
 
 	// execute before starting to read
 	public short readDataInit() {
 		
-		System.out.println("--- IO READ INIT BEGINN ---");
+//		System.out.println("--- IO READ INIT BEGINN ---");
 		
 		boolean recordExists = false;
 		
@@ -190,10 +190,10 @@ public class FileIO {
 		
 			try {			
 				rs = RecordStore.openRecordStore(recordName, false);
-		        System.out.println("--- IO OPEN RECORD ---");
+//		        System.out.println("--- IO OPEN RECORD ---");
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("--- IO OPEN RECORD ERROR ---");
+//				System.out.println("--- IO OPEN RECORD ERROR ---");
 			}
 		
 
@@ -202,25 +202,25 @@ public class FileIO {
 			try {
 				re = rs.enumerateRecords(null,null,false);
 				record = rs.getRecord(re.nextRecordId());
-				System.out.println("--- IO READ RECORD ---");
+//				System.out.println("--- IO READ RECORD ---");
 			} catch (Exception e) {
-				System.out.println("--- IO READ RECORD ERROR ---");
+//				System.out.println("--- IO READ RECORD ERROR ---");
 			}
 
 	        bais = new ByteArrayInputStream(record);
 	        dis = new DataInputStream(bais);
-	        System.out.println("--- IO READ INIT END ---");
+//	        System.out.println("--- IO READ INIT END ---");
 	        try {
 	        	return readDataShort(); // = versionSave
 	        }
 	        catch (Exception e) {
-	        	System.out.println("--- IO READ INIT END | ERROR ---");
+//	        	System.out.println("--- IO READ INIT END | ERROR ---");
 	        	return 0;
 	        }
 	
 		}
 		else {
-			System.out.println("--- IO READ INIT END | 0 ---");
+//			System.out.println("--- IO READ INIT END | 0 ---");
 			return 0;
 		}
 	}
@@ -341,7 +341,7 @@ public class FileIO {
 	// just to clear vars
 	// execute when finished reading
 	public void readDataFinalize() {
-		System.out.println("--- IO READ FINALIZE BEGINN ---");
+//		System.out.println("--- IO READ FINALIZE BEGINN ---");
 		bais = null;
 		dis = null;
 		try {
@@ -355,7 +355,7 @@ public class FileIO {
 //			System.out.println("--- IO RecordStore CLOSE ERROR ---");
 //			e.printStackTrace();
 		}
-		System.out.println("--- IO READ FINALIZE END ---");
+//		System.out.println("--- IO READ FINALIZE END ---");
 	}
 	
 	public void deleteRecord() {

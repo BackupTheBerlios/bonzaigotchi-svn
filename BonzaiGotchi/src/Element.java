@@ -17,7 +17,7 @@ import javax.microedition.lcdui.Graphics;
 
 public class Element {
 
-	private int id;
+//	private int id;
 
 	private MathFloat length;
 	private MathFloat thickness; 
@@ -25,11 +25,12 @@ public class Element {
 	private short posX;
 	private short posY;
 	private int water; 
-	private short health = 100; // tempValue
+	private short health = 100;
 	private int demand;
 	private short waterPercentage;
 	private MathFloat waterRequest;
 	private boolean growStop = false;
+	private int color = -1;
 
 	private int childWaterRequest = 0;
 	private byte childWaterDivider = 100;
@@ -40,10 +41,10 @@ public class Element {
 	
 	private Element parent = null;
 	
-	public Element(Element parent, FileIO data) {
+	public Element(Element parent, FileIO data, short posX, short posY) {
 	
-		id = ++GlobalVars.COUNTERELEMENT;
-		System.out.println("--- Element Constructor LOADED | "+ id +" ---");
+//		id = ++GlobalVars.COUNTERELEMENT;
+//		System.out.println("--- Element Constructor LOADED | "+ id +" ---");
 		
 		this.parent = parent;
 		
@@ -51,11 +52,12 @@ public class Element {
 		length = new MathFloat((int)data.readDataLong());
 		thickness = new MathFloat((int)data.readDataLong());
 		angle = data.readDataShort();
-		posX = data.readDataShort();
-		posY = data.readDataShort();
+		this.posX = posX;
+		this.posY = posY;
 		water = data.readDataInt();
 		health = data.readDataShort();
 		growStop = data.readDataBoolean();
+		color = data.readDataInt();
 		
 		// Check if I have children
 		boolean tmpChildLeft = data.readDataBoolean();
@@ -64,24 +66,24 @@ public class Element {
 		
 		if (tmpChildLeft) {
 			// System.out.println("--- Element Constructor ChildLeft ---");
-			childLeft = new Element(this, data);
+			childLeft = new Element(this, data, calcX2(posX), calcY2(posY));
 		}
 		if (tmpChildCenter) {
 			// System.out.println("--- Element Constructor ChildCenter ---");
-			childCenter = new Element(this, data);
+			childCenter = new Element(this, data, calcX2(posX), calcY2(posY));
 			
 		}
 		if (tmpChildRight) {
 			// System.out.println("--- Element Constructor ChildRight ---");
-			childRight = new Element(this, data);
+			childRight = new Element(this, data, calcX2(posX), calcY2(posY));
 		}
 				
 	}
 	
 	public Element(Element parent, short angle, short posX, short posY, int water) {
 	
-		id = ++GlobalVars.COUNTERELEMENT;
-		System.out.println("--- Element Constructor SPAWNED | "+ id +" ---");
+//		id = ++GlobalVars.COUNTERELEMENT;
+//		System.out.println("--- Element Constructor SPAWNED | "+ id +" ---");
 		
 		this.parent = parent;
 		
@@ -158,10 +160,14 @@ public class Element {
 		return childWaterRequest + waterRequest.getInt();
 	}
 
-	public boolean grow (int supply) {
+	public boolean grow (int supply, int colorAdaption) {
 		// System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
 		// Usage
+		
+		if (colorAdaption >= 0) {
+			color = MathCalc.colorCombine(color, colorAdaption, (short)8, (short)1);
+		}
 		
 		int supplyTaken = 0;
 		
@@ -220,28 +226,32 @@ public class Element {
 			if (childLeft != null) {
 				supplyTaken = supply * childWaterDivider / 100;
 				supply -= supplyTaken;
-				if (!childLeft.grow(supplyTaken)) { 
+				if (!childLeft.grow(supplyTaken, color)) { 
 //					System.out.println("--- ID: "+ id +" | Element.grow: Left ---");
-					childKill (childLeft); }
+					childKill (childLeft);
+					}
 			}
 			if (childCenter != null) {
 				if (childLeft != null) {
-					if (!childCenter.grow(supply)) { 
+					if (!childCenter.grow(supply, color)) { 
 //						System.out.println("--- ID: "+ id +" | Element.grow: Center_Left ---");
-						childKill (childCenter); }
+						childKill (childCenter);
+					}
 				}
 				else {
 					supplyTaken = supply * childWaterDivider / 100;
 					supply -= supplyTaken;
-					if (!childCenter.grow(supplyTaken)) {
+					if (!childCenter.grow(supplyTaken, color)) {
 //						System.out.println("--- ID: "+ id +" | Element.grow: Center_NoLeft ---");
-						childKill (childCenter); }
+						childKill (childCenter);
+					}
 				}
 			}
 			if (childRight != null) {
-				if (!childRight.grow(supply)) { 
+				if (!childRight.grow(supply, color)) { 
 //					System.out.println("--- ID: "+ id +" | Element.grow: Right ---");
-					childKill (childRight); }
+					childKill (childRight);
+				}
 			}
 		}
 		else {
@@ -342,8 +352,14 @@ public class Element {
 				case GlobalVars.PAINTSTATUS_LEAF:
 					if (health <= GlobalVars.COLOR_ELEMENT_DRY_THRESHOLD) {
 						if (health <= GlobalVars.GROWTH_HEALTH_DEATH) {
-							innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
-							outerColor = GlobalVars.COLOR_ELEMENT_DEAD;
+							if (color >= 0) {
+								innerColor = color;
+								outerColor = MathCalc.colorCombine(color, 0x000000, (short)4, (short)1);
+							}
+							else {
+								innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
+								outerColor = GlobalVars.COLOR_ELEMENT_DEAD;
+							}
 						}
 						else {
 							short steps = (short)((GlobalVars.COLOR_ELEMENT_DRY_THRESHOLD - GlobalVars.GROWTH_HEALTH_DEATH) / 10) +1; 
@@ -558,6 +574,10 @@ public class Element {
 		return tmpDemand;
 	}
 	
+	public void setColor(int color) {
+		this.color = color;
+	}
+	
 	// kill specific child
 	public void childKill(Element childToKill) {
 //		System.out.println("--- ID: "+ id +" | Element.childKill ---");
@@ -668,11 +688,12 @@ public class Element {
 		data.writeData(thickness.value);
 		
 		data.writeData(angle);
-		data.writeData(posX);
-		data.writeData(posY);
+//		data.writeData(posX);
+//		data.writeData(posY);
 		data.writeData(water);
 		data.writeData(health);
 		data.writeData(growStop);
+		data.writeData(color);
 
 		data.writeData(tmpChildLeft);
 		data.writeData(tmpChildCenter);

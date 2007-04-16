@@ -105,7 +105,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		data.readDataFinalize();
 		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) { // abfrage
 			// RecordStore
-			System.out.println("--- check ---");
+//			System.out.println("--- check ---");
 			check = 0; // Maximalmenueeintruege wieder hergestellt!
 		}
 
@@ -116,7 +116,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		// resume
 
 		if (check == 0) {
-			System.out.println("--- addEntry ---");
+//			System.out.println("--- addEntry ---");
 			mainElements[i++] = LangVars.CMD_STARTM_RESUME_TREE;
 		}
 		mainElements[i++] = LangVars.CMD_STARTM_NEW_TREE;
@@ -128,7 +128,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	protected void pauseApp() {}
 
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
-		System.out.println("SYSTEM EXIT! Program shut down!");
+//		System.out.println("SYSTEM EXIT! Program shut down!");
 		this.notifyDestroyed();
 
 	}
@@ -150,7 +150,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 					screenTree.setCommandListener(this);
 					
 					GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_RUNNING;
-					System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
+//					System.out.println("--- cmdBreak GlobalVars.APPSTATUS: " + GlobalVars.APPSTATUS + " ---");
 					screenTree.interval();
 				}
 				else {
@@ -184,7 +184,6 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 			case 3: { // im Creditsauswahl
 				Display.getDisplay(this).setCurrent(screenCredits);
 				screenCredits.setCommandListener(this);
-				screenCredits.repaint();
 				break;
 			}
 			default: { // im default;
@@ -194,7 +193,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 			}
 		} else if (c.equals(cmdMExit)) {
-			System.out.println("SYSTEM EXIT! Program shut down!");
+//			System.out.println("SYSTEM EXIT! Program shut down!");
 			this.notifyDestroyed();
 		}
 
@@ -263,7 +262,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		Display.getDisplay(this).setCurrent(mainmenuList);
 		
 		GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_MAINMENU;
-		System.out.println("--- MAIN MENUE CREATED ---");
+//		System.out.println("--- MAIN MENUE CREATED ---");
 
 	}
 
@@ -282,7 +281,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 		short tmpVer = data.readDataInit();
 		if (tmpVer == GlobalVars.SAVE_RECORDSTORE_VERSION) {
-			System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer	+ " ---");
+//			System.out.println("--- Core: DATAINIT FINISHED: " + tmpVer	+ " ---");
 			screenTree = new ScreenTree(this, data);
 			data.readDataFinalize();
 			
@@ -306,7 +305,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		// code: 1x Commands - 10 = clearMenu, 11 = treeMenu, 12 = treeDead, 13 =
 		// screenInterval; 2x keyEvent - 21 = fireButton; 31 = saveTree();
 
-		System.out.println("feedback: " + code);
+//		System.out.println("feedback: " + code);
 				
 		switch (code) {
 		
@@ -368,7 +367,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 				GlobalVars.APPSTATUS = code;
 				break;
 		}
-		System.out.println("APPSTATUS: "+GlobalVars.APPSTATUS);
+//		System.out.println("APPSTATUS: "+GlobalVars.APPSTATUS);
 	}
 
 	public void run() {
@@ -386,7 +385,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 //		System.out.println("----Thread Interval----");
 		if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_STANDBY) {
-			System.out.println("----Thread Interval Appstatus: " + GlobalVars.APPSTATUS + " ----");
+//			System.out.println("----Thread Interval Appstatus: " + GlobalVars.APPSTATUS + " ----");
 			if (screenTree != null) {
 				GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_RUNNING;
 				clearCommands();

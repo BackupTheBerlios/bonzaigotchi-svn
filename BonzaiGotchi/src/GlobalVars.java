@@ -27,6 +27,7 @@ public class GlobalVars {
 	public final static short APPSTATUS_RUNNING = 23;
 	public final static short APPSTATUS_EDIT = 24;
 	public final static short APPSTATUS_EDITEXACT = 241;
+	public final static short APPSTATUS_EDITCOLOR = 242;
 	public final static short APPSTATUS_WATERING = 26;
 	public final static short APPSTATUS_POTCHANGE = 27;
 	public final static short APPSTATUS_TREEDEAD = 29;
@@ -41,7 +42,7 @@ public class GlobalVars {
 	
 	public static byte PAINTSTATUS = PAINTSTATUS_VOID;
 	
-	public final static short INTRO_TIMEOUT = 1000;
+	public final static short INTRO_TIMEOUT = 100;
 	
 	public static Element ELEMENTEDIT;
 	public static int EDITEXACTPOS;
@@ -49,8 +50,8 @@ public class GlobalVars {
 	
 	public static final int MAINMENU_LIST_MAX = 4;
 	
-	public static int COUNTERELEMENT = 0;
-	public static int COUNTERINTERVAL = 0;
+//	public static int COUNTERELEMENT = 0;
+//	public static int COUNTERINTERVAL = 0;
 	public static int COUNTERCHEAT = 0;
 	
 	public static int GROWTH_INTERVAL = 600000;
@@ -112,9 +113,9 @@ public class GlobalVars {
 	public final static int COLOR_CAN_INNER = 0x496A7D;
 	public final static int COLOR_CAN_OUTER = 0x97A4AD;
 	
-	public final static int COLOR_BG_DAWN = 0xFBF782;
+	public final static int COLOR_BG_DAWN = 0x002299;
 	public final static int COLOR_BG_MIDDAY = 0xFFFFFF;
-	public final static int COLOR_BG_AFTERNOON = 0xFADDE0;
+//	public final static int COLOR_BG_AFTERNOON = 0xFADDE0;
 	public final static int COLOR_BG_DUSK = 0xFD5F72;
 	public final static int COLOR_BG_NIGHT = 0x000000; 
 
@@ -152,7 +153,7 @@ public class GlobalVars {
 	
 	
 	public static Date TIME_STAMP;
-	public final static short SAVE_RECORDSTORE_VERSION = 004;
+	public final static short SAVE_RECORDSTORE_VERSION = 005;
 
 	// DEMAND_TABLE
 	public final static short[] GROWTH_WATER_DEMAND = {60,90,120,150,180,210,240,265,290,315,340,360,380,400,420,435,450,465,480,490,500,510,520,530,535,540,545,550,555};

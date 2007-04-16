@@ -9,7 +9,7 @@ public class Can {
 		private short posY;
 		
 		public Can(short angle, short posX, short posY, short size) {
-			System.out.println("--- Element Can LOADED ---");
+//			System.out.println("--- Element Can LOADED ---");
 			
 			this.angle = angle;
 			this.posX = posX;

@@ -10,7 +10,6 @@ public class ScreenHelpButtons extends List implements CommandListener{
 
 	private String[] mainElements;
 
-
 	private Command cmdItems;
 
 	private Command cmdBack;
@@ -57,7 +56,6 @@ public class ScreenHelpButtons extends List implements CommandListener{
 			imageArray[9]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_DUNG);
 			imageArray[10]=Image.createImage(GlobalVars.MENU_IMG_PATH_BACKBUTTON);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 		
@@ -80,63 +78,19 @@ public class ScreenHelpButtons extends List implements CommandListener{
 			append(mainElements[i], imageArray[i]);
 			
 		}
-		//buttonsList = new List(LangVars.TU_LIST_TITLE, List.IMPLICIT, mainElements, imageArray);
-		
-		//mainElements = new String[GlobalVars.MAINMENU_LIST_MAX + check]; // anlegen
-
-//		mainElements[i++] = LangVars.CMD_STARTM_NEW_TREE;
-//		mainElements[i++] = LangVars.CMD_STARTM_TUTORIAL;
-//		mainElements[i++] = LangVars.CMD_STARTM_CREDITS;
-
 	}
 
-	/*
-	 * protected void paint(Graphics g) { g.setColor(0xFF0000); g.fillRect(0, 0,
-	 * GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-	 * g.setColor(0x000000); g.drawString("Help", 0, 0,
-	 * Graphics.TOP|Graphics.LEFT); }
-	 * 
-	 * protected void keyPressed (int keyCode) { switch (getGameAction(keyCode)) {
-	 * case LEFT: repaint(); break;
-	 * 
-	 * case RIGHT: repaint(); break;
-	 * 
-	 * case UP: repaint(); break;
-	 * 
-	 * case DOWN: repaint(); break; } }
-	 */
-
 	public void commandAction(Command c, Displayable arg1) {
-		// TODO Auto-generated method stub
-		System.out.println("Bin da!");
-
 		if (c==cmdBack)
 
 		{
 			parent.receiveFeedback(GlobalVars.APPSTATUS_MAINMENU);
 		}
-		else {
+		else { //Any other Button pressed (incl. SELECT)
 
 			GlobalVars.TU_ACTUAL=(short)this.getSelectedIndex();
 			parent.receiveFeedback(GlobalVars.APPSTATUS_HELP_WORK);
-			/*switch (si) {
 
-			case 0: { // im Water;
-				System.out.println("0 = Water");
-				//screenHBS=new ScreenHelpButtonsShow(si);
-				
-				break;
-			}
-			case 1: { // im Edit;
-				System.out.println("1 = Edit");
-				break;
-			}
-			default: { // im default;
-				System.out.println("Wie hast du das geschafft? Im Default....");
-				break;
-			}
-
-			}*/
 		}
 	}
 }

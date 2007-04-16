@@ -122,12 +122,13 @@ public class ScreenHelpButtons extends List implements CommandListener{
 	public void commandAction(Command c, Displayable arg1) {
 		// TODO Auto-generated method stub
 		System.out.println("Bin da!");
+
 		if (c==cmdBack)
 
 		{
 			parent.receiveFeedback(GlobalVars.APPSTATUS_MAINMENU);
 		}
-		else if (c==cmdItems){
+		else {
 
 			GlobalVars.TU_ACTUAL=(short)this.getSelectedIndex();
 			parent.receiveFeedback(GlobalVars.APPSTATUS_HELP_WORK);

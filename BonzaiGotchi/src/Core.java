@@ -59,7 +59,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		
 		data = new FileIO("BonzaiGotchi");
 		screenIntro = new ScreenIntro(this);
-		screenHelp = new ScreenHelp(this);
+		screenHelp = new ScreenHelp();
 		screenCredits = new ScreenCredits();
 		screenHelpButtons = new ScreenHelpButtons(this);
 

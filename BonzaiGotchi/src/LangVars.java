@@ -34,7 +34,7 @@ public class LangVars {
 	public final static String CMD_SELECTED_SEAL = "Seal";
 	public final static String CMD_SELECTED_DONTSEAL = "Don't Seal";
 	
-	public final static String CMD_BACKBUTTON = "Hash Sign";
+	public final static String CMD_BACKBUTTON = "Hash Sign Button";
 	public final static String DIE_MESSAGE = "Your tree died a slowly and painfull death";
 	
 	public final static String QUES_SURE = "Are your sure?";
@@ -45,39 +45,42 @@ public class LangVars {
 	//Credita
 	public final static String CR_TITLE = "Credits";
 	public final static String CR_TEXT =
-		 "Phillip Losbichler:\n"
+		 "\nPhilipp Losbichler:\n"
 		+"   - Project Lead\n"
 		+"   - Programmer\n\n"
 		+"Andreas Tschabuschnig:\n"
 		+"   - Programm Lead\n\n"
 		+"Johannes Greschitz:\n"
 		+"   - Programmer\n"
-		+"   - Graphics";
+		+"   - Graphics\n\n"
+		+"Special Thanxs to:\n"
+		+"Michael Cramer:\n"
+		+"- Idea / Bugfixing";
 	
 	//Tutorial
 	public final static String TU_HELPTEXT_TITLE = "Hilfe";
 	public final static String TU_HELPTEXT = "Herzlich Willkommen im Tutorial von BonzaiGotchi.\n\n"
-		+"Hier lernen Sie wie sie ihren Baum anlegen und pflegen kï¿½nnen. \n \n"
-		+"Der ï¿½Selectï¿½ Knopf (Mitte der Kreis oder Taste 5) wï¿½hlt immer das Menï¿½ aus.\n"
-		+"Mit der # - Taste kommen sie immer einen Schritt bzw. Menï¿½ zurï¿½ck.\n"
-		+"Der Baum wï¿½chst wie jede natï¿½rliche Pflanze nur wenn man ihn genï¿½gend gieï¿½t. "
-		+"Allerdings kann zuviel gieï¿½en dem BonzaiGotchi Schaden zufï¿½gen. "
-		+"Diesen kann man an den braunen ï¿½sten erkennen.\nGespeichert wird der Baum "
-		+"automatisch nach jeder getanen Aktion. Es ist somit nicht mï¿½glich Tï¿½tigkeiten "
-		+"rï¿½ckgï¿½ngig zu machen.";
+		+"Hier lernen Sie wie sie ihren Baum anlegen und pflegen koennen.\n\n"
+		+"Der „Select“ Knopf (Mitte der Kreis oder Taste 5) waehlt immer das Menue aus.\n"
+		+"Mit der # - Taste kommen sie immer einen Schritt bzw. Menue zurueck.\n"
+		+"Der Baum waechst wie jede natuerliche Pflanze nur wenn man ihn genuegend gieszt. "
+		+"Allerdings kann zuviel gieszen dem BonzaiGotchi Schaden zufuegen. Diesen kann man "
+		+"an den braunen Aesten erkennen. \n"
+		+"Gespeichert wird der Baum automatisch nach jeder getanen Aktion. Es ist somit "
+		+"nicht moeglich Taetigkeiten rueckgaengig zu machen.";
 	
 	public final static String TU_LIST_TITLE = "Buttonsliste";
-	public final static String[] TU_BUTTONS = {"Gieï¿½t den Baum. Die Grï¿½ï¿½e der Kanne kann mit den Pfeiltasten verï¿½ndert werden.",
-		"Im Edit Modus, kann ein spezifischer Ast mit den Navigationstasten ausgewï¿½hlt werden. Der rot eingefï¿½rbte Ast, ist die aktuelle Auswahl die bearbeitet werden kann. Die anders gefï¿½rbten ï¿½ste zeigt seine direkten Kinder an. ",
-		"Hier kann die Topfgrï¿½ï¿½e verï¿½ndert werden. Ein grï¿½ï¿½erer Topf kann natï¿½rlich mehr Wasser fassen. Allerdings wenn einmal Wurzeln gebildet sind, ist es nicht mï¿½glich den Topf zu verkleinern.",
-		"Geht zurï¿½ck ins Anfangsmenï¿½, wo diese Hilfe als Menï¿½punkt aufscheint.",
+	public final static String[] TU_BUTTONS = {"Gieszt den Baum. Die Groesze der Kanne kann mit den Pfeiltasten veraendert werden.",
+		"Im Edit Modus, kann ein spezifischer Ast mit den Navigationstasten ausgewaehlt werden. Der rot eingefaerbte Ast, ist die aktuelle Auswahl die bearbeitet werden kann. Die anders gefaerbten AEste zeigt seine direkten Kinder an. ",
+		"Hier kann die Topfgroesze veraendert werden. Ein groeszerer Topf kann natuerlich mehr Wasser fassen. Allerdings wenn einmal Wurzeln gebildet sind, ist es nicht moeglich den Topf zu verkleinern.",
+		"Geht zurueck ins Anfangsmenue, wo diese Hilfe als Menuepunkt aufscheint.",
 		"Hier wird der komplette Ast mitsamt seinen Kindern abgeschnitten.",
-		"Ein roter Strich markiert die exakte Position wo dieser Ast abgeschnitten wird. Dieser kann mit den Navigationstasten verï¿½ndert werden.",
+		"Ein roter Strich markiert die exakte Position wo dieser Ast abgeschnitten wird. Dieser kann mit den Navigationstasten veraendert werden.",
 		"Der abgeschnittene Ast kann danach versiegelt werden und somit keine neuen Kinder bekommen.",
-		"Kï¿½rzt nur den Ast und lï¿½sst neue Kinder zu.",
-		"(not implementet yet). Diese Funktion ermï¿½glicht das Einfï¿½rben des Astes. ",
-		"(not implementet yet). Wenn ein Ast einmal krank wird bzw. kein Wasser mehr bekommt, kann mit dieser Auswahl dem Ast zusï¿½tzliche Stï¿½rke/Wasser gegeben werden.",
-		"Navigiert immer einen Schritt zurï¿½ck. Sowohl in den Menï¿½s als auch auï¿½erhalb davon. (Vom Edit- ins Hauptmenï¿½)"};
+		"Kuerzt nur den Ast und laesst neue Kinder zu.",
+		"(not implementet yet). Diese Funktion ermoeglicht das Einfaerben des Astes. ",
+		"(not implementet yet). Wenn ein Ast einmal krank wird bzw. kein Wasser mehr bekommt, kann mit dieser Auswahl dem Ast zusaetzliche Staerke/Wasser gegeben werden.",
+		"Navigiert immer einen Schritt zurueck. Sowohl in den Menues als auch auszerhalb davon. (Vom Edit- ins Hauptmenue)"};
 	
 	public final static String[] TU_BUTTON_NAMES = {"Water","Edit","Change Pot","Exit","Cut Branch","Exact Cut","Seal","Don't Seal","Color Branch","Dung Branch","Hash Sign"};
 	

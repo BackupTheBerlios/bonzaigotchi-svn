@@ -1,19 +1,15 @@
 import java.io.IOException;
-
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
-import javax.microedition.lcdui.TextField;
+
 
 public class ScreenHelpButtons extends List implements CommandListener{
-	private List buttonsList;
-
-	private TextField tf_first;
 
 	private String[] mainElements;
+
 
 	private Command cmdItems;
 
@@ -27,28 +23,19 @@ public class ScreenHelpButtons extends List implements CommandListener{
 		super("Buttons List",List.IMPLICIT);
 
 		this.parent = parent;
-		
-		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
-			GlobalVars.DISPLAY_X_WIDTH = (short) super.getWidth();
-			GlobalVars.DISPLAY_Y_HEIGHT = (short) super.getHeight();
-		}
 
 		init();
 
 	}
 
 	private void init() {
-		tf_first = new TextField(LangVars.TU_HELPTEXT_TITLE,LangVars.TU_HELPTEXT,LangVars.TU_HELPTEXT.length(),TextField.ANY);
-		//append(tf_first);
-		//append("");
-
 		setCommandListener(this);
 		cmdItems = new Command(LangVars.CMD_ALL_SELECT, Command.ITEM, 2);
 		cmdBack = new Command(LangVars.CMD_ALL_BACK, Command.EXIT, 1);
 		this.addCommand(cmdItems);
 		this.addCommand(cmdBack);
 		buildImages();
-		//append(buttonsList);
+
 
 		
 	}
@@ -74,19 +61,19 @@ public class ScreenHelpButtons extends List implements CommandListener{
 			e.printStackTrace();
 		}		
 		
-		mainElements = new String[11];
-
-		mainElements[0]=LangVars.CMD_TREEMENU_WATER;
-		mainElements[1]=LangVars.CMD_TREEMENU_EDIT;
-		mainElements[2]=LangVars.CMD_TREEMENU_POT;
-		mainElements[3]=LangVars.CMD_ALL_EXIT;
-		mainElements[4]=LangVars.CMD_SELBRANCH_CUT;
-		mainElements[5]=LangVars.CMD_SELBRANCH_EXACTCUT;
-		mainElements[6]=LangVars.CMD_SELECTED_SEAL;
-		mainElements[7]=LangVars.CMD_SELECTED_DONTSEAL;
-		mainElements[8]=LangVars.CMD_SELBRANCH_COLOR;
-		mainElements[9]=LangVars.CMD_SELBRANCH_DUNG;
-		mainElements[10]=LangVars.CMD_BACKBUTTON;
+		mainElements = new String[]{
+			LangVars.CMD_TREEMENU_WATER,
+			LangVars.CMD_TREEMENU_EDIT,
+			LangVars.CMD_TREEMENU_POT,
+			LangVars.CMD_ALL_EXIT,
+			LangVars.CMD_SELBRANCH_CUT,
+			LangVars.CMD_SELBRANCH_EXACTCUT,
+			LangVars.CMD_SELECTED_SEAL,
+			LangVars.CMD_SELECTED_DONTSEAL,
+			LangVars.CMD_SELBRANCH_COLOR,
+			LangVars.CMD_SELBRANCH_DUNG,
+			LangVars.CMD_BACKBUTTON
+		};
 
 
 		for (int i=0;i<mainElements.length;i++) {

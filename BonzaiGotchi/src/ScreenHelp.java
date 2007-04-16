@@ -1,24 +1,14 @@
-import java.io.IOException;
-
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.List;
-import javax.microedition.lcdui.TextField;
+import javax.microedition.lcdui.StringItem;
 
 public class ScreenHelp extends Form{
 
-	private TextField tf_first;
-
-	
-	private ReceiveFeedback parent;
+	private StringItem tf_first;
 
 
-	public ScreenHelp(ReceiveFeedback parent) {
+
+	public ScreenHelp() {
 		super("Help / Tutorial");
-		this.parent = parent;
 		
 		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
 			GlobalVars.DISPLAY_X_WIDTH = (short) super.getWidth();
@@ -29,7 +19,7 @@ public class ScreenHelp extends Form{
 	}
 
 	private void init() {
-		tf_first = new TextField(LangVars.TU_HELPTEXT_TITLE,LangVars.TU_HELPTEXT,LangVars.TU_HELPTEXT.length(),TextField.ANY);
+		tf_first = new StringItem(LangVars.TU_HELPTEXT_TITLE,LangVars.TU_HELPTEXT);
 		append(tf_first);
 		append("");
 

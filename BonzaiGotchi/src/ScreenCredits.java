@@ -6,7 +6,7 @@ public class ScreenCredits extends Form {
 	private StringItem tf_first;
 
 	public ScreenCredits() {
-		super("Credits");
+		super("Project BonzaiGotchi");
 		
 		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
 			GlobalVars.DISPLAY_X_WIDTH = (short) super.getWidth();

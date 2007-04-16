@@ -62,7 +62,7 @@ public class LangVars {
 		"Ein roter Strich markiert die exakte Position wo dieser Ast abgeschnitten wird. Dieser kann mit den Navigationstasten verändert werden.",
 		"Der abgeschnittene Ast kann danach versiegelt werden und somit keine neuen Kinder bekommen.",
 		"Kürzt nur den Ast und lässt neue Kinder zu.",
-		"(not implementet yet). Diese Funktion ermöglicht das einfärben des Astes. ",
+		"(not implementet yet). Diese Funktion ermöglicht das Einfärben des Astes. ",
 		"(not implementet yet). Wenn ein Ast einmal krank wird bzw. kein Wasser mehr bekommt, kann mit dieser Auswahl dem Ast zusätzliche Stärke/Wasser gegeben werden.",
 		"Navigiert immer einen Schritt zurück. Sowohl in den Menüs als auch außerhalb davon. (Vom Edit- ins Hauptmenü)"};
 	

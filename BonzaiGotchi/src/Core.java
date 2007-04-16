@@ -20,6 +20,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	private ScreenHelpButtons screenHelpButtons;
 	private ScreenCredits screenCredits;
 	private ScreenIntro screenIntro;
+	private ScreenHelpButtonsShow screenHBS;
 
 	// TODO: private ScreenMenu screenMenu;
 	// TODO: private ScreenHelp screenHelp;
@@ -42,6 +43,9 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	
 	// HelpScreenButtons Commandos
 	private Command cmdHBack;
+	
+	// HelpScreenButtonsShow Commandos
+	private Command cmdHSBack;
 	
 	// CreditsScreen Commandos
 	private Command cmdCExit;
@@ -75,6 +79,9 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		
 		// ScreenHelpButtons Commandos
 		cmdHBack = new  Command(LangVars.CMD_ALL_BACK, Command.CANCEL, 1);
+		
+		// ScreenHelpButtonsShow Commandos
+		cmdHSBack = new  Command(LangVars.CMD_ALL_BACK, Command.CANCEL, 1);
 		
 		// ScreenCredits Comandos
 		cmdCExit = new Command(LangVars.CMD_ALL_EXIT, Command.EXIT, 1);
@@ -216,6 +223,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 			Display.getDisplay(this).setCurrent(screenHelpButtons);
 			
 		}
+		else if (c.equals(cmdHSBack)) {
+			Display.getDisplay(this).setCurrent(screenHelpButtons);
+			
+		}
 	}
 
 	private void doExitToMain() {
@@ -347,6 +358,12 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 				saveTree();
 				break;
 				
+			case GlobalVars.APPSTATUS_HELP_WORK:
+				screenHBS = new ScreenHelpButtonsShow(GlobalVars.TU_ACTUAL);
+				screenHBS.addCommand(cmdHSBack);
+				screenHBS.setCommandListener(this);
+				Display.getDisplay(this).setCurrent(screenHBS);
+				break;
 			default:
 				GlobalVars.APPSTATUS = code;
 				break;

@@ -22,7 +22,6 @@ public class ScreenHelpButtons extends List implements CommandListener{
 	private Image imageArray[];
 	private ReceiveFeedback parent;
 
-	//private ScreenHelpButtonsShow screenHBS;
 	
 	public ScreenHelpButtons(ReceiveFeedback parent) {
 		super("Buttons List",List.IMPLICIT);
@@ -91,7 +90,7 @@ public class ScreenHelpButtons extends List implements CommandListener{
 
 
 		for (int i=0;i<mainElements.length;i++) {
-			super.append(mainElements[i], imageArray[i]);
+			append(mainElements[i], imageArray[i]);
 			
 		}
 		//buttonsList = new List(LangVars.TU_LIST_TITLE, List.IMPLICIT, mainElements, imageArray);

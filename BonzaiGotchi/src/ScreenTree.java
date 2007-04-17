@@ -253,7 +253,6 @@ public class ScreenTree extends Canvas implements Runnable {
 		// What a beautiful day...
 		// Background
 		g.setColor(bgColor);
-		g.setColor(0xffffff);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 		
 		

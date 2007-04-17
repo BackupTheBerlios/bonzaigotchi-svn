@@ -64,6 +64,7 @@ public class GlobalVars {
 	public final static int[] POT_WIDTH = {30,40,50};
 	public final static int[] POT_HEIGHT = {10,15,20};
 	public final static int POT_THICKNESS = 3;
+	public final static byte POT_EARTH_HEIGHT = 4;
 	
 	public final static short[] HEALTH_WATER_THRESHOLD = { 0, 10, 30,50,60,90,100};
 	public final static short[] HEALTH_WATER_INC =       {-5,  0,  1, 3, 4, 5,  7};
@@ -72,17 +73,19 @@ public class GlobalVars {
 
 	public final static short GROWTH_WATER_MIN = 40;
 	public final static short GROWTH_HEALTH_MIN = 70;
-	public final static short GROWTH_HEALTH_DEATH = -100;
+	public final static short GROWTH_HEALTH_DRY = 0;
+	public final static short GROWTH_HEALTH_DEATH = -300;
 
 	public final static MathFloat GROWTH_LENGTH_INC = new MathFloat(33);
 	public final static MathFloat GROWTH_THICKNESS_INC = new MathFloat(2);
 	public final static MathFloat GROWTH_THICKNESS_ONLY_INC = new MathFloat(2);
+	public final static short GROWTH_DUNG_FACTOR = 3;
 
 	public final static int SPAWN_LENGTH_INIT = 2000;
 	public final static int SPAWN_THICKNESS_INIT = 1000;
 	public final static short SPAWN_LENGTH_MIN = 15;
 	public final static short SPAWN_CHANCE = 30;
-	public final static int SPAWN_WATER_CHILD = 10000;
+	public final static int SPAWN_WATER_CHILD = 4000;
 	
 	public final static int CAN_LENGTH_INIT = 10000;
 	public final static int CAN_THICKNESS_INIT = 10000;
@@ -95,7 +98,6 @@ public class GlobalVars {
 	public final static int LEAF_LENGTH_MIN = 10;
 	public final static int LEAF_THICKNESS_MAX = 5;
 	
-	public final static short COLOR_ELEMENT_DRY_THRESHOLD = 0;
 	public final static int COLOR_ELEMENT_INNER = 0x76E273;
 	public final static int COLOR_ELEMENT_OUTER = 0x007809;
 	public final static int COLOR_ELEMENT_DRY = 0xA3731A;
@@ -109,6 +111,8 @@ public class GlobalVars {
 	public final static int COLOR_ELEMENT_WATER_HIGH = 0x0000AA;
 	
 	public final static int COLOR_POT_WATER = 0x0000FF;
+	public final static int COLOR_POT_EARTH = 0xA26713;
+	public final static int COLOR_POT_EARTH_DUNG = 0xBBBB16;
 
 	public final static int COLOR_CAN_INNER = 0x496A7D;
 	public final static int COLOR_CAN_OUTER = 0x97A4AD;
@@ -126,13 +130,14 @@ public class GlobalVars {
 	public final static String MENU_IMG_PATH_WATER = "/watercan20.png";
 	public final static String MENU_IMG_PATH_EDIT = "/scissors20.png";
 	public final static String MENU_IMG_PATH_POT = "/pot20.png";
+	public final static String MENU_IMG_PATH_DUNG = "/dung20.png";
+	public final static String MENU_IMG_PATH_DUNG_NA = "/dungNA20.png";
 	public final static String MENU_IMG_PATH_EXIT = "/exit20.png";
 	
 	public final static String MENU_IMG_PATH_EDIT_CUT = "/cut20.png";
 	public final static String MENU_IMG_PATH_EDIT_EXACTCUT = "/target20.png";
 	public final static String MENU_IMG_PATH_EDIT_COLOR = "/palette20.png";
-	public final static String MENU_IMG_PATH_EDIT_DUNG = "/dung20.png";
-
+	
 	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_SEAL = "/seal20.png";
 	public final static String MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL = "/dontseal20.png";
 	
@@ -156,7 +161,7 @@ public class GlobalVars {
 	
 	
 	public static Date TIME_STAMP;
-	public final static short SAVE_RECORDSTORE_VERSION = 006;
+	public final static short SAVE_RECORDSTORE_VERSION = 007;
 
 	// DEMAND_TABLE
 	public final static short[] GROWTH_WATER_DEMAND = {60,90,120,150,180,210,240,265,290,315,340,360,380,400,420,435,450,465,480,490,500,510,520,530,535,540,545,550,555};

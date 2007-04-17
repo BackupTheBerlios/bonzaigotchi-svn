@@ -40,20 +40,20 @@ public class ScreenHelpButtons extends List implements CommandListener{
 	}
 
 	private void buildImages() {
-		// Hier wird der Array aufgebaut für die Items
+		// Hier wird der Array aufgebaut fï¿½r die Items
 
 	imageArray = new Image[11];
 		try {
 			imageArray[0]=Image.createImage(GlobalVars.MENU_IMG_PATH_WATER);
 			imageArray[1]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT);
 			imageArray[2]=Image.createImage(GlobalVars.MENU_IMG_PATH_POT);
-			imageArray[3]=Image.createImage(GlobalVars.MENU_IMG_PATH_EXIT);		
-			imageArray[4]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_CUT);
-			imageArray[5]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT);
-			imageArray[6]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL);
-			imageArray[7]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL);
-			imageArray[8]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_COLOR);
-			imageArray[9]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_DUNG);
+			imageArray[3]=Image.createImage(GlobalVars.MENU_IMG_PATH_DUNG);
+			imageArray[4]=Image.createImage(GlobalVars.MENU_IMG_PATH_EXIT);		
+			imageArray[5]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_CUT);
+			imageArray[6]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT);
+			imageArray[7]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_SEAL);
+			imageArray[8]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_EXACTCUT_DONTSEAL);
+			imageArray[9]=Image.createImage(GlobalVars.MENU_IMG_PATH_EDIT_COLOR);
 			imageArray[10]=Image.createImage(GlobalVars.MENU_IMG_PATH_BACKBUTTON);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -63,13 +63,13 @@ public class ScreenHelpButtons extends List implements CommandListener{
 			LangVars.CMD_TREEMENU_WATER,
 			LangVars.CMD_TREEMENU_EDIT,
 			LangVars.CMD_TREEMENU_POT,
+			LangVars.CMD_TREEMENU_DUNG,
 			LangVars.CMD_ALL_EXIT,
 			LangVars.CMD_SELBRANCH_CUT,
 			LangVars.CMD_SELBRANCH_EXACTCUT,
 			LangVars.CMD_SELECTED_SEAL,
 			LangVars.CMD_SELECTED_DONTSEAL,
 			LangVars.CMD_SELBRANCH_COLOR,
-			LangVars.CMD_SELBRANCH_DUNG,
 			LangVars.CMD_BACKBUTTON
 		};
 

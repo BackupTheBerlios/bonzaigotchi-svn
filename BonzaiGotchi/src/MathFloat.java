@@ -56,6 +56,10 @@ public class MathFloat {
 	}
 	
 	// Statische Funktionen
+	public static MathFloat multiply (MathFloat operand1, int operand2) {
+		return new MathFloat ((int)(operand1.value * operand2));
+	}
+	
 	public static MathFloat multiply (MathFloat operand1, MathFloat operand2) {
 		return new MathFloat ((int)(operand1.value * operand2.value / 1000));
 	}

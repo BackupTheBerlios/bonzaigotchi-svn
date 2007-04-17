@@ -26,9 +26,10 @@ public class Element {
 	private short posY;
 	private int water; 
 	private short health = 100;
+	private int demandIndex;
 	private int demand;
 	private short waterPercentage;
-	private MathFloat waterRequest;
+	private int waterRequest;
 	private boolean growStop = false;
 	private int color = -1;
 	private boolean colorNoAdaption = false;
@@ -116,9 +117,9 @@ public class Element {
 		int tmpChildWaterRequest = 0;
 		
 		// System.out.println("--- ID: "+ id +" | Water: " + water + " ---");
-		demand = calcDemand();
+		calcDemand();
 		// System.out.println("--- ID: "+ id +" | Demand: " + demand + " ---");
-		waterPercentage = (short)(water * 100 / (demand * 100)); // water x 100 (to get percentage) / (demand x [maximum intervalls the capacity could last]
+		calcWaterPercentage();
 		// System.out.println("--- ID: "+ id +" | WaterPercentage: " + waterPercentage + " ---");
 		
 		childWaterRequest = 0;
@@ -166,14 +167,13 @@ public class Element {
 			}
 		}	
 		
-		waterRequest = new MathFloat(demand*1000);
-		waterRequest.multiply(GlobalVars.REQUEST_WATER_FACTOR[n]);
+		waterRequest = MathFloat.multiply(GlobalVars.REQUEST_WATER_FACTOR[n], demand).getInt();
 		// System.out.println("--- ID: "+ id +" | WaterRequest|Factor: " + waterRequest.getInt() + "|" + GlobalVars.REQUEST_WATER_FACTOR[n].value + " ---");
 		// System.out.println("--- ID: "+ id +" | Element WaterRequest END ---");
-		return childWaterRequest + waterRequest.getInt();
+		return childWaterRequest + waterRequest;
 	}
 
-	public boolean grow (int supply, int colorAdaption) {
+	public boolean grow (int supply, boolean dung, int colorAdaption) {
 		// System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
 		// Usage
@@ -187,11 +187,11 @@ public class Element {
 		
 		if ((childLeft != null || childCenter != null || childRight != null) && childWaterRequest/2 > supply && waterPercentage > GlobalVars.WATER_SOCIAL_THRESHOLD) {
 			// System.out.println("--- ID: "+ id +" | SOCIAL ACT ---");
-			waterRequest.divide(2);
-			supplyTaken = Math.min(waterRequest.getInt(), supply);
+			waterRequest /= 2;
+			supplyTaken = Math.min(waterRequest, supply);
 		}
 		else {
-			supplyTaken = Math.min(waterRequest.getInt(), supply);
+			supplyTaken = Math.min(waterRequest, supply);
 		}
 		
 		// System.out.println("--- ID: "+ id +" | SupplyTaken: " + supplyTaken + " ---");
@@ -202,7 +202,7 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | water: " + water + " ---");
 		
 		// Health
-		waterPercentage = (short)(water * 100 / (demand * 100));
+		calcWaterPercentage();
 //		System.out.println("--- ID: "+ id +" | waterPercentage: " + waterPercentage + " ---");
 		short tmpHealthInc = 0;
 		
@@ -210,6 +210,10 @@ public class Element {
 			if (GlobalVars.HEALTH_WATER_THRESHOLD[i] <= waterPercentage) {
 				tmpHealthInc = GlobalVars.HEALTH_WATER_INC[i];
 			}
+		}
+		
+		if (dung) {
+			health += 5;
 		}
 		
 		health += tmpHealthInc;
@@ -229,10 +233,7 @@ public class Element {
 				// System.out.println("--- ID: "+ id +" | Thickness: " + thickness.getInt() + " ---");
 			} else {
 				water -= MathFloat.divide(demand, GlobalVars.GROWTH_WATER_DEMAND_NO_GROWTH_FACTOR).getInt();
-				if (water < 0) {
-					water = 0;
-					health--;
-				}
+
 			}
 			
 			// Let my children have the rest of the supply but share it brotherly
@@ -240,14 +241,14 @@ public class Element {
 			if (childLeft != null) {
 				supplyTaken = supply * childWaterDivider / 100;
 				supply -= supplyTaken;
-				if (!childLeft.grow(supplyTaken, color)) { 
+				if (!childLeft.grow(supplyTaken, dung, color)) { 
 //					System.out.println("--- ID: "+ id +" | Element.grow: Left ---");
 					childKill (childLeft);
 					}
 			}
 			if (childCenter != null) {
 				if (childLeft != null) {
-					if (!childCenter.grow(supply, color)) { 
+					if (!childCenter.grow(supply, dung, color)) { 
 //						System.out.println("--- ID: "+ id +" | Element.grow: Center_Left ---");
 						childKill (childCenter);
 					}
@@ -255,14 +256,14 @@ public class Element {
 				else {
 					supplyTaken = supply * childWaterDivider / 100;
 					supply -= supplyTaken;
-					if (!childCenter.grow(supplyTaken, color)) {
+					if (!childCenter.grow(supplyTaken, dung, color)) {
 //						System.out.println("--- ID: "+ id +" | Element.grow: Center_NoLeft ---");
 						childKill (childCenter);
 					}
 				}
 			}
 			if (childRight != null) {
-				if (!childRight.grow(supply, color)) { 
+				if (!childRight.grow(supply, dung, color)) { 
 //					System.out.println("--- ID: "+ id +" | Element.grow: Right ---");
 					childKill (childRight);
 				}
@@ -270,7 +271,11 @@ public class Element {
 		}
 		else {
 			if (waterPercentage >= GlobalVars.GROWTH_WATER_MIN && health >= GlobalVars.GROWTH_HEALTH_MIN) {
-				length.add(GlobalVars.GROWTH_LENGTH_INC);
+				if (dung) {
+					length.add((MathFloat.multiply(GlobalVars.GROWTH_LENGTH_INC, GlobalVars.GROWTH_DUNG_FACTOR)));
+				} else {
+					length.add(GlobalVars.GROWTH_LENGTH_INC);
+				}
 				thickness.add(GlobalVars.GROWTH_THICKNESS_INC);
 				water -= demand;
 				// System.out.println("--- ID: "+ id +" | Length|Thickness: " + length.getInt() + "|" + thickness.getInt() + " ---");
@@ -279,6 +284,11 @@ public class Element {
 			}
 		}
 	
+		if (water < 0) {
+			water = 0;
+			health--;
+		}
+		
 		if (!growStop && childLeft == null && childCenter == null && childRight == null && length.getInt() > GlobalVars.SPAWN_LENGTH_MIN && waterPercentage > GlobalVars.GROWTH_WATER_MIN && MathCalc.getRandom(GlobalVars.SPAWN_CHANCE) == 3) {
 			short tmpRandom = (short)MathCalc.getRandom(3);
 			
@@ -324,7 +334,27 @@ public class Element {
 		else { return true; }
 		// System.out.println("--- ID: "+ id +" | Element Grow END ---");
 	}
+	
+	private void calcDemand() {
+		demandIndex = (int)(((thickness.value * length.value / 1000000) -4) / 4);
+		if (demandIndex < 0) {
+			demandIndex = 0;
+		}
+		else if (demandIndex >= GlobalVars.GROWTH_WATER_DEMAND.length) {
+			demandIndex = GlobalVars.GROWTH_WATER_DEMAND.length - 1;
+		}
 		
+		demand = GlobalVars.GROWTH_WATER_DEMAND[demandIndex];
+		if (growStop || childLeft != null || childCenter != null || childRight != null) {
+			demand = MathFloat.divide(demand, GlobalVars.GROWTH_WATER_DEMAND_NO_GROWTH_FACTOR).getInt();
+		}
+	}
+	
+	private void calcWaterPercentage() {
+//		water x 100 (to get percentage) / (demand x [maximum intervalls the capacity could last]
+		waterPercentage = (short)(water * 100 / (demand * (100 + demandIndex)));
+		if (waterPercentage < 0) System.out.println("Water%: " + waterPercentage);
+	}
 	
 
 	public void draw(Graphics g) {
@@ -360,30 +390,36 @@ public class Element {
 			
 			int innerColor = 0;
 			int outerColor = 0;
-			
-			if (color >= 0) {
-				innerColor = color;
-				outerColor = MathCalc.colorCombine(color, 0x000000, (short)4, (short)1);
-			}
-			else {
-				innerColor = GlobalVars.COLOR_ELEMENT_INNER;
-				outerColor = GlobalVars.COLOR_ELEMENT_OUTER;
-			}
-			
+					
 			switch (GlobalVars.PAINTSTATUS) { 
 				case GlobalVars.PAINTSTATUS_NORMAL:
 				case GlobalVars.PAINTSTATUS_LEAF:
-					if (health <= GlobalVars.COLOR_ELEMENT_DRY_THRESHOLD) {
+					
+					if (waterPercentage < 10) {
+						innerColor = GlobalVars.COLOR_ELEMENT_DRY;
+						outerColor = MathCalc.colorCombine(GlobalVars.COLOR_ELEMENT_DRY, 0x000000, (short) 4, (short) 1);
+						// System.out.println("--- ID: "+ id +" | GROW - STEPS|RATIO|HEALTH: "+ steps + " | "+ ratio +" | "+ health +" ---");						
+					}					
+					else if (color >= 0) {
+						innerColor = color;
+						outerColor = MathCalc.colorCombine(color, 0x000000, (short)4, (short)1);
+					}
+					else {
+						innerColor = GlobalVars.COLOR_ELEMENT_INNER;
+						outerColor = GlobalVars.COLOR_ELEMENT_OUTER;
+					}
+					
+					if (health <= GlobalVars.GROWTH_HEALTH_DRY) {
 						if (health <= GlobalVars.GROWTH_HEALTH_DEATH) {
 							innerColor = GlobalVars.COLOR_ELEMENT_DEAD;
 							outerColor = GlobalVars.COLOR_ELEMENT_DEAD;
 						}
 						else {
-							short steps = (short)((GlobalVars.COLOR_ELEMENT_DRY_THRESHOLD - GlobalVars.GROWTH_HEALTH_DEATH) / 10) +1; 
+							short steps = (short)((GlobalVars.GROWTH_HEALTH_DRY - GlobalVars.GROWTH_HEALTH_DEATH) / 10) +1; 
 							short ratio = (short)((health - GlobalVars.GROWTH_HEALTH_DEATH) / 10);
-							innerColor = MathCalc.colorCombine(innerColor, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
-							innerColor = MathCalc.colorCombine(outerColor, GlobalVars.COLOR_ELEMENT_DRY, ratio, (short)(steps - ratio));
-							// System.out.println("--- ID: "+ id +" | GROW - STEPS|RATIO|HEALTH: "+ steps + " | "+ ratio +" | "+ health +" ---");
+							innerColor = MathCalc.colorCombine(innerColor, GlobalVars.COLOR_ELEMENT_DEAD, ratio, (short)(steps - ratio));
+							outerColor = MathCalc.colorCombine(outerColor, GlobalVars.COLOR_ELEMENT_DEAD, ratio, (short)(steps - ratio));
+//							System.out.println("--- ID: "+ id +" | GROW - STEPS|RATIO|HEALTH: "+ steps + " | "+ ratio +" | "+ health +" ---");
 						}
 					}
 					break;
@@ -569,24 +605,6 @@ public class Element {
 		else if (tmpAngle < 0) tmpAngle += 32;
 
 		return tmpAngle;
-	}
-	
-	private int calcDemand() {
-		// tmpDemand = index Value
-		int tmpDemand = (int)(((thickness.value * length.value / 1000000) -4) / 4);
-		if (tmpDemand < 0) {
-			tmpDemand = 0;
-		}
-		else if (tmpDemand >= GlobalVars.GROWTH_WATER_DEMAND.length) {
-			tmpDemand = GlobalVars.GROWTH_WATER_DEMAND.length - 1;
-		}
-		
-		// tmpDemand = real Value
-		tmpDemand = GlobalVars.GROWTH_WATER_DEMAND[tmpDemand];
-		if (growStop || childLeft != null || childCenter != null || childRight != null) {
-			tmpDemand = MathFloat.divide(tmpDemand, GlobalVars.GROWTH_WATER_DEMAND_NO_GROWTH_FACTOR).getInt();
-		}
-		return tmpDemand;
 	}
 	
 	public void setColor(int color) {

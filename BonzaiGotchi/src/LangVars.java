@@ -18,6 +18,7 @@ public class LangVars {
 	public final static String CMD_STARTM_NEW_TREE = "New Tree";
 	public final static String CMD_STARTM_TUTORIAL = "Help / Tutorial";
 	public final static String CMD_STARTM_CREDITS = "Credits";	
+	public final static String CMD_STARTM_ADMIN = "Admin Backups";
 	// if adding one Menu entry increment MAINMENU_LIST_MAX in GlobalVars!!
 	
 	public final static String CMD_TREEMENU_MENU = "Menu";
@@ -26,6 +27,8 @@ public class LangVars {
 	public final static String CMD_TREEMENU_EDIT  = "Edit";
 	public final static String CMD_TREEMENU_POT  = "Change Pot";
 	public final static String CMD_TREEMENU_DUNG = "Dung Tree";
+	public final static String CMD_TREEMENU_FREEZE = "Freeze Tree";
+	public final static String CMD_TREEMENU_FREEZE_UNDO = "Undo Freeze Tree";
 
 	public final static String CMD_SELBRANCH_CUT = "Cut Branch";
 	public final static String CMD_SELBRANCH_EXACTCUT = "Exact Cut";

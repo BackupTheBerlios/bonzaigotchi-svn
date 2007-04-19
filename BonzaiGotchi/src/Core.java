@@ -21,6 +21,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	private ScreenCredits screenCredits;
 	private ScreenIntro screenIntro;
 	private ScreenHelpButtonsShow screenHBS;
+	private ScreenAdmin screenAdmin;
 
 	// TODO: private ScreenMenu screenMenu;
 	// TODO: private ScreenHelp screenHelp;
@@ -57,7 +58,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 
 		
-		data = new FileIO("BonzaiGotchi");
+		data = new FileIO(GlobalVars.RECORDSTORE_NAME);
 		screenIntro = new ScreenIntro(this);
 		screenHelp = new ScreenHelp();
 		screenCredits = new ScreenCredits();
@@ -122,6 +123,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		mainElements[i++] = LangVars.CMD_STARTM_NEW_TREE;
 		mainElements[i++] = LangVars.CMD_STARTM_TUTORIAL;
 		mainElements[i++] = LangVars.CMD_STARTM_CREDITS;
+		mainElements[i++] = LangVars.CMD_STARTM_ADMIN;
 
 	}
 
@@ -139,7 +141,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 			cori = 0;
 		}
 
-		if (c == cmdMSelect)
+		if (c == cmdMSelect || (d.equals(mainmenuList) && c == List.SELECT_COMMAND))
 		{
 			switch (mainmenuList.getSelectedIndex() + cori) {
 
@@ -186,6 +188,11 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 				screenCredits.setCommandListener(this);
 				break;
 			}
+			case 4:
+				screenAdmin = new ScreenAdmin(this);
+				GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_ADMIN;
+				Display.getDisplay(this).setCurrent(screenAdmin);
+				break;
 			default: { // im default;
 				System.out.println("Wie hast du das geschafft? Im Default....");
 				break;
@@ -310,19 +317,30 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		switch (code) {
 		
 			case GlobalVars.APPSTATUS_MAINMENU:
-				if (GlobalVars.APPSTATUS==GlobalVars.APPSTATUS_INTRO){
-					GlobalVars.APPSTATUS = code;
-					screenIntro=null;
-					showMainMenu();
-					
-				}
-				else if (GlobalVars.APPSTATUS==GlobalVars.APPSTATUS_HELP) {
-					GlobalVars.APPSTATUS = code;
-					showMainMenu();
-				}
-				else {
-					GlobalVars.APPSTATUS = code;
-					doExitToMain();
+				
+				switch (GlobalVars.APPSTATUS) {
+				
+					case GlobalVars.APPSTATUS_INTRO:
+						GlobalVars.APPSTATUS = code;
+						screenIntro=null;
+						showMainMenu();
+						break;
+						
+					case GlobalVars.APPSTATUS_HELP:
+						GlobalVars.APPSTATUS = code;
+						showMainMenu();
+						break;
+						
+					case GlobalVars.APPSTATUS_ADMIN:
+						screenAdmin = null;
+						GlobalVars.APPSTATUS = code;
+						showMainMenu();
+						break;						
+
+					default:
+						GlobalVars.APPSTATUS = code;
+						doExitToMain();
+						break;
 				}
 				break;				
 				
@@ -353,7 +371,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 				showTreeDeadCommand();
 				break;
 				
-			case 31:
+			case GlobalVars.FEEDBACK_SAVE:
 				saveTree();
 				break;
 				

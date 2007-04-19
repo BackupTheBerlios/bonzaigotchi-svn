@@ -34,8 +34,7 @@ import javax.microedition.lcdui.Image;
 
 public class ScreenTree extends Canvas implements Runnable {
 
-	private byte timeZone = 1;
-	private int dungCounter = 50;
+	private boolean frozen = false;
 	
 	// Children
 	private Element log;
@@ -48,7 +47,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private int logWaterRequest;
 	private Image potChangeImgArrowLeft;
 	private Image potChangeImgArrowRight;
-	private Image cloudImage;
+//	private Image cloudImage;
 	
 	// Gauge
 	private Can can;
@@ -64,8 +63,10 @@ public class ScreenTree extends Canvas implements Runnable {
 	private MenuItem[] menu;
 	private Image menuSelected = null;
 	private int menuItemSelected = 0;
+	private int dungCounter = 50;
 	
 	// Background
+	private byte timeZone = 1;
 	private short currentHour = 0;
 	private int bgColor = 0;
 	private short[] bgStarsX = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -80,6 +81,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private ReceiveFeedback parent;
 	
 	// TODO: When switching ScreenSize (eg: Iam flipping the Screen of my MDA) the Tree is somewhere and the BG is wrong aswell | very low priority
+	// fixed the treePosition problem
 	public ScreenTree(ReceiveFeedback parent) {
 		
 		this.parent = parent;
@@ -99,7 +101,8 @@ public class ScreenTree extends Canvas implements Runnable {
 	public ScreenTree(ReceiveFeedback parent, FileIO data) {
 		
 		this.parent = parent;
-				
+
+		frozen = data.readDataBoolean();
 		// setzten der GlobalVars
 		GlobalVars.TIME_STAMP = new Date(data.readDataLong());
 //		GlobalVars.COUNTERINTERVAL = data.readDataInt();
@@ -343,9 +346,13 @@ public class ScreenTree extends Canvas implements Runnable {
 		if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_POTCHANGE) {
 			potSizeDraw = potSizeChange;
 		}
-
-		if (dung > 0) g.setColor(GlobalVars.COLOR_POT_EARTH_DUNG);
-		else          g.setColor(GlobalVars.COLOR_POT_EARTH);
+		
+		if (frozen) g.setColor(GlobalVars.COLOR_POT_FROZEN);
+		else {
+			if (dung > 0) g.setColor(GlobalVars.COLOR_POT_EARTH_DUNG);
+			else          g.setColor(GlobalVars.COLOR_POT_EARTH);
+		}
+		
 		for(int i=0; i <= GlobalVars.POT_EARTH_HEIGHT; i++) {
 			g.drawLine(
 				GlobalVars.DISPLAY_X_WIDTH / 2 - GlobalVars.POT_WIDTH[potSizeDraw] - i / 2,
@@ -372,7 +379,8 @@ public class ScreenTree extends Canvas implements Runnable {
 			}
 		}
 		
-		g.setColor(100,50,50);
+		if (frozen) g.setColor(GlobalVars.COLOR_POT_FROZEN);
+		else g.setColor(GlobalVars.COLOR_POT);
 		for (int i=0; i <= GlobalVars.POT_THICKNESS; i++) {
 			g.drawLine(
 				GlobalVars.DISPLAY_X_WIDTH / 2 - GlobalVars.POT_WIDTH[potSizeDraw] + i,
@@ -439,17 +447,26 @@ public class ScreenTree extends Canvas implements Runnable {
 		switch (menuId) {
 			// MainMenu
 			case 0:
-				MenuItem tmpDung = null;
-				if (dungCounter == 0) tmpDung = new MenuItem(4, LangVars.CMD_TREEMENU_DUNG,     GlobalVars.MENU_IMG_PATH_DUNG);
-				else                  tmpDung = new MenuItem(41, LangVars.CMD_TREEMENU_DUNG + LangVars.CMD_ALL_NA,     GlobalVars.MENU_IMG_PATH_DUNG_NA);
-				
-				menu = new MenuItem[] {
-					new MenuItem(1, LangVars.CMD_TREEMENU_WATER, GlobalVars.MENU_IMG_PATH_WATER),
-					new MenuItem(2, LangVars.CMD_TREEMENU_EDIT,  GlobalVars.MENU_IMG_PATH_EDIT),
-					new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT),
-					tmpDung,
-					new MenuItem(9, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT)
-					};
+				if (frozen) {
+					menu = new MenuItem[] {
+							new MenuItem(9, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT),
+							new MenuItem(51, LangVars.CMD_TREEMENU_FREEZE_UNDO, GlobalVars.MENU_IMG_PATH_FREEZE_UNDO)
+							};
+				}
+				else {
+					MenuItem tmpDung = null;
+					if (dungCounter == 0) tmpDung = new MenuItem(4, LangVars.CMD_TREEMENU_DUNG,     GlobalVars.MENU_IMG_PATH_DUNG);
+					else                  tmpDung = new MenuItem(41, LangVars.CMD_TREEMENU_DUNG + LangVars.CMD_ALL_NA,     GlobalVars.MENU_IMG_PATH_DUNG_NA);
+										
+					menu = new MenuItem[] {
+						new MenuItem(1, LangVars.CMD_TREEMENU_WATER, GlobalVars.MENU_IMG_PATH_WATER),
+						new MenuItem(2, LangVars.CMD_TREEMENU_EDIT,  GlobalVars.MENU_IMG_PATH_EDIT),
+						new MenuItem(3, LangVars.CMD_TREEMENU_POT,   GlobalVars.MENU_IMG_PATH_POT),
+						tmpDung,
+						new MenuItem(5, LangVars.CMD_TREEMENU_FREEZE, GlobalVars.MENU_IMG_PATH_FREEZE),
+						new MenuItem(9, LangVars.CMD_ALL_EXIT,       GlobalVars.MENU_IMG_PATH_EXIT)
+						};
+				}
 				break;		
 				
 			// Edit
@@ -551,6 +568,13 @@ public class ScreenTree extends Canvas implements Runnable {
 			case 41:
 				break;
 				
+			case 5:
+				freeze(true);
+				break;
+			case 51:
+				freeze(false);
+				break;
+				
 			case 9:
 				parent.receiveFeedback(GlobalVars.APPSTATUS_MAINMENU);
 				break;
@@ -575,7 +599,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 			
 //		System.out.println("--- WATERING|WATER: " + GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps + " | " + water + " ---");
-		parent.receiveFeedback((short)31);
+		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
 		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		this.repaint();
 		//animWatering=false;
@@ -592,7 +616,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		if (water > GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100)) {
 			water = GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100);
 		}		
-		parent.receiveFeedback((short)31);
+		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
 		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		this.repaint();
 	}
@@ -600,7 +624,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private void dungAction() {
 		dungCounter = 700;
 		dung += 50;
-		parent.receiveFeedback((short)31);
+		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
 		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		this.repaint();
 	}
@@ -616,10 +640,8 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private void selectColorAction() {
 		GlobalVars.ELEMENTEDIT.setColor(selectColor[0]*0x10000 + selectColor[1]*0x100 + selectColor[2]);
-		GlobalVars.ELEMENTEDIT = null;
-		parent.receiveFeedback((short)31);
-		parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
-		this.repaint();
+		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
+		edit(true);
 	}
 	
 	private void edit(boolean resume) {
@@ -649,7 +671,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			tmpParent.childKill(GlobalVars.ELEMENTEDIT);
 			GlobalVars.ELEMENTEDIT = tmpParent;
 		}
-		parent.receiveFeedback((short)31);
+		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
 	}
 	
 	private void editExact() {
@@ -660,7 +682,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	private void editCut(boolean seal) {
 		GlobalVars.ELEMENTEDIT.cut(GlobalVars.EDITEXACTPOS, seal);
-		parent.receiveFeedback((short)31);
+		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
 		parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
 		repaint();
 //		GlobalVars.ELEMENTEDIT.setSize();
@@ -675,10 +697,26 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
+	private void freeze (boolean freeze) {
+		if (freeze) {
+			frozen = true;
+			parent.receiveFeedback(GlobalVars.APPSTATUS_FROZEN);
+		}
+		else {
+			frozen = false;
+			GlobalVars.TIME_STAMP = new Date();
+			parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
+		}
+		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
+		repaint();
+	}
+	
 	public void interval() {
-		threadInterval = new Thread(this);
-		threadWaiting = false;
-		threadInterval.start();
+		if (!frozen) {
+			threadInterval = new Thread(this);
+			threadWaiting = false;
+			threadInterval.start();
+		} else parent.receiveFeedback(GlobalVars.APPSTATUS_FROZEN);
 	}
 
 	public void run() {
@@ -726,7 +764,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 //		System.out.println("--- INTERVAL END LOOP ---");
 		if (log != null) {
-			parent.receiveFeedback((byte)31);
+			parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
 		}
 		this.repaint();
 		
@@ -965,12 +1003,8 @@ public class ScreenTree extends Canvas implements Runnable {
 			
 			// Cheats
 			case GlobalVars.APPSTATUS_STANDBY:
-				
-				if (getGameAction(keyCode) == FIRE) {
-					menuShow();
-				}
-			
-				else if (keyCode == KEY_NUM7) {
+							
+				if (keyCode == KEY_NUM7) {
 	//				System.out.println("--- Key Pressed: CHEATER ---");
 					GlobalVars.COUNTERCHEAT = 10;
 					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
@@ -988,6 +1022,11 @@ public class ScreenTree extends Canvas implements Runnable {
 					parent.receiveFeedback(GlobalVars.APPSTATUS_RUNNING);
 					interval();
 				}
+
+			case GlobalVars.APPSTATUS_FROZEN:
+				if (getGameAction(keyCode) == FIRE) {
+					menuShow();
+				}				
 				break;
 			// END CASE CHEATS
 		}
@@ -1001,6 +1040,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 
 	public void writeData(FileIO data) {
+		data.writeData(frozen);
 		data.writeData(GlobalVars.TIME_STAMP.getTime());
 //		data.writeData(GlobalVars.COUNTERINTERVAL);
 		data.writeData(water);

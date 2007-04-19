@@ -16,13 +16,17 @@ import java.util.Random;
 
 public class GlobalVars {
 	
+	public final static short FEEDBACK_SAVE = 31;
+	
 	public final static short APPSTATUS_INIT = 0;
 	public final static short APPSTATUS_MAINMENU = 1;
 	public final static short APPSTATUS_INTRO = 11;
 	public final static short APPSTATUS_HELP = 12;
 	public final static short APPSTATUS_HELP_WORK = 121;
 	public final static short APPSTATUS_CREDITS = 13;
+	public final static short APPSTATUS_ADMIN = 14;
 	public final static short APPSTATUS_STANDBY = 21;
+	public final static short APPSTATUS_FROZEN = 219;
 	public final static short APPSTATUS_MENU = 22;
 	public final static short APPSTATUS_RUNNING = 23;
 	public final static short APPSTATUS_EDIT = 24;
@@ -42,13 +46,15 @@ public class GlobalVars {
 	
 	public static byte PAINTSTATUS = PAINTSTATUS_VOID;
 	
-	public final static short INTRO_TIMEOUT = 2500;
+	public final static String RECORDSTORE_NAME = "BonzaiGotchi";
+	
+	public final static short INTRO_TIMEOUT = 100;
 	
 	public static Element ELEMENTEDIT;
 	public static int EDITEXACTPOS;
 	public static int EDITEXACTLENGTH = 3;
 	
-	public static final int MAINMENU_LIST_MAX = 4;
+	public static final int MAINMENU_LIST_MAX = 5;
 	
 //	public static int COUNTERELEMENT = 0;
 //	public static int COUNTERINTERVAL = 0;
@@ -110,9 +116,11 @@ public class GlobalVars {
 	public final static int COLOR_ELEMENT_WATER_LOW = 0x99BBFF;
 	public final static int COLOR_ELEMENT_WATER_HIGH = 0x0000AA;
 	
+	public final static int COLOR_POT = 0x643232;
 	public final static int COLOR_POT_WATER = 0x0000FF;
 	public final static int COLOR_POT_EARTH = 0xA26713;
 	public final static int COLOR_POT_EARTH_DUNG = 0xBBBB16;
+	public final static int COLOR_POT_FROZEN = 0x99DDFF;
 
 	public final static int COLOR_CAN_INNER = 0x496A7D;
 	public final static int COLOR_CAN_OUTER = 0x97A4AD;
@@ -132,6 +140,8 @@ public class GlobalVars {
 	public final static String MENU_IMG_PATH_POT = "/pot20.png";
 	public final static String MENU_IMG_PATH_DUNG = "/dung20.png";
 	public final static String MENU_IMG_PATH_DUNG_NA = "/dungNA20.png";
+	public final static String MENU_IMG_PATH_FREEZE = "/snow20.png";
+	public final static String MENU_IMG_PATH_FREEZE_UNDO = "/snowUndo20.png";
 	public final static String MENU_IMG_PATH_EXIT = "/exit20.png";
 	
 	public final static String MENU_IMG_PATH_EDIT_CUT = "/cut20.png";
@@ -161,7 +171,7 @@ public class GlobalVars {
 	
 	
 	public static Date TIME_STAMP;
-	public final static short SAVE_RECORDSTORE_VERSION = 007;
+	public final static short SAVE_RECORDSTORE_VERSION = 8;
 
 	// DEMAND_TABLE
 	public final static short[] GROWTH_WATER_DEMAND = {60,90,120,150,180,210,240,265,290,315,340,360,380,400,420,435,450,465,480,490,500,510,520,530,535,540,545,550,555};

@@ -24,10 +24,27 @@ public class FileIO {
 	private ByteArrayInputStream bais;
 	private DataInputStream dis;
 	
-	public FileIO(String tmpRecordName) {
-		super();
-		
-		recordName = tmpRecordName;
+	public FileIO(String recordName) {
+
+		this.recordName = recordName;
+	}
+	
+	public void setRecordName(String recordName) {
+		this.recordName = recordName;
+	}
+	
+	public boolean copyRecord(String recordNameTarget) {
+		byte [] record = getRecord();
+		closeRecordStore();
+		if (record != null) {
+			if (writeRecord(recordNameTarget, record)) return true;
+			else return false;
+		}
+		else return false;
+	}
+	
+	public static String[] getRecordList() {
+		return RecordStore.listRecordStores();
 	}
 	
 	// IO Operations
@@ -130,29 +147,11 @@ public class FileIO {
 		
 	}
 	
-	// execute when reading has been finished
+	// execute when writing has been finished
 	public boolean writeDataFinalize() {
 //		System.out.println("--- IO WRITE FINALIZE BEGINN ---");
-		
-		byte[] record = baos.toByteArray();
-		
-		try {
-			RecordStore.deleteRecordStore(recordName);
-//			System.out.println("--- IO DELETE RECORD ---");
-		} catch (RecordStoreException e) {
-//			System.out.println("--- IO DELETE RECORD ERROR ---");
-		}
-		
-
-		try {
-			rs = RecordStore.openRecordStore(recordName, true);
-			rs.addRecord(record, 0, record.length);
-			rs.closeRecordStore();
-//			System.out.println("--- IO RECORD " + recordName + " SAVED | " + record.length + " BYTES WRITTEN ---");
-		} catch (RecordStoreException e) {
-//			System.out.println("--- IO WRITE RECORD ERROR ---");
-			return false;
-		}
+			
+		writeRecord(recordName, baos.toByteArray());
 		
 		
 		baos = null;
@@ -162,51 +161,16 @@ public class FileIO {
 		return true;
 	}
 
+	
 	// execute before starting to read
 	public short readDataInit() {
 		
 //		System.out.println("--- IO READ INIT BEGINN ---");
 		
-		boolean recordExists = false;
+		byte[] record = getRecord();
 		
-		byte[] record = null;
+		if (record != null) {
 		
-		String[] recordList = RecordStore.listRecordStores();
-		if (recordList != null) {
-		
-//			System.out.println ("--- IO RECORDNAME: " + recordName + " ---");
-//			System.out.println ("--- IO RECORD LIST: " + recordList.length + " ---");
-			
-			for (int i = 0; i < recordList.length; i++) {
-//				System.out.println ("--- IO RECORD LIST: " + i + ": " + recordList[i] + " ---");
-				if (recordList[i].compareTo(recordName) == 0) {
-					recordExists = true;
-//					System.out.println ("--- IO RECORD EXISTS: " + i + ": " + recordList[i] + " ---");
-				}
-			}
-		}
-
-		if (recordExists) {
-		
-			try {			
-				rs = RecordStore.openRecordStore(recordName, false);
-//		        System.out.println("--- IO OPEN RECORD ---");
-			} catch (Exception e) {
-				e.printStackTrace();
-//				System.out.println("--- IO OPEN RECORD ERROR ---");
-			}
-		
-
-
-	        RecordEnumeration re;
-			try {
-				re = rs.enumerateRecords(null,null,false);
-				record = rs.getRecord(re.nextRecordId());
-//				System.out.println("--- IO READ RECORD ---");
-			} catch (Exception e) {
-//				System.out.println("--- IO READ RECORD ERROR ---");
-			}
-
 	        bais = new ByteArrayInputStream(record);
 	        dis = new DataInputStream(bais);
 //	        System.out.println("--- IO READ INIT END ---");
@@ -344,6 +308,82 @@ public class FileIO {
 //		System.out.println("--- IO READ FINALIZE BEGINN ---");
 		bais = null;
 		dis = null;
+		closeRecordStore();
+//		System.out.println("--- IO READ FINALIZE END ---");
+	}
+	
+	public void deleteRecord() {
+		deleteRecord(recordName);
+	}
+	
+	
+	// internal Methods
+	private byte[] getRecord() {
+		if (checkRecord(recordName)) {
+			
+			try {			
+				rs = RecordStore.openRecordStore(recordName, false);
+//		        System.out.println("--- IO OPEN RECORD ---");
+			} catch (Exception e) {
+				e.printStackTrace();
+//				System.out.println("--- IO OPEN RECORD ERROR ---");
+			}
+		
+
+
+	        RecordEnumeration re;
+			try {
+				re = rs.enumerateRecords(null,null,false);
+				return rs.getRecord(re.nextRecordId());
+				
+//				System.out.println("--- IO READ RECORD ---");
+			} catch (Exception e) {
+				return null;
+//				System.out.println("--- IO READ RECORD ERROR ---");
+			}
+		}
+		else return null;
+
+	}
+	
+	private boolean checkRecord (String recordName) {
+		boolean recordExists = false;
+		
+		String[] recordList = RecordStore.listRecordStores();
+		
+		if (recordList != null) {
+			
+//			System.out.println ("--- IO RECORDNAME: " + recordName + " ---");
+//			System.out.println ("--- IO RECORD LIST: " + recordList.length + " ---");
+			
+			for (int i = 0; i < recordList.length; i++) {
+//				System.out.println ("--- IO RECORD LIST: " + i + ": " + recordList[i] + " ---");
+				if (recordList[i].compareTo(recordName) == 0) {
+					recordExists = true;
+					break;
+//					System.out.println ("--- IO RECORD EXISTS: " + i + ": " + recordList[i] + " ---");
+				}
+			}
+		}
+		return recordExists;
+	}
+	
+	private boolean writeRecord(String recordName, byte[] record) {
+		deleteRecord(recordName);		
+
+		try {
+			rs = RecordStore.openRecordStore(recordName, true);
+			rs.addRecord(record, 0, record.length);
+			closeRecordStore();
+			return true;
+//			System.out.println("--- IO RECORD " + recordName + " SAVED | " + record.length + " BYTES WRITTEN ---");
+		} catch (RecordStoreException e) {
+//			System.out.println("--- IO WRITE RECORD ERROR ---");
+			return false;
+		}
+	}
+	
+	private void closeRecordStore(){
 		try {
 			if (rs != null) {
 				rs.closeRecordStore();
@@ -355,19 +395,20 @@ public class FileIO {
 //			System.out.println("--- IO RecordStore CLOSE ERROR ---");
 //			e.printStackTrace();
 		}
-//		System.out.println("--- IO READ FINALIZE END ---");
 	}
 	
-	public void deleteRecord() {
-		try {
-			RecordStore.deleteRecordStore (recordName);
-		} catch (RecordStoreNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RecordStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private void deleteRecord(String recordName) {
+		if (checkRecord(recordName)) {
+			try {
+				RecordStore.deleteRecordStore (recordName);
+			} catch (RecordStoreNotFoundException e) {
+				// I dont really care
+				e.printStackTrace();
+			} catch (RecordStoreException e) {
+				e.printStackTrace();
+			}
 		}
 	}
+	
 	
 }

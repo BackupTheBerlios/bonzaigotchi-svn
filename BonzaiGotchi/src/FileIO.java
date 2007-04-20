@@ -35,12 +35,15 @@ public class FileIO {
 	
 	public boolean copyRecord(String recordNameTarget) {
 		byte [] record = getRecord();
-		closeRecordStore();
 		if (record != null) {
 			if (writeRecord(recordNameTarget, record)) return true;
 			else return false;
 		}
 		else return false;
+	}
+	
+	public void deleteRecord() {
+		deleteRecord(recordName);
 	}
 	
 	public static String[] getRecordList() {
@@ -152,8 +155,7 @@ public class FileIO {
 //		System.out.println("--- IO WRITE FINALIZE BEGINN ---");
 			
 		writeRecord(recordName, baos.toByteArray());
-		
-		
+				
 		baos = null;
 		dos = null;
 		
@@ -308,17 +310,14 @@ public class FileIO {
 //		System.out.println("--- IO READ FINALIZE BEGINN ---");
 		bais = null;
 		dis = null;
-		closeRecordStore();
 //		System.out.println("--- IO READ FINALIZE END ---");
-	}
-	
-	public void deleteRecord() {
-		deleteRecord(recordName);
-	}
-	
-	
+	}	
 
-	public byte[] getRecord() {
+	
+	// internal Methods
+	private byte[] getRecord() {
+		byte[] record = null;
+		
 		if (checkRecord(recordName)) {
 			
 			try {			
@@ -334,20 +333,18 @@ public class FileIO {
 	        RecordEnumeration re;
 			try {
 				re = rs.enumerateRecords(null,null,false);
+				record = rs.getRecord(re.nextRecordId());
+				closeRecordStore();
 //				System.out.println("--- IO READ RECORD ---");
-				return rs.getRecord(re.nextRecordId());
 				
 				
 			} catch (Exception e) {
 //				System.out.println("--- IO READ RECORD ERROR ---");
-				return null;
 			}
 		}
-		else return null;
-
+		return record;
 	}
 	
-	// internal Methods
 	private boolean checkRecord (String recordName) {
 		boolean recordExists = false;
 		

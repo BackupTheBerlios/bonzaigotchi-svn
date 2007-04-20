@@ -43,7 +43,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private byte potSize;
 	private byte potSizeChange;
 	private int water;
-	private int dung;
+	private short dung;
 	private int logWaterRequest;
 	private Image potChangeImgArrowLeft;
 	private Image potChangeImgArrowRight;
@@ -63,7 +63,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	private MenuItem[] menu;
 	private Image menuSelected = null;
 	private int menuItemSelected = 0;
-	private int dungCounter = 50;
+	private short dungCounter = 50;
 	
 	// Background
 	private byte timeZone = 1;
@@ -109,8 +109,8 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 		water = data.readDataInt();
 		potSize = data.readDataByte();
-		dung = data.readDataInt();
-		dungCounter = data.readDataInt();
+		dung = data.readDataShort();
+		dungCounter = data.readDataShort();
 		
 		log = new Element(null, data, (short)(GlobalVars.DISPLAY_X_WIDTH / 2), (short)(GlobalVars.DISPLAY_Y_HEIGHT - GlobalVars.POT_EARTH_HEIGHT));
 		
@@ -705,6 +705,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		else {
 			frozen = false;
 			GlobalVars.TIME_STAMP = new Date();
+			calcTime();
 			parent.receiveFeedback(GlobalVars.APPSTATUS_STANDBY);
 		}
 		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);

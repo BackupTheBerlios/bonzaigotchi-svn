@@ -51,8 +51,8 @@ public class Element {
 		this.parent = parent;
 		
 		// Load Vars
-		length = new MathFloat((int)data.readDataLong());
-		thickness = new MathFloat((int)data.readDataLong());
+		length = new MathFloat(data.readDataInt());
+		thickness = new MathFloat(data.readDataInt());
 		angle = data.readDataShort();
 		this.posX = posX;
 		this.posY = posY;
@@ -718,8 +718,8 @@ public class Element {
 
 		
 		// write Vars
-		data.writeData(length.value);
-		data.writeData(thickness.value);
+		data.writeData((int)length.value);
+		data.writeData((int)thickness.value);
 		
 		data.writeData(angle);
 //		data.writeData(posX);

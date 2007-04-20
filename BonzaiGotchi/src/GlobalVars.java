@@ -171,7 +171,7 @@ public class GlobalVars {
 	
 	
 	public static Date TIME_STAMP;
-	public final static short SAVE_RECORDSTORE_VERSION = 8;
+	public final static short SAVE_RECORDSTORE_VERSION = 9;
 
 	// DEMAND_TABLE
 	public final static short[] GROWTH_WATER_DEMAND = {60,90,120,150,180,210,240,265,290,315,340,360,380,400,420,435,450,465,480,490,500,510,520,530,535,540,545,550,555};

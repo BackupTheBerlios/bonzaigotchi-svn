@@ -173,9 +173,7 @@ public class ScreenAdmin extends Canvas {
 								break;
 							
 							case 1:
-								data.setRecordName(treeBackup[treeBackupSelected]);
-								netIO.sendData(data.getRecord());
-//								data.readDataFinalize();
+								netIO.sendData(new FileIO(treeBackup[treeBackupSelected]));
 								break;
 								
 							case 2:

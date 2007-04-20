@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Date;
 
 import javax.microedition.io.*;
 
@@ -7,18 +8,18 @@ public class NetIO implements Runnable {
 	private String url = "http://andreas.tschabuschnig.com/bonzaiGotchi.php";
 	private Thread threadInet; 
 	
-	private byte[] data;
+	private FileIO data;
 	private boolean succeded = false;
 	
 	public NetIO() {
 	}
 	
-	public void sendData(byte[] data) {
+	public void sendData(FileIO data) {
 		succeded = false;
 		this.data = data;
+		
 		threadInet = new Thread(this);
 		threadInet.start();
-
 	}
 	
 	public void run() {
@@ -69,10 +70,10 @@ public class NetIO implements Runnable {
             os = c.openOutputStream();
             os.write("data=".getBytes());
 //            os.write("test2".getBytes());
-            os.write(data);
+            os.write(parseXML().getBytes());
             os.flush();                // Optional, openInputStream will flush
 
-            process(data);
+//            process(data);
             System.out.println("x");
             
             // Opening the InputStream will open the connection
@@ -112,6 +113,65 @@ public class NetIO implements Runnable {
         }
     }
 	
+    private String parseXML() {
+    	
+    	int childCounter = 0;
+    	
+    	String xml = "<?xml version=\"1.0\"?>\n";
+
+    	// from Core    	
+    	xml +=  "<BonzaiGotchi saveVersion="+data.readDataInit()+">\n";
+    	   	
+    	// from ScreenTree
+    	xml +=  "<pot "+
+    			"frozen=\""         +data.readDataBoolean()+"\" "+
+    			"timeStamp=\""      +data.readDataLong()   +"\" "+
+    			"water=\""          +data.readDataInt()    +"\" "+
+    			"potSize=\""        +data.readDataByte()   +"\" "+
+    			"dung=\""           +data.readDataShort()  +"\" "+
+    			"dungCounter=\""    +data.readDataShort()  +"\">\n";   	    	
+		
+		// from Element
+    	do {
+    	
+    	xml +=  "<element "+
+				"length=\""         +data.readDataInt()    +"\" "+
+				"thickness=\""      +data.readDataInt()    +"\" "+
+				"angle=\""          +data.readDataShort()  +"\" "+
+				"water=\""          +data.readDataInt()    +"\" "+
+				"health=\""          +data.readDataShort()  +"\" "+
+				"growStop=\""       +data.readDataBoolean()+"\" "+
+				"color=\""          +data.readDataInt()    +"\" "+
+				"colorNoAdaption=\""+data.readDataBoolean()+"\" ";
+    	
+    	boolean tmpChildLeft = data.readDataBoolean();
+		boolean tmpChildCenter = data.readDataBoolean();
+		boolean tmpChildRight = data.readDataBoolean();
+		
+		xml += 	"childLeft=\""      +tmpChildLeft          +"\" "+
+				"childCenter=\""    +tmpChildCenter        +"\" "+
+				"childRight=\""     +tmpChildRight         +"\" />\n";
+		
+		if (tmpChildLeft) {
+			childCounter++;
+		}
+		if (tmpChildCenter) {
+			childCounter++;
+			
+		}
+		if (tmpChildRight) {
+			childCounter++;
+		}
+		
+		
+    	} while (childCounter-- > 0);
+		
+		xml +=  "</pot>\n";
+		xml +=  "</BonzaiGotchi>\n";
+		
+		return xml;
+    }
+    
     private void process(byte[] data) {
     	for (int i=0;i<data.length;i++) process(data[i]);
     }
@@ -120,3 +180,4 @@ public class NetIO implements Runnable {
     	System.out.print((char)data);
     }
 }
+

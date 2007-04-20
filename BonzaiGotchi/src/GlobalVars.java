@@ -17,6 +17,8 @@ import java.util.Random;
 public class GlobalVars {
 	
 	public final static short FEEDBACK_SAVE = 31;
+	public final static short FEEDBACK_UPLOAD_SUCCESS = 141;
+	public final static short FEEDBACK_UPLOAD_NOSUCCESS = 142;
 	
 	public final static short APPSTATUS_INIT = 0;
 	public final static short APPSTATUS_MAINMENU = 1;

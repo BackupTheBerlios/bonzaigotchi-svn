@@ -5,6 +5,7 @@
 // 2007-01-30 new constructed.... by fiips 
 // 2007-02-28 ausgemistet & fertiggebaut  ..... by fiips
 
+import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
@@ -22,6 +23,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	private ScreenIntro screenIntro;
 	private ScreenHelpButtonsShow screenHBS;
 	private ScreenAdmin screenAdmin;
+	private Alert screenAlert;
 
 	// TODO: private ScreenMenu screenMenu;
 	// TODO: private ScreenHelp screenHelp;
@@ -61,6 +63,8 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		screenHelp = new ScreenHelp();
 		screenCredits = new ScreenCredits();
 		screenHelpButtons = new ScreenHelpButtons(this);
+		screenAlert = new Alert("Tree Upload");
+		screenAlert.setTimeout(Alert.FOREVER);
 
 		// ScreenMenu screeny = new ScreenMenu();
 		// screeny.initialize();
@@ -255,7 +259,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		screenCredits.removeCommand(cmdCExit); */
 	}
 
-	public void showMainMenu() {		
+	private void showMainMenu() {		
 		// mainmenuList.setSelectCommand(cmdMSelect); //NICHT MIDP 1.0 f�hig
 		checkResume(); // Array bauen fuer Liste
 		mainmenuList = new List(LangVars.MENU_NAME, List.IMPLICIT, mainElements, null);
@@ -269,6 +273,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_MAINMENU;
 //		System.out.println("--- MAIN MENUE CREATED ---");
 
+	}
+	
+	private void showAlert() {
+		Display.getDisplay(this).setCurrent(screenAlert, Display.getDisplay(this).getCurrent());
 	}
 
 	private void showTreeDeadCommand() {
@@ -379,6 +387,16 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 				screenHBS.setCommandListener(this);
 				Display.getDisplay(this).setCurrent(screenHBS);
 				break;
+				
+			case GlobalVars.FEEDBACK_UPLOAD_SUCCESS:
+				screenAlert.setString("Tree upload was successful");
+				showAlert();
+				break;
+			case GlobalVars.FEEDBACK_UPLOAD_NOSUCCESS:
+				screenAlert.setString("Tree upload was NOT successful");
+				showAlert();
+				break;
+				
 			default:
 				GlobalVars.APPSTATUS = code;
 				break;

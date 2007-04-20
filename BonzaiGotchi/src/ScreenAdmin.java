@@ -23,7 +23,7 @@ public class ScreenAdmin extends Canvas {
 	public ScreenAdmin(ReceiveFeedback parent) {
 		
 		this.parent = parent;
-		netIO = new NetIO();
+		netIO = new NetIO(parent);
 
 		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
 			GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();

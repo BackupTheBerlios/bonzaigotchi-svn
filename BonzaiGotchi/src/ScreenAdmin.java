@@ -8,6 +8,7 @@ public class ScreenAdmin extends Canvas {
 	ReceiveFeedback parent;
 	
 	private FileIO data;
+	private NetIO netIO;
 	
 	private boolean treeActive = false;
 	private String[] treeBackup = null;
@@ -22,6 +23,7 @@ public class ScreenAdmin extends Canvas {
 	public ScreenAdmin(ReceiveFeedback parent) {
 		
 		this.parent = parent;
+		netIO = new NetIO();
 
 		if (GlobalVars.DISPLAY_X_WIDTH == 0) {
 			GlobalVars.DISPLAY_X_WIDTH = (short)super.getWidth();
@@ -45,11 +47,12 @@ public class ScreenAdmin extends Canvas {
 		
 		// check for Backups
 		String[] recordList = FileIO.getRecordList();
-		
 		int treeBackupCounter = 0;
-		for (int i = 0; i < recordList.length; i++) {
-			if (recordList[i].startsWith(GlobalVars.RECORDSTORE_NAME + "_")) {
-				treeBackupCounter++;
+		if (recordList != null) {
+			for (int i = 0; i < recordList.length; i++) {
+				if (recordList[i].startsWith(GlobalVars.RECORDSTORE_NAME + "_")) {
+					treeBackupCounter++;
+				}
 			}
 		}
 		
@@ -100,7 +103,7 @@ public class ScreenAdmin extends Canvas {
 	private void showTreeBackupOptions() {
 		clearList();
 		menuSelected = 0;
-		menu = new String[] { "make Active", "delete", "back" };
+		menu = new String[] { "make Active", "send", "delete", "back" };
 		adminStatus = 3;
 	}
 	
@@ -168,15 +171,21 @@ public class ScreenAdmin extends Canvas {
 								getData();
 								showRecordList();
 								break;
-								
+							
 							case 1:
+								data.setRecordName(treeBackup[treeBackupSelected]);
+								netIO.sendData(data.getRecord());
+//								data.readDataFinalize();
+								break;
+								
+							case 2:
 								data.setRecordName(treeBackup[treeBackupSelected]);
 								data.deleteRecord();
 								getData();
 								showRecordList();
 								break;
 								
-							case 2:
+							case 3:
 								showRecordList();
 								break;
 						}

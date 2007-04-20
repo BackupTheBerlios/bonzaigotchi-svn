@@ -317,8 +317,8 @@ public class FileIO {
 	}
 	
 	
-	// internal Methods
-	private byte[] getRecord() {
+
+	public byte[] getRecord() {
 		if (checkRecord(recordName)) {
 			
 			try {			
@@ -334,18 +334,20 @@ public class FileIO {
 	        RecordEnumeration re;
 			try {
 				re = rs.enumerateRecords(null,null,false);
+//				System.out.println("--- IO READ RECORD ---");
 				return rs.getRecord(re.nextRecordId());
 				
-//				System.out.println("--- IO READ RECORD ---");
+				
 			} catch (Exception e) {
-				return null;
 //				System.out.println("--- IO READ RECORD ERROR ---");
+				return null;
 			}
 		}
 		else return null;
 
 	}
 	
+	// internal Methods
 	private boolean checkRecord (String recordName) {
 		boolean recordExists = false;
 		

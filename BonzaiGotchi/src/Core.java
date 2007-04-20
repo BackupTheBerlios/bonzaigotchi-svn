@@ -55,9 +55,7 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 	private Thread alarm;
 
 	protected void startApp() throws MIDletStateChangeException {	
-
-
-		
+	
 		data = new FileIO(GlobalVars.RECORDSTORE_NAME);
 		screenIntro = new ScreenIntro(this);
 		screenHelp = new ScreenHelp();

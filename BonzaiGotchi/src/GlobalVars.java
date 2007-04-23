@@ -50,7 +50,7 @@ public class GlobalVars {
 	
 	public final static String RECORDSTORE_NAME = "BonzaiGotchi";
 	
-	public final static short INTRO_TIMEOUT = 100;
+	public final static short INTRO_TIMEOUT = 2500;
 	
 	public static Element ELEMENTEDIT;
 	public static int EDITEXACTPOS;

@@ -109,7 +109,7 @@ public class NetIO implements Runnable {
     	String xml = "<?xml version=\"1.0\"?>\n";
 
     	// from Core    	
-    	xml +=  "<BonzaiGotchi saveVersion="+data.readDataInit()+">\n";
+    	xml +=  "<BonzaiGotchi saveVersion=\""+data.readDataInit()+"\">\n";
     	   	
     	// from ScreenTree
     	xml +=  "<pot "+

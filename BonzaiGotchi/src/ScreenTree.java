@@ -490,6 +490,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	private void menuBack() {
+//		System.out.println(GlobalVars.APPSTATUS);
 		switch (GlobalVars.APPSTATUS) {
 			case GlobalVars.APPSTATUS_MENU:
 				switch (menuId) {
@@ -757,7 +758,7 @@ public class ScreenTree extends Canvas implements Runnable {
 //				System.out.println("--- WATER|REQUEST: " + water + " | " + logWaterRequest + " ---");
 				calcTime();
 			}
-			if (++counterDraw == 1) {
+			if (++counterDraw == GlobalVars.INTERVAL_REPEAT) {
 					threadWaiting = true;
 					break;
 			}

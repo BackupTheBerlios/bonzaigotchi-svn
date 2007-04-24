@@ -48,6 +48,8 @@ public class GlobalVars {
 	
 	public static byte PAINTSTATUS = PAINTSTATUS_VOID;
 	
+	public final static byte INTERVAL_REPEAT = 8; //Standardmaeﬂig auf 1
+	
 	public final static String RECORDSTORE_NAME = "BonzaiGotchi";
 	
 	public final static short INTRO_TIMEOUT = 2500;

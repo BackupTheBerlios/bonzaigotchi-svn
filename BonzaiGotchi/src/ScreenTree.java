@@ -166,8 +166,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 		if (GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_TREEDEAD) {
 									
-			if (GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_MENU &&
-				GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_EDITCOLOR) {
+			if (GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_EDITCOLOR) {
 
 				drawBackground(g);
 				drawPot(g);
@@ -975,6 +974,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			// END CASE POT
 		
 			case GlobalVars.APPSTATUS_EDITCOLOR:
+				checkBack = true;
 				switch (getGameAction(keyCode)) {
 					case LEFT:
 						if (--selectColorSelected < 0) selectColorSelected = 0;

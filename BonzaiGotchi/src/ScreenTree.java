@@ -195,21 +195,21 @@ public class ScreenTree extends Canvas implements Runnable {
 			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_MENU ||
 				GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITEXACT) {
 				
-				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH, 43);
+				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH,  28 + g.getFont().getHeight() + 2);
 				g.setColor(0xFFFFFF);
 				g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
 				g.setColor(0x000000);
 				
 					
 				g.setColor(0x000000);
-				g.drawLine(0, 42, GlobalVars.DISPLAY_X_WIDTH, 42);
+				g.drawLine(0, 28 + g.getFont().getHeight() + 1, GlobalVars.DISPLAY_X_WIDTH,  28 + g.getFont().getHeight() + 1);
 							
 				for (int i = 0; i < menu.length; i++) {			
 					if (i == menuItemSelected) {						
 						g.setClip(i * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - menu.length * 12, 2, 24, 24);
 						g.drawImage(menuSelected, g.getClipX(), g.getClipY(), Graphics.TOP|Graphics.LEFT);
 						
-						g.setClip(0, 30, GlobalVars.DISPLAY_X_WIDTH, 12);
+						g.setClip(0, 28, GlobalVars.DISPLAY_X_WIDTH, g.getFont().getHeight() + 2);
 						g.setColor(0x000000);
 						g.drawString(menu[i].getTitle(), GlobalVars.DISPLAY_X_WIDTH / 2, g.getClipY(), Graphics.TOP|Graphics.HCENTER);
 						

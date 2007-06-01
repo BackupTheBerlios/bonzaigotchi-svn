@@ -525,6 +525,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		repaint();
 	}
 	
+	// TODO: when exiting on moto razzr app freeze
 	private void menuSelect() {
 		switch (menu[menuItemSelected].getMenuId())
 		{

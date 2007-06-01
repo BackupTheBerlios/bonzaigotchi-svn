@@ -479,7 +479,7 @@ public class Element {
 					// System.out.println("--- LOOP END ---");			
 				}
 			}
-			else {
+			else if (health > 0) {
 				// draw the leafs
 				if (length.getInt() >= GlobalVars.LEAF_LENGTH_MIN && thickness.getInt() < GlobalVars.LEAF_THICKNESS_MAX) {
 					

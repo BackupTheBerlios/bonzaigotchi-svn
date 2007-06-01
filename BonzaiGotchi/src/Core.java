@@ -272,7 +272,6 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		
 		GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_MAINMENU;
 //		System.out.println("--- MAIN MENUE CREATED ---");
-
 	}
 	
 	private void showAlert() {

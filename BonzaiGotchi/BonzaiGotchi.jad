@@ -1,7 +1,7 @@
 MIDlet-Version: 0.99.135
-MIDlet-Vendor: Midlet Suite Vendor
+MIDlet-Vendor: FH Salzburg
 MIDlet-Jar-URL: BonzaiGotchi.jar
 MicroEdition-Configuration: CLDC-1.0
-MIDlet-1: BonzaiGotchi, ,Core
+MIDlet-1: BonzaiGotchi, icon_1.png ,Core
 MicroEdition-Profile: MIDP-1.0
-MIDlet-Name: BonzaiGotchi Midlet Suite
+MIDlet-Name: BonzaiGotchi

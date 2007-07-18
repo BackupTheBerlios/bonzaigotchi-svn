@@ -62,7 +62,7 @@ public class LangVars {
 	
 	//Tutorial english
 	public final static String TU_HELPTEXT_TITLE = "Help";
-	public final static String TU_HELPTEXT = "Welcome to the tutorial of BonzaiGotchi!\n\n"
+	public final static String TU_HELPTEXT = "\nWelcome to the tutorial of BonzaiGotchi!\n\n"
 		+"This shows you how to plant and take care of your tree.\n\n"
 		+"The SELECT Button (or Number 5) retrieve the menu.\n"
 		+"You can always step back with the # - Button.\n"
@@ -72,8 +72,8 @@ public class LangVars {
 		+"to undo any actions!";
 	
 	public final static String TU_LIST_TITLE = "List of Buttons";
-	public final static String[] TU_BUTTONS = {"Water the tree. The size of the canister can be chanced while pressing the arrow keys (left and right).",
-		"You can select the a specific branch while navigating with the arrow keys. The red colored branch is the selected one, which can be manipulated. The magenta/yellow/blue colored branches are the immediate children.",
+	public final static String[] TU_BUTTONS = {"Pour the tree. The size of the canister can be chanced while pressing the arrow keys (left and right).",
+		"You can select the a specific branch while navigating with the arrow keys. The red colored branch is the selected one, which can be manipulated. The magenta/yellow/blue ones show the immediate children.",
 		"To change the potsize press the left and right arrow key. You can scale up the pot to increase the water capacity. After scaling up it is impossible to undo this because of the roots.",
 		"Can be used rarly. This gives the tree strengh and higher growth.",
 		"Here you can leave the tree screen. Goes back to root menue.",
@@ -82,7 +82,7 @@ public class LangVars {
 		"The exact cutted branch can be sealed and refuse new children.",
 		"Chop the branch and allow new children.",
 		"Here you can give the tree (and branches) your individual colors.",
-		"This button navigates always one step back. (From edit to menu, etc."};
+		"This button navigates always one step back. (From edit to menu, etc.)"};
 
 	
 	//Tutorial deutsch

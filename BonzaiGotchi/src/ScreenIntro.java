@@ -4,6 +4,10 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+/**
+ * The Class contains the Intro for the Bonzaigotchi.
+ *  
+ */
 public class ScreenIntro extends Canvas implements Runnable {
 	private Image introbild;
 	private Image intro2bild;
@@ -15,6 +19,10 @@ public class ScreenIntro extends Canvas implements Runnable {
 
 	private int count = 1;
 
+	/**
+	 * Constructor for ScreenIntro. Allocates the images and inits introrun thread.
+	 * @param parent
+	 */
 	public ScreenIntro(ReceiveFeedback parent) {
 
 		this.parent = parent;
@@ -35,11 +43,17 @@ public class ScreenIntro extends Canvas implements Runnable {
 		introrun = new Thread(this);
 
 	}
-
+	/**
+	 * Starts the introrun thread.
+	 */
 	public void play() {
 		introrun.start();
 	}
-
+	
+	/**
+	 * Paints the intro pics depending on count.
+	 * @param g
+	 */
 	protected void paint(Graphics g) {
 		g.setColor(0xFFFFFF);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH,
@@ -65,20 +79,32 @@ public class ScreenIntro extends Canvas implements Runnable {
 		
 
 	}
-
+	/**
+	 * Gives back the relative Y position of the image on a given value i.
+	 * @param i
+	 * @return GlobalVars.DISPLAY_Y_HEIGHT - i
+	 */
 	private int getYCenterImage(int i) {
 		int value = 0;
 		value = (GlobalVars.DISPLAY_Y_HEIGHT - i) / 2;
 		return value;
 	}
 
+	/**
+	 * Gives back the relative X position of the image on a given value i.
+	 * @param i
+	 * @return GlobalVars.DISPLAY_X_WIDTH - i
+	 */
 	private int getXCenterImage(int i) {
 		int value = 0;
 		value = (GlobalVars.DISPLAY_X_WIDTH - i) / 2;
 		return value;
 	}
 
-
+	/**
+	 * The Thread sleeps for GlobalVars.INTRO_TIMEOUT the increments count.
+	 * Then it responds to his parent APPSTATUS_MAINMENU.
+	 */
 	public void run() {
 		for (int i = 0; i < 2; i++) {
 			repaint();

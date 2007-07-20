@@ -14,6 +14,11 @@ import javax.microedition.lcdui.List;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+
+/** 
+ * Core is the main Midlet Class.
+ * From here the application starts.  
+ */ 
 public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Runnable {
 
 	private ScreenTree screenTree;
@@ -56,6 +61,12 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 
 	private Thread alarm;
 
+	 
+	/** 
+	 * Entry point in Core.
+	 * 
+	 * 	@throws MIDletStateChangeException
+	 */ 
 	protected void startApp() throws MIDletStateChangeException {	
 	
 		data = new FileIO(GlobalVars.RECORDSTORE_NAME);
@@ -96,7 +107,10 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		screenIntro.play();
 
 	}
-
+	 
+	/** 
+	 * Builds up an array for the menu.
+	 */
 	private void checkResume() {
 		// Hier wird der Array aufgebaut fuer das Menue
 
@@ -128,15 +142,26 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		mainElements[i++] = LangVars.CMD_STARTM_ADMIN;
 
 	}
-
+	/** 
+	 * Pauses application
+	 *  @throws MIDletStateChangeException
+	 */
 	protected void pauseApp() {}
-
+	 
+	/** 
+	 * Destroys application
+	 *  @throws MIDletStateChangeException
+	 */
 	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 //		System.out.println("SYSTEM EXIT! Program shut down!");
 		this.notifyDestroyed();
 
 	}
-
+	/** 
+	 * Links to the content of the Menu points.
+	 * 
+	 * @param c  gives us the destination of the menu. d  contains a menulist
+	 */
 	public void commandAction(Command c, Displayable d) {
 		int cori = 1; // abfrage ob resume oder nicht....
 		if (mainElements.length == GlobalVars.MAINMENU_LIST_MAX) {
@@ -236,7 +261,11 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 			
 		}
 	}
-
+	/** 
+	 * Exits from Tree to MainMenu. 
+	 * Tree will be saved in case GlobalVars.APPSTATUS is not set to APPSTATUS_TREEDEAD. 
+	 *  
+	 */
 	private void doExitToMain() {
 		if (GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_TREEDEAD) {
 			saveTree();
@@ -246,7 +275,11 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		showMainMenu();
 	}
 
-	// obsolete since there is only one button at the moment
+	/** 
+	 * Removes cmdDTExit from screenTree. 
+	 */
+	 //* @deprecated obsolete since there is only one button at the moment (ich lass es mal auskommentiert weil die funktion öfter aufgerufen wird)
+	 //*/
 	private void clearCommands() {
 		screenTree.removeCommand(cmdDTExit);
 		/*screenTree.removeCommand(cmdMSelect);
@@ -258,7 +291,11 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		screenHelpButtons.removeCommand(cmdHBack);
 		screenCredits.removeCommand(cmdCExit); */
 	}
-
+	
+	/** 
+	 * Displays the Main Menu.
+	 * Sets the APPSTATUS to APPSTATUS_MAINMENU. 
+	 */
 	private void showMainMenu() {		
 		// mainmenuList.setSelectCommand(cmdMSelect); //NICHT MIDP 1.0 fï¿½hig
 		checkResume(); // Array bauen fuer Liste
@@ -273,17 +310,28 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		GlobalVars.APPSTATUS = GlobalVars.APPSTATUS_MAINMENU;
 //		System.out.println("--- MAIN MENUE CREATED ---");
 	}
-	
+	/** 
+	 * Displays an Alert Message defined in screenAlert. 
+	 */
 	private void showAlert() {
 		Display.getDisplay(this).setCurrent(screenAlert, Display.getDisplay(this).getCurrent());
 	}
-
+	
+	/** 
+	 * Clears all commands and adds an exit Command.
+	 */
 	private void showTreeDeadCommand() {
 		clearCommands();
 		screenTree.addCommand(cmdDTExit);
 
 	}
-
+	
+	/** 
+	 * Loads a new tree from a record store.
+	 * Kills an existing tree if availible.
+	 * 
+	 * @return true if Version from record store equals GlobalVars.SAVE_RECORDSTORE_VERSION.
+	 */
 	protected boolean loadTree() {
 
 		if (screenTree != null) {
@@ -306,17 +354,26 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		// TODO: ausgabe + delete Record bzw. spaeter recordStore konverter
 
 	}
-
+	/** 
+	 * Writes tree data in record store.
+	 * calls screenTree.writeData()
+	 * 
+	 */
 	private void saveTree() {
 		data.writeDataInit(GlobalVars.SAVE_RECORDSTORE_VERSION);
 		screenTree.writeData(data);
 		data.writeDataFinalize();
 	}
 
+	
+	/** 
+	 * Receives an APPSTATUS which determines what Menu will be displayed.
+	 * 
+	 * @param code code: 1x Commands - 10 = clearMenu, 11 = treeMenu, 12 = treeDead, 13 =
+	 * screenInterval; 2x keyEvent - 21 = fireButton; 31 = saveTree();
+	 */
 	public void receiveFeedback(short code) {
-		// code: 1x Commands - 10 = clearMenu, 11 = treeMenu, 12 = treeDead, 13 =
-		// screenInterval; 2x keyEvent - 21 = fireButton; 31 = saveTree();
-
+		
 //		System.out.println("feedback: " + code);
 				
 		switch (code) {
@@ -402,7 +459,11 @@ public class Core extends MIDlet implements CommandListener, ReceiveFeedback, Ru
 		}
 //		System.out.println("APPSTATUS: "+GlobalVars.APPSTATUS);
 	}
-
+	/** 
+	 * sleeps for GlobalVars.GROWTH_INTERVAL and if APPSTATUS equals GlobalVars.APPSTATUS_STANDBY
+	 * and screenTree not null, then it marks APPSTATUS as running.
+	 * 
+	 */
 	public void run() {
 
 //		System.out.println("!!----Im Thread----");

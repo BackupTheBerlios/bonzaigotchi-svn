@@ -5,7 +5,11 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 
-
+/**
+ * The Class ScreenHelpButtons contains the buttons which
+ * are used to water, cut, dung the tree. 
+ *  
+ */
 public class ScreenHelpButtons extends List implements CommandListener{
 
 	private String[] mainElements;
@@ -17,7 +21,10 @@ public class ScreenHelpButtons extends List implements CommandListener{
 	private Image imageArray[];
 	private ReceiveFeedback parent;
 
-	
+	/**
+	 * Constructs the Button list.
+	 * @param parent
+	 */
 	public ScreenHelpButtons(ReceiveFeedback parent) {
 		super("Buttons List",List.IMPLICIT);
 
@@ -26,7 +33,11 @@ public class ScreenHelpButtons extends List implements CommandListener{
 		init();
 
 	}
-
+	
+	/**
+	 * Initialise/adds cmdItems and cmdBack.
+	 * Then builds the Images.
+	 */
 	private void init() {
 		setCommandListener(this);
 		cmdItems = new Command(LangVars.CMD_ALL_SELECT, Command.ITEM, 2);
@@ -38,9 +49,14 @@ public class ScreenHelpButtons extends List implements CommandListener{
 
 		
 	}
-
+	
+	/**
+	 * Builds up an array for the images and menu strings.
+	 * Adds them to the list.
+	 *
+	 */
 	private void buildImages() {
-		// Hier wird der Array aufgebaut f�r die Items
+	
 
 	imageArray = new Image[11];
 		try {
@@ -79,7 +95,15 @@ public class ScreenHelpButtons extends List implements CommandListener{
 			
 		}
 	}
-
+	
+	
+	/**
+	 * Depending on the command a certain feedback is send to the parent class.
+	 * APPSTATUS_MAINMENU or APPSTATUS_HELP_WORK
+	 * 
+	 * @param c
+	 * @param arg1
+	 */
 	public void commandAction(Command c, Displayable arg1) {
 		if (c==cmdBack)
 

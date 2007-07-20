@@ -12,7 +12,11 @@ import java.io.IOException;
 import javax.microedition.rms.*;
 
 
-
+/**
+ * The Class FileIO manages the record sets where the tree is stored while the
+ * application sleeps or is shut down.
+ * 
+ */
 public class FileIO {
 	
 	private String recordName;
@@ -24,15 +28,28 @@ public class FileIO {
 	private ByteArrayInputStream bais;
 	private DataInputStream dis;
 	
+	/**
+	 * Initialises the name of the record store.
+	 * @param recordName
+	 */
 	public FileIO(String recordName) {
 
 		this.recordName = recordName;
 	}
 	
+	/**
+	 * Sets the name of the record store.
+	 * @param recordName
+	 */
 	public void setRecordName(String recordName) {
 		this.recordName = recordName;
 	}
 	
+	/**
+	 * Copies the record store into a another one with a specified name.
+	 * @param recordNameTarget name of the copied record store.
+	 * @return true if successful, false not successfull
+	 */
 	public boolean copyRecord(String recordNameTarget) {
 		byte [] record = getRecord();
 		if (record != null) {
@@ -42,10 +59,18 @@ public class FileIO {
 		else return false;
 	}
 	
+	/**
+	 * Deletes the Record store.
+	 *
+	 */
 	public void deleteRecord() {
 		deleteRecord(recordName);
 	}
 	
+	/**
+	 * Returns a list of all Record stores that can be found.
+	 * @return String array
+	 */
 	public static String[] getRecordList() {
 		return RecordStore.listRecordStores();
 	}
@@ -53,6 +78,12 @@ public class FileIO {
 	// IO Operations
 	
 	// writeDataInit has to be started before writing can begin
+	
+	/**
+	 * Initialises the data. Writes the version.
+	 * 
+	 * @param versionSave 
+	 */
 	public void writeDataInit(short versionSave) {
 //		System.out.println("--- IO WRITE INIT BEGINN ---");
 		
@@ -63,6 +94,11 @@ public class FileIO {
 //		System.out.println("--- IO WRITE INIT ENDE ---");
 	}
 	
+	/**
+	 * Writes String in Data Output Stream.
+	 * 
+	 * @param data
+	 */
 	public void writeData(String data) {
 
 		// System.out.println("--- IO WRITE (STRING)---");				
@@ -76,6 +112,11 @@ public class FileIO {
 		}
 	}
 	
+	/**
+	 * Writes byte in Data Output Stream.
+	 * 
+	 * @param data
+	 */
 	public void writeData(byte data) {
 		
 		// System.out.println("--- IO WRITE (BYTE)---");
@@ -89,7 +130,11 @@ public class FileIO {
 		}
 		
 	}
-	
+	/**
+	 * Writes short in Data Output Stream.
+	 * 
+	 * @param data
+	 */
 	public void writeData(short data) {
 		
 		// System.out.println("--- IO WRITE (SHORT)---");
@@ -104,7 +149,11 @@ public class FileIO {
 		}
 		
 	}
-	
+	/**
+	 * Writes int in Data Output Stream.
+	 * 
+	 * @param data
+	 */
 	public void writeData(int data) {
 
 		// System.out.println("--- IO WRITE (INT)---");
@@ -119,7 +168,11 @@ public class FileIO {
 		}
 		
 	}
-	
+	/**
+	 * Writes boolean in Data Output Stream.
+	 * 
+	 * @param data
+	 */
 	public void writeData(boolean data) {
 
 		// System.out.println("--- IO WRITE (BOOLEAN)---");
@@ -134,7 +187,11 @@ public class FileIO {
 		}
 		
 	}
-	
+	/**
+	 * Writes long in Data Output Stream.
+	 * 
+	 * @param data
+	 */
 	public void writeData(long data) {
 
 		// System.out.println("--- IO WRITE (LONG)---");
@@ -150,7 +207,9 @@ public class FileIO {
 		
 	}
 	
-	// execute when writing has been finished
+	/**
+	 * execute when writing has been finished
+	 */ 
 	public boolean writeDataFinalize() {
 //		System.out.println("--- IO WRITE FINALIZE BEGINN ---");
 			
@@ -164,7 +223,9 @@ public class FileIO {
 	}
 
 	
-	// execute before starting to read
+	/**
+	 * execute before starting to read
+	 */ 
 	public short readDataInit() {
 		
 //		System.out.println("--- IO READ INIT BEGINN ---");
@@ -190,7 +251,10 @@ public class FileIO {
 			return 0;
 		}
 	}
-		
+	/**	
+	 * Reads String from Data Input Stream.
+	 * @return String
+	 */
 	public String readDataString() {
 		
 		// System.out.println("--- IO READ (STRING) ---");
@@ -209,7 +273,10 @@ public class FileIO {
 		return tmpData;
 		
 	}
-	
+	/**	
+	 * Reads byte from Data Input Stream.
+	 * @return byte
+	 */
 	public byte readDataByte() {
         
 		// System.out.println("--- IO READ (BYTE) ---");
@@ -228,7 +295,10 @@ public class FileIO {
 		return tmpData;
 		
 	}
-	
+	/**	
+	 * Reads short from Data Input Stream.
+	 * @return short
+	 */
 	public short readDataShort() {
         
 		// System.out.println("--- IO READ (SHORT) ---");
@@ -247,7 +317,10 @@ public class FileIO {
 		return tmpData;
 		
 	}
-
+	/**	
+	 * Reads int from Data Input Stream.
+	 * @return int
+	 */
 	public int readDataInt() {
 				
 		// System.out.println("--- IO READ (INT) ---");
@@ -266,7 +339,10 @@ public class FileIO {
 		return tmpData;
 
 	}
-	
+	/**	
+	 * Reads boolean from Data Input Stream.
+	 * @return boolean
+	 */
 	public boolean readDataBoolean() {
 		
 		// System.out.println("--- IO READ (BOOLEAN) ---");
@@ -285,7 +361,10 @@ public class FileIO {
 		return tmpData;
 
 	}
-	
+	/**	
+	 * Reads long from Data Input Stream.
+	 * @return long
+	 */
 	public long readDataLong() {
 		// System.out.println("--- IO READ (LONG) ---");
 		
@@ -304,8 +383,11 @@ public class FileIO {
 	}
 	
 	
-	// just to clear vars
-	// execute when finished reading
+	/**
+	 * execute when finished reading.
+	 * just to clear vars.
+	 * 
+	 */ 
 	public void readDataFinalize() {
 //		System.out.println("--- IO READ FINALIZE BEGINN ---");
 		bais = null;
@@ -314,7 +396,11 @@ public class FileIO {
 	}	
 
 	
-	// internal Methods
+	/**
+	 * Checks if record is availible and opens it.
+	 * Reads and returns it.
+	 * @return record
+	 */ 
 	private byte[] getRecord() {
 		byte[] record = null;
 		
@@ -344,7 +430,11 @@ public class FileIO {
 		}
 		return record;
 	}
-	
+	/**
+	 * Checks if Record is availible.
+	 * @param recordName
+	 * @return true or false
+	 */
 	private boolean checkRecord (String recordName) {
 		boolean recordExists = false;
 		
@@ -366,7 +456,12 @@ public class FileIO {
 		}
 		return recordExists;
 	}
-	
+	/**
+	 * Writes Data in a record file.
+	 * @param recordName
+	 * @param record
+	 * @return
+	 */
 	private boolean writeRecord(String recordName, byte[] record) {
 		deleteRecord(recordName);		
 
@@ -381,7 +476,10 @@ public class FileIO {
 			return false;
 		}
 	}
-	
+	/**
+	 * Closes Record Store.
+	 *
+	 */
 	private void closeRecordStore(){
 		try {
 			if (rs != null) {
@@ -395,7 +493,10 @@ public class FileIO {
 //			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Deletes Record Store.
+	 * @param recordName
+	 */
 	private void deleteRecord(String recordName) {
 		if (checkRecord(recordName)) {
 			try {

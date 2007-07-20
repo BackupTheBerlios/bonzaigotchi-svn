@@ -2,7 +2,10 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
-
+/**
+ * The class ScreenAdmin contains the MenuItems for the Admin screen.
+ * It also contains a draw function.
+ */
 public class ScreenAdmin extends Canvas {
 	
 	ReceiveFeedback parent;
@@ -20,6 +23,10 @@ public class ScreenAdmin extends Canvas {
 	
 	private short adminStatus = 0;
 	
+	/**
+	 * Constructs the Admin Backups menu.
+	 * @param parent
+	 */
 	public ScreenAdmin(ReceiveFeedback parent) {
 		
 		this.parent = parent;
@@ -34,9 +41,12 @@ public class ScreenAdmin extends Canvas {
 		
 		showRecordList();	
 	}
-	
+	/**
+	 * Checks for active Tree(s) and for their backups.
+	 * Global Variables treeActive and treeBackup are set.
+	 */
 	private void getData() {
-//		 check for active Tree
+
 		data = new FileIO(GlobalVars.RECORDSTORE_NAME);
 		short tmpVer = data.readDataInit();
 		data.readDataFinalize();
@@ -45,7 +55,7 @@ public class ScreenAdmin extends Canvas {
 		}
 		
 		
-		// check for Backups
+		
 		String[] recordList = FileIO.getRecordList();
 		int treeBackupCounter = 0;
 		if (recordList != null) {
@@ -71,7 +81,11 @@ public class ScreenAdmin extends Canvas {
 			}
 		}
 	}
-	
+	/**
+	 * Builds up the menu based on how much trees/backups were found.
+	 * sets adminStatus to 1.
+	 *
+	 */
 	private void showRecordList() {
 		clearList();
 		menuSelected = 0;
@@ -93,6 +107,10 @@ public class ScreenAdmin extends Canvas {
 		adminStatus = 1;
 	}
 	
+	/**
+	 * Builds up the menu within the menupoint "active Tree".
+	 *
+	 */
 	private void showTreeActiveOptions() {
 		clearList();
 		menuSelected = 0;
@@ -100,6 +118,10 @@ public class ScreenAdmin extends Canvas {
 		adminStatus = 2;
 	}
 	
+	/**
+	 * Builds up the menu when a tree is selected.
+	 *
+	 */
 	private void showTreeBackupOptions() {
 		clearList();
 		menuSelected = 0;
@@ -107,11 +129,21 @@ public class ScreenAdmin extends Canvas {
 		adminStatus = 3;
 	}
 	
+	/**
+	 * Clears the menu list.
+	 *
+	 */
 	private void clearList() {
 		menu = null;
 	}
 
-
+	/**
+	 * Determines the pressed key and selects the menu point.
+	 * adminStatus tells in which menu we are right now.
+	 * Then repaints the menu.
+	 * 
+	 * @param keyCode
+	 */
 	protected void keyPressed (int keyCode) {
 		
 		switch (getGameAction(keyCode)) {
@@ -199,7 +231,11 @@ public class ScreenAdmin extends Canvas {
 		
 		
 
-
+	/**
+	 * Paints the ScreenAdmin menu.
+	 * 
+	 * @param g
+	 */
 	protected void paint(Graphics g) {
 		Font f = g.getFont();
 		g.setColor(0xFFFFFF);

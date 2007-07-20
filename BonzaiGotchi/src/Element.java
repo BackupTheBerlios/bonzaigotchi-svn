@@ -15,6 +15,13 @@
 
 import javax.microedition.lcdui.Graphics;
 
+
+/**
+ * The Class Element describes an entity which
+ * makes it possible to build up a whole tree recursivly.
+ * Element defines the branches/logs of a tree. 
+ *
+ */
 public class Element {
 
 //	private int id;
@@ -43,6 +50,11 @@ public class Element {
 	
 	private Element parent = null;
 	
+	/** 
+	 * Loads the elements of a tree recursively from a record store.
+	 * 
+	 * @param parent the parent, data record store, posX X position of the element, posY Y position of the element.
+	 */
 	public Element(Element parent, FileIO data, short posX, short posY) {
 	
 //		id = ++GlobalVars.COUNTERELEMENT;
@@ -87,11 +99,21 @@ public class Element {
 //		element(parent, angle, posX, posY, water);
 //	}
 	
+	/** 
+	 * creates a new Element.
+	 * 
+	 * @param parent the parent, angle the angle of the element, posX X position of the element, posY Y position of the element, water how much water does it contain, color the color of the element
+	 */
 	public Element(Element parent, short angle, short posX, short posY, int water, int color) {
 		this(parent, angle, posX, posY, water);
 		this.color = color;
 	}
 	
+	/** 
+	 * creates a new Element.
+	 * 
+	 * @param parent the parent, angle the angle of the element, posX X position of the element, posY Y position of the element, water how much water does it contain
+	 */
 	public Element(Element parent, short angle, short posX, short posY, int water) {
 	
 //		id = ++GlobalVars.COUNTERELEMENT;
@@ -110,7 +132,11 @@ public class Element {
 	}
 	
 
-	
+	/** 
+	 * Gets the waterRequest from the children adds it to the own waterRequest and returns it.
+	 * 
+	 * @return ChildWaterRequest
+	 */
 	public int getChildWaterRequest() {
 		// System.out.println("--- ID: "+ id +" | Element WaterRequest BEGINN ---");
 		
@@ -172,7 +198,13 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | Element WaterRequest END ---");
 		return childWaterRequest + waterRequest;
 	}
-
+	
+	/** 
+	 * The growing function. If there is enough water element will grow and/or spawn new elements.
+	 * 
+	 * @param supply the amount of water that is provided, dung helps the element grow and survive, colorAdaption inherits the color
+	 * @return boolean  true means element is healty, false element is going to die
+	 */
 	public boolean grow (int supply, boolean dung, int colorAdaption) {
 		// System.out.println("--- ID: "+ id +" | Element Grow BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | Supply: " + supply + "---");
@@ -335,6 +367,12 @@ public class Element {
 		// System.out.println("--- ID: "+ id +" | Element Grow END ---");
 	}
 	
+	/** 
+	 * Calculates the amount of water that is needed based on the values
+	 * thickness and length.
+	 * Demand information is stored in value demand.
+	 *  
+	 */
 	private void calcDemand() {
 		demandIndex = (int)(((thickness.value * length.value / 1000000) -4) / 4);
 		if (demandIndex < 0) {
@@ -349,14 +387,19 @@ public class Element {
 			demand = MathFloat.divide(demand, GlobalVars.GROWTH_WATER_DEMAND_NO_GROWTH_FACTOR).getInt();
 		}
 	}
-	
+	/** 
+	 * Calculates the percentage of water within the element.
+	 * water x 100 (to get percentage) / (demand x [maximum intervalls the capacity could last].
+	 */
 	private void calcWaterPercentage() {
-//		water x 100 (to get percentage) / (demand x [maximum intervalls the capacity could last]
 		waterPercentage = (short)(water * 100 / (demand * (100 + demandIndex)));
 		if (waterPercentage < 0) System.out.println("Water%: " + waterPercentage);
 	}
 	
-
+	/** 
+	 * Draws the element and their leaves. 
+	 * Function recursively calls itself.
+	 */
 	public void draw(Graphics g) {
 		// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 		// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
@@ -566,29 +609,60 @@ public class Element {
 		
 		// System.out.println("--- ID: "+ id +" | Element Draw END ---");
 	}
-
+	/**
+	 * Calculates the X position from the top of the branch.
+	 * 
+	 * @param tmpX X pos of the element
+	 * @return top X position of the element
+	 */
 	private short calcX2(short tmpX) {
 		return calcX2(tmpX, angle, length);
 	}
-	
+	/**
+	 * Calculates the X position from the top of the branch.
+	 * 
+	 * @param tmpX X pos of the element
+	 * @param tmpAngle angle of the element
+	 * @param tmpLength length of the element
+	 * @return top X position of the element
+	 */
 	private short calcX2(short tmpX, short tmpAngle, MathFloat tmpLength) {
 		tmpAngle = calcAngle(tmpAngle, (short)-8);
 		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
 		tmpPos.multiply(tmpLength);
 		return (short)(tmpX + tmpPos.getShort());
 	}
-	
+	/**
+	 * Calculates the Y position from the top of the branch.
+	 * 
+	 * @param tmpY Y pos of the element
+	 * @return top Y position of the element
+	 */
 	private short calcY2(short tmpY) {
 		
 		return calcY2(tmpY, angle, length);
 	}
-	
+	/**
+	 * Calculates the Y position from the top of the branch.
+	 * 
+	 * @param tmpY Y pos of the element
+	 * @param tmpAngle angle of the element
+	 * @param tmpLength length of the element
+	 * @return top Y position of the element
+	 */
 	private short calcY2(short tmpY, short tmpAngle, MathFloat tmpLength) {
 		MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[tmpAngle].value);
 		tmpPos.multiply(tmpLength);
 		return (short)(tmpY - tmpPos.getShort());
 	}	
-
+	
+	/**
+	 * Calculates a random angle for the child element.
+	 * 
+	 * @param inputAngle
+	 * @param range
+	 * @return random angle
+	 */
 	private short calcAngleRandom(short inputAngle, short range) {
 		short tmpAngle = (short)(MathCalc.getRandom(range) + angle + inputAngle);
 		
@@ -597,7 +671,13 @@ public class Element {
 		}
 		return tmpAngle;
 	}
-	
+	/**
+	 * Calculates the angle of the element.
+	 * 
+	 * @param tmpAngle
+	 * @param degree
+	 * @return angle
+	 */
 	private short calcAngle(short tmpAngle, short degree) {
 		tmpAngle += degree;
 		
@@ -606,13 +686,21 @@ public class Element {
 
 		return tmpAngle;
 	}
-	
+	/**
+	 * Sets the color of the element.
+	 * @param color
+	 */
 	public void setColor(int color) {
 		this.color = color;
 		colorNoAdaption = true;
 	}
 	
-	// kill specific child
+ 
+	/**
+	 * Kill specific child.
+	 * 
+	 * @param childToKill Element that should be killed
+	 */
 	public void childKill(Element childToKill) {
 //		System.out.println("--- ID: "+ id +" | Element.childKill ---");
 		if (childLeft != null && childLeft.equals(childToKill)) {
@@ -635,7 +723,10 @@ public class Element {
 		}
 	}
 	
-	// kill all of them
+	
+	/**
+	 * Kill all children from the element.
+	 */
 	public void childKill() {
 		// System.out.println("--- ID: "+ id +" | Element.childKillAll ---");
 		if (childLeft != null) {
@@ -655,6 +746,12 @@ public class Element {
 		}
 	}
 	
+	/**
+	 * Cuts the element on the given position.
+	 * 
+	 * @param cutPos the position where the element should be cutted.
+	 * @param seal if it is set to true this element can not grow anymore.
+	 */
 	public void cut(int cutPos, boolean seal) {
 		childKill();
 		length = new MathFloat(cutPos * 1000);
@@ -663,6 +760,12 @@ public class Element {
 		}
 	}
 	
+	/**
+	 * Element gives you one of his childs.
+	 * 
+	 * @param relative specifies what child element should be returned
+	 * @return a specific child element
+	 */
 	public Element getRelative(byte relative) {
 		
 		switch (relative) {
@@ -678,6 +781,12 @@ public class Element {
 		return null;
 	}
 	
+	/**
+	 * Gives back an index related to a child.
+	 * 
+	 * @param relative a child element
+	 * @return the index of a specific child
+	 */
 	public byte getRelative(Element relative) {
 		if (childLeft != null && childLeft.equals(relative)) {
 			return 1;
@@ -696,10 +805,21 @@ public class Element {
 		}
 	}
 	
+	/**
+	 * Get the length of the element.
+	 * 
+	 * @return length of the element
+	 */
 	public int getLength() {
 		return length.getInt();
 	}
 	
+	/**
+	 * Writes the element into an record store.
+	 * Function recursively calls itself.
+	 * 
+	 * @param data the record store.
+	 */
 	public void writeData(FileIO data) {
 
 		boolean tmpChildLeft = false;

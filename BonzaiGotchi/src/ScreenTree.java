@@ -32,6 +32,14 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 
+
+/**
+ * ScreenTree defines the container in which the tree and all
+ * the surrounding elements as sun, pot, water and stars as well as the
+ * ScreenTree menu itself are displayed.
+ * 
+ * 
+ */
 public class ScreenTree extends Canvas implements Runnable {
 
 	private boolean frozen = false;
@@ -82,6 +90,13 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	// TODO: When switching ScreenSize (eg: Iam flipping the Screen of my MDA) the Tree is somewhere and the BG is wrong aswell | very low priority
 	// fixed the treePosition problem
+	
+	/**
+	 * Constructor of ScreenTree.
+	 * A new Tree will be constructed.
+	 * 
+	 * @param parent needed for asynchronus feedback com system with core
+	 */
 	public ScreenTree(ReceiveFeedback parent) {
 		
 		this.parent = parent;
@@ -98,6 +113,13 @@ public class ScreenTree extends Canvas implements Runnable {
 		screenTreeInit();
 	}
 	
+	/**
+	 * Constructor of ScreenTree
+	 * Tree will be read from Record store.
+	 * 
+	 * @param parent needed for asynchronus feedback com system with core
+	 * @param data tree data.
+	 */
 	public ScreenTree(ReceiveFeedback parent, FileIO data) {
 		
 		this.parent = parent;
@@ -116,7 +138,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 		screenTreeInit();
 	}
-	
+	/**
+	 * Initialises Screen, set position for stars, gets Time.
+	 *
+	 */
 	private void screenTreeInit() {
 		
 		
@@ -136,7 +161,7 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 //		GlobalVars.COUNTERELEMENT = 0;
 		GlobalVars.COUNTERCHEAT = 0;
-		can = new Can((short)0,(short)(GlobalVars.DISPLAY_X_WIDTH/2),(short)(GlobalVars.DISPLAY_Y_HEIGHT/2),(short)0);
+		can = new Can((short)(GlobalVars.DISPLAY_X_WIDTH/2),(short)(GlobalVars.DISPLAY_Y_HEIGHT/2),(short)0);
 		
 		try {
 			potChangeImgArrowLeft = Image.createImage("/arrow20.png");
@@ -149,6 +174,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		logWaterRequest = log.getChildWaterRequest();
 	}
 	
+	/**
+	 * Randomizes the position of the stars.
+	 * Position stored in bgStarsX[], bgStarsY[]
+	 *
+	 */
 	private void randomizeStars(){
 //		Randomize the stars
 		for(int i=0; i < bgStarsX.length; i++) {
@@ -158,8 +188,16 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
+	/**
+	 * Paints the Tree, Leafs, Background, Pot, Sun and Menu.
+	 * Also draws selected elements.
+	 * Depends on APPSTATUS.
+	 * 
+	 * @params g
+	 */
 	protected void paint(Graphics g) {
 //		System.out.println("--- ScreenTree.paint BEGINN ---");
+		boolean paintLeafs = false;
 		g.setFont(Font.getFont(Font.FACE_MONOSPACE,Font.STYLE_PLAIN,Font.SIZE_SMALL));		
 		
 		
@@ -173,24 +211,19 @@ public class ScreenTree extends Canvas implements Runnable {
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
 				log.draw(g);
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
-
-				if (GlobalVars.ELEMENTEDIT == null &&
-					GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_EDITEXACT &&
-					GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_EDITCOLOR) {
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_LEAF;
-					log.draw(g);
-					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
-				}
+				paintLeafs = true;
 			}
 		
 			
 			if (GlobalVars.ELEMENTEDIT != null) {
+				paintLeafs = false;
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
 				log.draw(g);
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
 			}
 			
 			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITEXACT) {
+				paintLeafs = false;
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_SELECTBRANCH;
 				log.draw(g);
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
@@ -202,7 +235,9 @@ public class ScreenTree extends Canvas implements Runnable {
 				g.setClip(0, 0, GlobalVars.DISPLAY_X_WIDTH,  28 + g.getFont().getHeight() + 2);
 				g.setColor(0xFFFFFF);
 				g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, GlobalVars.DISPLAY_Y_HEIGHT);
-		
+				g.setColor(0x000000);
+				
+					
 				g.setColor(0x000000);
 				g.drawLine(0, 28 + g.getFont().getHeight() + 1, GlobalVars.DISPLAY_X_WIDTH,  28 + g.getFont().getHeight() + 1);
 							
@@ -229,6 +264,7 @@ public class ScreenTree extends Canvas implements Runnable {
 			}
 			
 			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITCOLOR) {
+				paintLeafs = false;
 				drawSelectColor(g);
 			}
 		
@@ -236,6 +272,11 @@ public class ScreenTree extends Canvas implements Runnable {
 				g.setColor(0x555555);
 				g.drawString("calculating ...", 0, 0, Graphics.TOP|Graphics.LEFT);
 				interval();
+			}
+			if (paintLeafs) {
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_LEAF;
+				log.draw(g);
+				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
 			}
 		}
 		else {
@@ -246,6 +287,12 @@ public class ScreenTree extends Canvas implements Runnable {
 			
 	}
 	
+	/**
+	 * Draws the Background Color (night/day) bgcolor is set in calcTime
+	 * Draws the Stars always, draw the sun
+	 * 
+	 * @param g
+	 */
 	private void drawBackground(Graphics g) {
 		
 		// What a beautiful day...
@@ -271,6 +318,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		drawClouds(g);
 	}
 
+	/**
+	 * Draw the Clouds (not implemented yet)
+	 * 
+	 * @param g
+	 */
     private void drawClouds(Graphics g)
     {
     	if(MathCalc.getRandom(5)==4)
@@ -279,6 +331,12 @@ public class ScreenTree extends Canvas implements Runnable {
     		}
     	
     }
+    
+    /**
+     * Draws the sun depending on current time.
+     * 
+     * @param g
+     */
 	private void drawSun(Graphics g) {
 		
 		short sunX = 0;
@@ -332,7 +390,13 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 //	}
 
-
+	 /**
+	  * Draws the pot, earth and water. Size of the pot depends on potSize.
+	  * If frozen is set Pot changes color or if dung is set earth changes color.
+	  * Also displays arrows when potsize is changed.
+	  * 
+	  * @param g
+	  */
 	private void drawPot(Graphics g){
 		//		drawing a pot
 		
@@ -406,6 +470,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		
 	}
 
+	/**
+	 * Displays menu for selecting Color.
+	 * 
+	 * @param g
+	 */
 	private void drawSelectColor(Graphics g) {
 		g.setColor(0xFFFFFF);
 		g.fillRect(0, 0, GlobalVars.DISPLAY_X_WIDTH, 40);
@@ -431,10 +500,22 @@ public class ScreenTree extends Canvas implements Runnable {
 		g.fillRect(3 * 24 + GlobalVars.DISPLAY_X_WIDTH / 2 - selectColor.length * 12 + 2, 2, 36, 36);		
 	}
 	
+	/**
+	 * Calls Main ScreenTree menu (Water, Edit, Change Pot, Dung, Freeze, Exit)
+	 *
+	 */
 	private void menuShow() {
 		menuShow(0);
 	}
 	
+	/**
+	 * Shows menu depending on tmpMenuId code. 
+	 * 0 main menu, 
+	 * 2 edit menu
+	 * 22 seal menu
+	 * 
+	 * @param tmpMenuId
+	 */
 	private void menuShow(int tmpMenuId) {
 		menuId = tmpMenuId;
 		menuItemSelected = 0;
@@ -484,6 +565,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		repaint();
 	}
 	
+	/**
+	 * goes one step back from every menu.
+	 * kills menu if in main menu.
+	 * 
+	 */
 	private void menuBack() {
 //		System.out.println(GlobalVars.APPSTATUS);
 		switch (GlobalVars.APPSTATUS) {
@@ -513,6 +599,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
+	/**
+	 * kills menu, sets menuId to -1
+	 * 
+	 */
 	private void menuKill() {
 		menuId = -1;
 		menu = null;
@@ -522,6 +612,12 @@ public class ScreenTree extends Canvas implements Runnable {
 	}
 	
 	// TODO: when exiting on moto razzr app freeze
+	
+	/**
+	 * Depending on what menuItem is selected menuSelect calls
+	 * the specified function. eg. watering, potchange,...
+	 * 
+	 */
 	private void menuSelect() {
 		switch (menu[menuItemSelected].getMenuId())
 		{
@@ -578,6 +674,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
+	/**
+	 * Watering is selected. Now parameters for Can will be set
+	 * and repaint called.
+	 *
+	 */
 	private void watering(){
 		parent.receiveFeedback(GlobalVars.APPSTATUS_WATERING);
 		canValue = 1;
@@ -588,6 +689,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		this.repaint();
 	}
 
+	/**
+	 * Depending on size of the can, water is added to the tree.
+	 *
+	 */
 	private void wateringAction(){
 		water += GlobalVars.POT_SIZE[potSize] * canValue / 100 * 110 / canSteps ;
 
@@ -602,12 +707,22 @@ public class ScreenTree extends Canvas implements Runnable {
 		//animWatering=false;
 	}
 	
+	/**
+	 * parameter for potchange will be set.
+	 * repaint called.
+	 *
+	 */
 	private void potChange() {
 		parent.receiveFeedback(GlobalVars.APPSTATUS_POTCHANGE);
 		potSizeChange = potSize;
 		this.repaint();
 	}
 	
+	/**
+	 * new potsize will be set then repaint.
+	 * new watersize depending on potsize.
+	 *
+	 */
 	private void potChangeAction() {
 		potSize = potSizeChange;
 		if (water > GlobalVars.POT_SIZE[potSize] / 100 * (GlobalVars.POT_HEIGHT[potSize] + 100)) {
@@ -618,6 +733,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		this.repaint();
 	}
 	
+	/**
+	 * Dungcounter is set to 700 and dung+50
+	 * Dung won´t availible for a long time ;)
+	 *
+	 */
 	private void dungAction() {
 		dungCounter = 700;
 		dung += 50;
@@ -626,6 +746,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		this.repaint();
 	}
 	
+	/**
+	 * initialises colors and selects the first color.
+	 * calls repaint.
+	 */
 	private void selectColor() {
 		parent.receiveFeedback(GlobalVars.APPSTATUS_EDITCOLOR);
 		for (int i = 0; i < selectColor.length; i++) {
@@ -635,18 +759,31 @@ public class ScreenTree extends Canvas implements Runnable {
 		this.repaint();
 	}
 	
+	/**
+	 * Assembles the RGB colors in one and writes it into
+	 * GlobalVars.ELEMENTEDIT
+	 *
+	 */
 	private void selectColorAction() {
 		GlobalVars.ELEMENTEDIT.setColor(selectColor[0]*0x10000 + selectColor[1]*0x100 + selectColor[2]);
 		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
 		edit(true);
 	}
-	
+	/**
+	 * Sets ELEMENTEDIT = log if resume is false.
+	 * @param resume
+	 */
 	private void edit(boolean resume) {
 		parent.receiveFeedback(GlobalVars.APPSTATUS_EDIT);
 		if (!resume) { GlobalVars.ELEMENTEDIT = log; }
 		this.repaint();
 	}
 	
+	/**
+	 * Kills all children then kills log.
+	 * Creates a new log.
+	 *
+	 */
 	private void editKill() {
 		if (GlobalVars.ELEMENTEDIT == log) {
 			if (log != null) {
@@ -671,12 +808,23 @@ public class ScreenTree extends Canvas implements Runnable {
 		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
 	}
 	
+	/**
+	 * Exact position is determined -> GlobalVars.EDITEXACTPOS
+	 * Calls repaint.
+	 * 
+	 */
 	private void editExact() {
 		parent.receiveFeedback(GlobalVars.APPSTATUS_EDITEXACT);
 		GlobalVars.EDITEXACTPOS = GlobalVars.SPAWN_LENGTH_INIT/1000;
 		repaint();
 	}
 	
+	/**
+	 * Element will be cutted. Seal determines whether it can
+	 * grow or not.
+	 * 
+	 * @param seal
+	 */
 	private void editCut(boolean seal) {
 		GlobalVars.ELEMENTEDIT.cut(GlobalVars.EDITEXACTPOS, seal);
 		parent.receiveFeedback(GlobalVars.FEEDBACK_SAVE);
@@ -687,6 +835,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		// set growthStop = seal
 	}
 	
+	/**
+	 * Kills the Children and log.
+	 *
+	 */
 	public void kill() {
 		if (log != null) {
 			log.childKill();
@@ -694,6 +846,15 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
+	/**
+	 * If freeze is set to true, frozen will be set to true.
+	 * receiveFeedback -> APPSTATUS_FROZEN
+	 * If freeze is set to false, frozen will be set to false
+	 * New Timestamp will be created.
+	 * Calls repaint.
+	 * 
+	 * @param freeze
+	 */
 	private void freeze (boolean freeze) {
 		if (freeze) {
 			frozen = true;
@@ -709,6 +870,10 @@ public class ScreenTree extends Canvas implements Runnable {
 		repaint();
 	}
 	
+	/**
+	 * If frozen is false a new Interval/Thread will be started.
+	 * Run is called.
+	 */
 	public void interval() {
 		if (!frozen) {
 			threadInterval = new Thread(this);
@@ -717,6 +882,14 @@ public class ScreenTree extends Canvas implements Runnable {
 		} else parent.receiveFeedback(GlobalVars.APPSTATUS_FROZEN);
 	}
 
+	/**
+	 * Main Entry point for creating the tree itself.
+	 * GlobalVars.COUNTERCHEAT determines how often one interval is repeated.
+	 * dung variables are decreased.
+	 * Growing function of log is called. If it dies on too less water/health/dung
+	 * APPSTATUS_TREEDEAD is set.
+	 * 
+	 */
 	public void run() {
 		
 		//TODO: Wurzeln; Krankheit durch Wasser; 
@@ -772,7 +945,13 @@ public class ScreenTree extends Canvas implements Runnable {
 
 		
 	}
-	
+	/**
+	 * Calculates time depending on GlobalVars.TIME_STAMP.
+	 * currentHour is set.
+	 * bgColor (Day Night Color) is set with MathCalc.colorCombine method.
+	 * In the night the Growth Interval is set to a lower value.
+	 *
+	 */
 	private void calcTime() {
 		// Hour of Day ((UTC + timeZone) * 10)
 		currentHour = (short)(GlobalVars.TIME_STAMP.getTime() % 86400000 / 360000 + timeZone * 10);
@@ -812,7 +991,12 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
-	
+	/**
+	 * Determines which key was pressed and take some action.
+	 * 
+	 * 
+	 * @param keyCode
+	 */
 	protected void keyPressed (int keyCode) {
 //		System.out.println("--- Key Pressed: "+ getKeyName(keyCode) +" ---");
 		
@@ -1037,7 +1221,11 @@ public class ScreenTree extends Canvas implements Runnable {
 		}
 	}
 	
-
+	/**
+	 * Writes data into Record store, if log is not null.
+	 * 
+	 * @param data
+	 */
 	public void writeData(FileIO data) {
 		data.writeData(frozen);
 		data.writeData(GlobalVars.TIME_STAMP.getTime());

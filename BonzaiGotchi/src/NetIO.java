@@ -12,10 +12,19 @@ public class NetIO implements Runnable {
 	
 	private ReceiveFeedback parent;
 	
+	/**
+	 * Constructor of Net Input Output.
+	 * 
+	 * @param parent needed for asynchronus feedback com system with core
+	 */
 	public NetIO(ReceiveFeedback parent) {
 		this.parent = parent;
 	}
 	
+	/**
+	 * Save data and starts thread to send Data.
+	 * @param data
+	 */
 	public void sendData(FileIO data) {
 		succeded = false;
 		this.data = data;
@@ -23,7 +32,9 @@ public class NetIO implements Runnable {
 		threadInet = new Thread(this);
 		threadInet.start();
 	}
-	
+	/**
+	 * Calls postViaHttpConnection() an sets FEEDBACK_UPLOAD_SUCCESS or FEEDBACK_UPLOAD_NOSUCCESS.
+	 */
 	public void run() {
 		try {
 			postViaHttpConnection();
@@ -54,7 +65,10 @@ public class NetIO implements Runnable {
 	}
 */
 
-
+	/**
+	 * Sends given data via HTTP to http://andreas.tschabuschnig.com/bonzaiGotchi.php
+	 * @throws IOException
+	 */
 	private void postViaHttpConnection() throws IOException {
 		HttpConnection c = null;
 		InputStream is = null;
@@ -101,7 +115,11 @@ public class NetIO implements Runnable {
 				c.close();
 		}
 	}
-	
+	/**
+	 * Converts data into XML stream.
+	 * 
+	 * @return XML data.
+	 */
 	private String parseXML() {
     	
 		int childCounter = 0;

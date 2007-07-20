@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Random;
 
 
+
 public class GlobalVars {
 	
 	public final static short FEEDBACK_SAVE = 31;

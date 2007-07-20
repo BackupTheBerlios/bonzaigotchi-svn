@@ -1,5 +1,9 @@
 import javax.microedition.lcdui.Graphics;
-//
+
+/**
+ * Contains everything that describes und draws the can.
+ * 
+ */
 public class Can {
 
 		private MathFloat length;
@@ -8,16 +12,27 @@ public class Can {
 		private short posX;
 		private short posY;
 		
-		public Can(short angle, short posX, short posY, short size) {
+		/**
+		 * Initialise can with given params and sets size.
+		 * 
+		 * @param posX X position of the can.
+		 * @param posY Y position of the can.
+		 * @param size size of the can.
+		 */
+		public Can(short posX, short posY, short size) {
 //			System.out.println("--- Element Can LOADED ---");
 			
-			this.angle = angle;
+			//this.angle = angle;
 			this.posX = posX;
 			this.posY = posY;
 			
 			setSize (size);
 		}
 				
+		/**
+		 * Sets the size for the can.
+		 * @param size
+		 */
 		public void setSize (short size)  {
 			
 			length = new MathFloat(GlobalVars.CAN_LENGTH_INIT);
@@ -25,12 +40,19 @@ public class Can {
 			thickness = new MathFloat(GlobalVars.CAN_THICKNESS_INIT);
 			thickness.multiply(size);
 		}
-		
+		/**
+		 * Set the position of the can.
+		 * @param x
+		 * @param y
+		 */
 		public void setPos (short x, short y) {
 			posX = x;
 			posY = y;
 		}
-
+		/**
+		 * Draws the can. Uses Global varibles to determine size and x,y.
+		 * @param g
+		 */
 		public void draw(Graphics g) {
 			// System.out.println("--- ID: "+ id +" | Element Draw BEGINN ---");
 			// System.out.println("--- ID: "+ id +" | editChild: "+ editChild +" ---");
@@ -40,17 +62,9 @@ public class Can {
 			
 			boolean drawHorizontal = false;
 			
-			if (angle >= 28 || angle <= 4 || (angle >= 12 && angle <= 20)) {
-				drawHorizontal = true;
-				tmpPosX -= thickness.getShort() / 2;
-			}
-			else {
-				tmpPosY -= thickness.getShort() / 2;
-			}
+			drawHorizontal = true;
+			tmpPosX -= thickness.getShort() / 2;
 			
-			// System.out.println("--- DrawHorizontal: " + drawHorizontal + " ---");
-			
-			// System.out.println("--- ThicknessEven: " + thicknessEven + " ---");
 			
 			short tmpPosX2 = calcX2(tmpPosX);
 			short tmpPosY2 = calcY2(tmpPosY);
@@ -191,6 +205,12 @@ public class Can {
 			// System.out.println("--- ID: "+ id +" | Element Draw END ---");
 		}
 		
+		/**
+		 * Calculates the X position from the top of the line which is used to draw the can.
+		 * 
+		 * @param tmpX X pos of the element
+		 * @return top X position of the element
+		 */
 		private short calcX2(short tmpX) {
 			short tmpAngle = (short)(angle - 8);
 			if (tmpAngle < 0) {
@@ -201,7 +221,12 @@ public class Can {
 			tmpPos.multiply(length);
 			return (short)(tmpX + tmpPos.getShort());
 		}
-		
+		/**
+		 * Calculates the Y position from the top of the line which is used to draw the can.
+		 * 
+		 * @param tmpY Y pos of the element
+		 * @return top Y position of the element
+		 */
 		private short calcY2(short tmpY) {
 			MathFloat tmpPos = new MathFloat((int)GlobalVars.COSINUS_TABLE[angle].value);
 			tmpPos.multiply(length);

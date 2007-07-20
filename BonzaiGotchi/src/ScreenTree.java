@@ -197,7 +197,6 @@ public class ScreenTree extends Canvas implements Runnable {
 	 */
 	protected void paint(Graphics g) {
 //		System.out.println("--- ScreenTree.paint BEGINN ---");
-		boolean paintLeafs = false;
 		g.setFont(Font.getFont(Font.FACE_MONOSPACE,Font.STYLE_PLAIN,Font.SIZE_SMALL));		
 		
 		
@@ -211,19 +210,24 @@ public class ScreenTree extends Canvas implements Runnable {
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_NORMAL;
 				log.draw(g);
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
-				paintLeafs = true;
+			}
+			
+			if (GlobalVars.ELEMENTEDIT == null &&
+				GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_EDITEXACT &&
+				GlobalVars.APPSTATUS != GlobalVars.APPSTATUS_EDITCOLOR) {
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_LEAF;
+					log.draw(g);
+					GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
 			}
 		
 			
 			if (GlobalVars.ELEMENTEDIT != null) {
-				paintLeafs = false;
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_EDIT;
 				log.draw(g);
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
 			}
 			
 			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITEXACT) {
-				paintLeafs = false;
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_SELECTBRANCH;
 				log.draw(g);
 				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
@@ -264,7 +268,6 @@ public class ScreenTree extends Canvas implements Runnable {
 			}
 			
 			if (GlobalVars.APPSTATUS == GlobalVars.APPSTATUS_EDITCOLOR) {
-				paintLeafs = false;
 				drawSelectColor(g);
 			}
 		
@@ -272,11 +275,6 @@ public class ScreenTree extends Canvas implements Runnable {
 				g.setColor(0x555555);
 				g.drawString("calculating ...", 0, 0, Graphics.TOP|Graphics.LEFT);
 				interval();
-			}
-			if (paintLeafs) {
-				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_LEAF;
-				log.draw(g);
-				GlobalVars.PAINTSTATUS = GlobalVars.PAINTSTATUS_VOID;
 			}
 		}
 		else {
@@ -735,7 +733,7 @@ public class ScreenTree extends Canvas implements Runnable {
 	
 	/**
 	 * Dungcounter is set to 700 and dung+50
-	 * Dung won´t availible for a long time ;)
+	 * Dung wonï¿½t availible for a long time ;)
 	 *
 	 */
 	private void dungAction() {

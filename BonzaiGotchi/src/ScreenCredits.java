@@ -11,7 +11,7 @@ public class ScreenCredits extends Form {
 	
 	/**
 	 * Constructs the Credit menu.
-	 * 
+	 * Classically the most important part!
 	 */
 	public ScreenCredits() {
 		super("Project BonzaiGotchi");

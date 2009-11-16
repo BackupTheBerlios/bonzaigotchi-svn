@@ -1,8 +1,8 @@
-﻿import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Graphics;
 
 /**
  * Contains everything that describes und draws the can.
- * Change #2
+ * Change #1
  */
 public class Can {
 
